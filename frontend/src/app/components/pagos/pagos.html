@@ -1,0 +1,101 @@
+<div class="pagos">
+  <div class="page-header">
+    <h1>Gestión de Pagos</h1>
+    <button class="btn btn-primary" (click)="mostrarFormulario()">
+      <span>💳</span> Nuevo Pago
+    </button>
+  </div>
+
+  <!-- Lista de pagos -->
+  <div class="pagos-list">
+    <div class="pago-card" *ngFor="let pago of pagos">
+      <div class="pago-header">
+        <div class="pago-id">
+          <h3>Pago #{{ pago.idPago }}</h3>
+          <span class="pago-date">{{ pago.fechaPago | date:'mediumDate' }}</span>
+        </div>
+        <div class="pago-amount">
+          <span class="amount-value">${{ pago.montoTotal | number:'1.0-0' }}</span>
+          <span class="payment-method">{{ getMetodoPagoText(pago.metodoPago) }}</span>
+        </div>
+      </div>
+      
+      <div class="pago-details">
+        <div class="detail-item">
+          <strong>Orden de Trabajo:</strong> #{{ pago.idOT }}
+        </div>
+        <div class="detail-item">
+          <strong>Cliente:</strong> {{ getClienteName(pago.idOT) }}
+        </div>
+        <div class="detail-item">
+          <strong>Vehículo:</strong> {{ getVehiculoInfo(pago.idOT) }}
+        </div>
+      </div>
+      
+      <div class="pago-actions">
+        <button class="btn btn-primary" (click)="verDetalles(pago)">
+          Ver Detalles
+        </button>
+        <button class="btn btn-secondary" (click)="generarFactura(pago)">
+          Generar Factura
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje cuando no hay pagos -->
+  <div class="no-pagos" *ngIf="pagos.length === 0">
+    <div class="no-pagos-icon">💳</div>
+    <h3>No hay pagos registrados</h3>
+    <p>Comienza registrando el primer pago</p>
+    <button class="btn btn-primary" (click)="mostrarFormulario()">
+      Registrar Pago
+    </button>
+  </div>
+
+  <!-- Modal de formulario -->
+  <div class="modal" *ngIf="mostrarModal" (click)="cerrarModal($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Nuevo Pago</h2>
+        <button class="modal-close" (click)="cerrarModal($event)">×</button>
+      </div>
+      
+      <form class="pago-form" (ngSubmit)="guardarPago()">
+        <div class="form-group">
+          <label class="form-label">Orden de Trabajo</label>
+          <select class="form-control" [(ngModel)]="pagoForm.idOT" name="idOT" required>
+            <option value="">Seleccionar orden de trabajo</option>
+            <option *ngFor="let orden of ordenesTrabajo" [value]="orden.idOT">
+              #{{ orden.idOT }} - {{ getClienteName(orden.idVehiculo) }}
+            </option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Monto Total</label>
+          <input type="number" class="form-control" [(ngModel)]="pagoForm.montoTotal" name="montoTotal" required min="0">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Método de Pago</label>
+          <select class="form-control" [(ngModel)]="pagoForm.metodoPago" name="metodoPago" required>
+            <option value="">Seleccionar método</option>
+            <option value="efectivo">Efectivo</option>
+            <option value="tarjeta">Tarjeta</option>
+            <option value="transferencia">Transferencia</option>
+          </select>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModal($event)">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary">
+            Registrar Pago
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

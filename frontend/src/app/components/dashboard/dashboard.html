@@ -1,0 +1,120 @@
+<div class="dashboard">
+  <div class="dashboard-header">
+    <h1>Dashboard - MecanixPro</h1>
+    <p>Bienvenido al sistema de gestión de taller mecánico</p>
+  </div>
+  
+  <!-- Tarjetas de estadísticas -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.totalClientes }}</h3>
+        <p class="stat-label">Clientes Registrados</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">��</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.totalVehiculos }}</h3>
+        <p class="stat-label">Vehículos</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">🔧</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.ordenesPendientes }}</h3>
+        <p class="stat-label">Órdenes Pendientes</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">✅</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.ordenesCompletadas }}</h3>
+        <p class="stat-label">Órdenes Completadas</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">⚙️</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.totalServicios }}</h3>
+        <p class="stat-label">Servicios Disponibles</p>
+      </div>
+    </div>
+    
+    <div class="stat-card">
+      <div class="stat-icon">🔩</div>
+      <div class="stat-content">
+        <h3 class="stat-number">{{ stats.totalRepuestos }}</h3>
+        <p class="stat-label">Repuestos en Stock</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Sección de acciones rápidas -->
+  <div class="quick-actions">
+    <h2>Acciones Rápidas</h2>
+    <div class="actions-grid">
+      <button class="action-btn" routerLink="/ordenes-trabajo">
+        <span class="action-icon">➕</span>
+        <span>Nueva Orden de Trabajo</span>
+      </button>
+      
+      <button class="action-btn" routerLink="/clientes">
+        <span class="action-icon">👤</span>
+        <span>Agregar Cliente</span>
+      </button>
+      
+      <button class="action-btn" routerLink="/vehiculos">
+        <span class="action-icon">🚗</span>
+        <span>Registrar Vehículo</span>
+      </button>
+      
+      <button class="action-btn" routerLink="/pagos">
+        <span class="action-icon">💳</span>
+        <span>Registrar Pago</span>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Resumen de órdenes recientes -->
+  <div class="recent-orders">
+    <h2>Órdenes de Trabajo Recientes</h2>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Vehículo</th>
+            <th>Estado</th>
+            <th>Fecha</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let orden of ordenesRecientes">
+            <td>#{{ orden.idOT }}</td>
+            <td>{{ getClienteName(orden.idVehiculo) }}</td>
+            <td>{{ getVehiculoInfo(orden.idVehiculo) }}</td>
+            <td>
+              <span class="badge" [ngClass]="getEstadoClass(orden.estado)">
+                {{ getEstadoText(orden.estado) }}
+              </span>
+            </td>
+            <td>{{ orden.fechaCreacion | date:'short' }}</td>
+            <td>
+              <button class="btn btn-primary btn-sm" routerLink="/ordenes-trabajo/{{ orden.idOT }}">
+                Ver Detalles
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

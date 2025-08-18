@@ -1,0 +1,98 @@
+<div class="clientes">
+  <div class="page-header">
+    <h1>Gestión de Clientes</h1>
+    <button class="btn btn-primary" (click)="mostrarFormulario()">
+      <span>➕</span> Nuevo Cliente
+    </button>
+  </div>
+
+  <!-- Lista de clientes -->
+  <div class="clientes-grid">
+    <div class="cliente-card" *ngFor="let cliente of clientes">
+      <div class="cliente-header">
+        <div class="cliente-avatar">
+          <span>{{ cliente.nombre.charAt(0) }}</span>
+        </div>
+        <div class="cliente-info">
+          <h3>{{ cliente.nombre }}</h3>
+          <p class="cliente-email">{{ cliente.correo }}</p>
+        </div>
+      </div>
+      
+      <div class="cliente-details">
+        <div class="detail-item">
+          <span class="detail-icon">📍</span>
+          <span>{{ cliente.direccion }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-icon">📞</span>
+          <span>{{ cliente.telefono }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-icon">🚗</span>
+          <span>{{ getVehiculosCount(cliente.idCliente) }} vehículos</span>
+        </div>
+      </div>
+      
+      <div class="cliente-actions">
+        <button class="btn btn-secondary" (click)="editarCliente(cliente)">
+          Editar
+        </button>
+        <button class="btn btn-primary" (click)="verDetalles(cliente)">
+          Ver Detalles
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje cuando no hay clientes -->
+  <div class="no-clientes" *ngIf="clientes.length === 0">
+    <div class="no-clientes-icon">👥</div>
+    <h3>No hay clientes registrados</h3>
+    <p>Comienza registrando tu primer cliente</p>
+    <button class="btn btn-primary" (click)="mostrarFormulario()">
+      Registrar Cliente
+    </button>
+  </div>
+
+  <!-- Modal de formulario -->
+  <div class="modal" *ngIf="mostrarModal" (click)="cerrarModal($event)">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ clienteEditando ? 'Editar' : 'Nuevo' }} Cliente</h2>
+        <button class="modal-close" (click)="cerrarModal($event)">×</button>
+      </div>
+      
+      <form class="cliente-form" (ngSubmit)="guardarCliente()">
+        <div class="form-group">
+          <label class="form-label">Nombre completo</label>
+          <input type="text" class="form-control" [(ngModel)]="clienteForm.nombre" name="nombre" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Dirección</label>
+          <input type="text" class="form-control" [(ngModel)]="clienteForm.direccion" name="direccion" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Teléfono</label>
+          <input type="tel" class="form-control" [(ngModel)]="clienteForm.telefono" name="telefono" required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Correo electrónico</label>
+          <input type="email" class="form-control" [(ngModel)]="clienteForm.correo" name="correo" required>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="cerrarModal($event)">
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary">
+            {{ clienteEditando ? 'Actualizar' : 'Guardar' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
