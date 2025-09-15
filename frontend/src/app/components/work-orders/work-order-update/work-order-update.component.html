@@ -1,0 +1,236 @@
+<div class="container">
+  <h2>Actualizar Orden de Trabajo</h2>
+  
+  <div *ngIf="loading" class="loading">
+    <p>Cargando orden de trabajo...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+    <button class="btn btn-secondary" (click)="loadWorkOrder()">Reintentar</button>
+  </div>
+
+  <form *ngIf="!loading && !error" (ngSubmit)="onSubmit()" #workOrderForm="ngForm">
+    <div class="form-row">
+      <div class="form-group">
+        <label for="clientId">ID del Cliente:</label>
+        <input 
+          type="number" 
+          id="clientId" 
+          name="clientId" 
+          [(ngModel)]="workOrder.clientId" 
+          required 
+          class="form-control"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="vehicleId">ID del Vehículo:</label>
+        <input 
+          type="number" 
+          id="vehicleId" 
+          name="vehicleId" 
+          [(ngModel)]="workOrder.vehicleId" 
+          required 
+          class="form-control"
+        >
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="mechanicId">ID del Mecánico:</label>
+        <input 
+          type="number" 
+          id="mechanicId" 
+          name="mechanicId" 
+          [(ngModel)]="workOrder.mechanicId" 
+          required 
+          class="form-control"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="serviceId">ID del Servicio:</label>
+        <input 
+          type="number" 
+          id="serviceId" 
+          name="serviceId" 
+          [(ngModel)]="workOrder.serviceId" 
+          required 
+          class="form-control"
+        >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Descripción del Trabajo:</label>
+      <textarea 
+        id="description" 
+        name="description" 
+        [(ngModel)]="workOrder.description" 
+        required 
+        class="form-control" 
+        rows="3"
+      ></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="status">Estado:</label>
+        <select 
+          id="status" 
+          name="status" 
+          [(ngModel)]="workOrder.status" 
+          required 
+          class="form-control"
+        >
+          <option value="pending">Pendiente</option>
+          <option value="in-progress">En Progreso</option>
+          <option value="completed">Completada</option>
+          <option value="cancelled">Cancelada</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="priority">Prioridad:</label>
+        <select 
+          id="priority" 
+          name="priority" 
+          [(ngModel)]="workOrder.priority" 
+          required 
+          class="form-control"
+        >
+          <option value="low">Baja</option>
+          <option value="medium">Media</option>
+          <option value="high">Alta</option>
+          <option value="urgent">Urgente</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="estimatedHours">Horas Estimadas:</label>
+        <input 
+          type="number" 
+          id="estimatedHours" 
+          name="estimatedHours" 
+          [(ngModel)]="workOrder.estimatedHours" 
+          step="0.5"
+          min="0"
+          required 
+          class="form-control"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="actualHours">Horas Reales:</label>
+        <input 
+          type="number" 
+          id="actualHours" 
+          name="actualHours" 
+          [(ngModel)]="workOrder.actualHours" 
+          step="0.5"
+          min="0"
+          class="form-control"
+        >
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="laborCost">Costo de Mano de Obra:</label>
+        <input 
+          type="number" 
+          id="laborCost" 
+          name="laborCost" 
+          [(ngModel)]="workOrder.laborCost" 
+          step="0.01"
+          min="0"
+          required 
+          class="form-control"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="partsCost">Costo de Repuestos:</label>
+        <input 
+          type="number" 
+          id="partsCost" 
+          name="partsCost" 
+          [(ngModel)]="workOrder.partsCost" 
+          step="0.01"
+          min="0"
+          required 
+          class="form-control"
+        >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="totalCost">Costo Total:</label>
+      <input 
+        type="number" 
+        id="totalCost" 
+        name="totalCost" 
+        [(ngModel)]="workOrder.totalCost" 
+        step="0.01"
+        min="0"
+        required 
+        class="form-control"
+      >
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="startDate">Fecha de Inicio:</label>
+        <input 
+          type="datetime-local" 
+          id="startDate" 
+          name="startDate" 
+          [(ngModel)]="workOrder.startDate" 
+          required 
+          class="form-control"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="endDate">Fecha de Finalización:</label>
+        <input 
+          type="datetime-local" 
+          id="endDate" 
+          name="endDate" 
+          [(ngModel)]="workOrder.endDate" 
+          class="form-control"
+        >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Notas:</label>
+      <textarea 
+        id="notes" 
+        name="notes" 
+        [(ngModel)]="workOrder.notes" 
+        class="form-control" 
+        rows="3"
+      ></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="!workOrderForm.form.valid || loading">
+        {{ loading ? 'Actualizando...' : 'Actualizar Orden de Trabajo' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="cancel()">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>
+
+
+
+
+
+

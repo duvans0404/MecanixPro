@@ -1,0 +1,86 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PaymentService } from '../../../services/payment.service';
+import { Payment } from '../../../models/payment.model';
+
+@Component({
+  selector: 'app-payment-update',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './payment-update.component.html',
+})
+export class PaymentUpdateComponent implements OnInit {
+  payment: Payment = {
+    id: 0,
+    workOrderId: 0,
+    amount: 0,
+    paymentMethod: '',
+    paymentDate: new Date(),
+    status: 'pending',
+    transactionId: '',
+    notes: '',
+    createdAt: new Date(),
+    updatedAt: new Date()
+  };
+
+  loading = false;
+  error: string | null = null;
+  paymentId: number = 0;
+
+  constructor(
+    private paymentService: PaymentService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    this.route.params.subscribe(params => {
+      this.paymentId = +params['id'];
+      if (this.paymentId) {
+        this.loadPayment();
+      }
+    });
+  }
+
+  loadPayment() {
+    this.loading = true;
+    this.error = null;
+    
+    this.paymentService.getPaymentById(this.paymentId).subscribe({
+      next: (payment: Payment | undefined) => {
+        if (payment) {
+          this.payment = payment;
+        }
+        this.loading = false;
+      },
+      error: (error: any) => {
+        this.error = 'Error al cargar el pago';
+        this.loading = false;
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  onSubmit() {
+    this.loading = true;
+    this.error = null;
+    
+    this.paymentService.updatePayment(this.paymentId, this.payment).subscribe({
+      next: (response) => {
+        console.log('Pago actualizado exitosamente:', response);
+        this.router.navigate(['/payments']);
+      },
+      error: (error: any) => {
+        this.error = 'Error al actualizar el pago';
+        this.loading = false;
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  cancel() {
+    this.router.navigate(['/payments']);
+  }
+}

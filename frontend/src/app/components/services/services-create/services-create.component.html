@@ -1,0 +1,170 @@
+<div class="page-container">
+  <div class="page-wrapper">
+    <!-- Header -->
+    <div class="page-header">
+      <div style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h1 class="page-title">
+            <i class="pi pi-cog" style="margin-right: 0.75rem; color: #3b82f6;"></i>
+            Crear Nuevo Servicio
+          </h1>
+          <p class="page-subtitle">Completa la información del servicio</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="page-card">
+      <div>
+        <form [formGroup]="serviceForm" (ngSubmit)="onSubmit()" class="space-y-8">
+      
+          <!-- Nombre del Servicio -->
+          <div class="form-group">
+            <label for="name" class="form-label flex items-center">
+              <i class="pi pi-tag mr-2 text-blue-500"></i>
+              Nombre del Servicio *
+            </label>
+            <input 
+              type="text" 
+              id="name"
+              pInputText 
+              formControlName="name"
+              placeholder="Ej: Cambio de aceite, Revisión general"
+              [class.p-invalid]="isFieldInvalid('name')"
+              class="form-control">
+            <small 
+              *ngIf="getFieldError('name')" 
+              class="p-error block mt-2 text-sm font-medium">
+              {{ getFieldError('name') }}
+            </small>
+          </div>
+
+          <!-- Descripción -->
+          <div class="form-group">
+            <label for="description" class="form-label flex items-center">
+              <i class="pi pi-file-edit mr-2 text-green-500"></i>
+              Descripción *
+            </label>
+            <textarea 
+              id="description"
+              pInputTextarea 
+              formControlName="description"
+              placeholder="Describe detalladamente el servicio que se realizará"
+              [class.p-invalid]="isFieldInvalid('description')"
+              rows="4"
+              class="form-control">
+            </textarea>
+            <small 
+              *ngIf="getFieldError('description')" 
+              class="p-error block mt-2 text-sm font-medium">
+              {{ getFieldError('description') }}
+            </small>
+          </div>
+
+          <!-- Categoría y Precio -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="form-group">
+              <label for="category" class="form-label flex items-center">
+                <i class="pi pi-list mr-2 text-purple-500"></i>
+                Categoría *
+              </label>
+              <p-select 
+                formControlName="category"
+                [options]="categoryOptions"
+                placeholder="Selecciona una categoría"
+                [class.p-invalid]="isFieldInvalid('category')"
+                style="width: 100%;">
+              </p-select>
+              <small 
+                *ngIf="getFieldError('category')" 
+                class="p-error block mt-2 text-sm font-medium">
+                {{ getFieldError('category') }}
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="price" class="form-label flex items-center">
+                <i class="pi pi-dollar mr-2 text-orange-500"></i>
+                Precio (USD) *
+              </label>
+              <p-inputNumber 
+                formControlName="price"
+                mode="currency"
+                currency="USD"
+                locale="en-US"
+                placeholder="0.00"
+                [class.p-invalid]="isFieldInvalid('price')"
+                style="width: 100%;">
+              </p-inputNumber>
+              <small 
+                *ngIf="getFieldError('price')" 
+                class="p-error block mt-2 text-sm font-medium">
+                {{ getFieldError('price') }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Duración -->
+          <div class="form-group">
+            <label for="durationMinutes" class="form-label flex items-center">
+              <i class="pi pi-clock mr-2 text-red-500"></i>
+              Duración Estimada (minutos) *
+            </label>
+            <p-inputNumber 
+              formControlName="durationMinutes"
+              placeholder="60"
+              [min]="1"
+              [max]="480"
+              [class.p-invalid]="isFieldInvalid('durationMinutes')"
+              style="width: 100%;">
+            </p-inputNumber>
+            <small 
+              *ngIf="getFieldError('durationMinutes')" 
+              class="p-error block mt-2 text-sm font-medium">
+              {{ getFieldError('durationMinutes') }}
+            </small>
+          </div>
+
+          <!-- Estado Activo -->
+          <div class="form-group">
+            <div class="flex items-center p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-200">
+              <p-checkbox 
+                formControlName="active" 
+                [binary]="true" 
+                inputId="active"
+                class="mr-4">
+              </p-checkbox>
+              <label for="active" class="text-lg font-semibold text-gray-700 flex items-center">
+                <i class="pi pi-check-circle mr-2 text-green-500"></i>
+                Servicio activo
+              </label>
+            </div>
+          </div>
+
+          <!-- Botones -->
+          <div class="flex justify-end gap-6 pt-8 border-t border-gray-200">
+            <button 
+              type="button" 
+              pButton 
+              label="Cancelar" 
+              icon="pi pi-times" 
+              class="p-button-secondary p-button-lg"
+              (click)="onCancel()">
+            </button>
+            <button 
+              type="submit" 
+              pButton 
+              label="Crear Servicio" 
+              icon="pi pi-check" 
+              class="p-button-success p-button-lg"
+              [loading]="loading"
+              [disabled]="serviceForm.invalid">
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

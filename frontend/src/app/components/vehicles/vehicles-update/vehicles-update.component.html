@@ -1,0 +1,232 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-green-50 p-6">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-10 mb-8 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-green-400/10 to-emerald-400/10 rounded-full -translate-y-32 translate-x-32"></div>
+      <div class="relative z-10">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-green-600 to-emerald-600 mb-3">
+              <i class="pi pi-car mr-4 text-green-500"></i>
+              Editar Vehículo
+            </h1>
+            <p class="text-xl text-gray-600 font-medium">Modifica la información del vehículo</p>
+          </div>
+          <div class="hidden lg:block">
+            <div class="w-24 h-24 bg-gradient-to-br from-green-500 to-emerald-600 rounded-3xl flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
+              <i class="pi pi-car text-white text-3xl"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-10 relative overflow-hidden" *ngIf="vehicle">
+      <div class="absolute top-0 left-0 w-48 h-48 bg-gradient-to-br from-green-400/5 to-emerald-400/5 rounded-full -translate-y-24 -translate-x-24"></div>
+      <div class="relative z-10">
+        <form [formGroup]="vehicleForm" (ngSubmit)="onSubmit()" class="space-y-8">
+      
+          <!-- Marca y Modelo -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="form-group">
+              <label for="make" class="form-label flex items-center">
+                <i class="pi pi-star mr-2 text-blue-500"></i>
+                Marca *
+              </label>
+              <input 
+                type="text" 
+                id="make"
+                pInputText 
+                formControlName="make"
+                placeholder="Ej: Toyota, Ford, Honda"
+                [class.p-invalid]="isFieldInvalid('make')"
+                class="form-control">
+              <small 
+                *ngIf="getFieldError('make')" 
+                class="p-error block mt-2 text-sm font-medium">
+                {{ getFieldError('make') }}
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="model" class="form-label flex items-center">
+                <i class="pi pi-tag mr-2 text-purple-500"></i>
+                Modelo *
+              </label>
+              <input 
+                type="text" 
+                id="model"
+                pInputText 
+                formControlName="model"
+                placeholder="Ej: Corolla, F-150, Civic"
+                [class.p-invalid]="isFieldInvalid('model')"
+                class="form-control">
+              <small 
+                *ngIf="getFieldError('model')" 
+                class="p-error block mt-2 text-sm font-medium">
+                {{ getFieldError('model') }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Año y Color -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="form-group">
+              <label for="year" class="form-label flex items-center">
+                <i class="pi pi-calendar mr-2 text-orange-500"></i>
+                Año *
+              </label>
+              <input 
+                type="number" 
+                id="year"
+                pInputText 
+                formControlName="year"
+                placeholder="2023"
+                [class.p-invalid]="isFieldInvalid('year')"
+                class="form-control">
+              <small 
+                *ngIf="getFieldError('year')" 
+                class="p-error block mt-2 text-sm font-medium">
+                {{ getFieldError('year') }}
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="color" class="form-label flex items-center">
+                <i class="pi pi-palette mr-2 text-pink-500"></i>
+                Color *
+              </label>
+              <input 
+                type="text" 
+                id="color"
+                pInputText 
+                formControlName="color"
+                placeholder="Ej: Blanco, Negro, Azul"
+                [class.p-invalid]="isFieldInvalid('color')"
+                class="form-control">
+              <small 
+                *ngIf="getFieldError('color')" 
+                class="p-error block mt-2 text-sm font-medium">
+                {{ getFieldError('color') }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Placa y VIN -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="form-group">
+              <label for="licensePlate" class="form-label flex items-center">
+                <i class="pi pi-id-card mr-2 text-teal-500"></i>
+                Placa *
+              </label>
+              <input 
+                type="text" 
+                id="licensePlate"
+                pInputText 
+                formControlName="licensePlate"
+                placeholder="ABC-123"
+                [class.p-invalid]="isFieldInvalid('licensePlate')"
+                class="form-control font-mono">
+              <small 
+                *ngIf="getFieldError('licensePlate')" 
+                class="p-error block mt-2 text-sm font-medium">
+                {{ getFieldError('licensePlate') }}
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="vin" class="form-label flex items-center">
+                <i class="pi pi-key mr-2 text-indigo-500"></i>
+                VIN *
+              </label>
+              <input 
+                type="text" 
+                id="vin"
+                pInputText 
+                formControlName="vin"
+                placeholder="17 caracteres alfanuméricos"
+                [class.p-invalid]="isFieldInvalid('vin')"
+                class="form-control font-mono">
+              <small 
+                *ngIf="getFieldError('vin')" 
+                class="p-error block mt-2 text-sm font-medium">
+                {{ getFieldError('vin') }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Cliente -->
+          <div class="form-group">
+            <label for="clientId" class="form-label flex items-center">
+              <i class="pi pi-user mr-2 text-green-500"></i>
+              Cliente *
+            </label>
+            <p-select 
+              formControlName="clientId"
+              [options]="clientOptions"
+              placeholder="Selecciona un cliente"
+              [class.p-invalid]="isFieldInvalid('clientId')"
+              style="width: 100%;">
+            </p-select>
+            <small 
+              *ngIf="getFieldError('clientId')" 
+              class="p-error block mt-2 text-sm font-medium">
+              {{ getFieldError('clientId') }}
+            </small>
+          </div>
+
+          <!-- Estado Activo -->
+          <div class="form-group">
+            <div class="flex items-center p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-200">
+              <p-checkbox 
+                formControlName="active" 
+                [binary]="true" 
+                inputId="active"
+                class="mr-4">
+              </p-checkbox>
+              <label for="active" class="text-lg font-semibold text-gray-700 flex items-center">
+                <i class="pi pi-check-circle mr-2 text-green-500"></i>
+                Vehículo activo
+              </label>
+            </div>
+          </div>
+
+          <!-- Botones -->
+          <div class="flex justify-end gap-6 pt-8 border-t border-gray-200">
+            <button 
+              type="button" 
+              pButton 
+              label="Cancelar" 
+              icon="pi pi-times" 
+              class="p-button-secondary p-button-lg"
+              (click)="onCancel()">
+            </button>
+            <button 
+              type="submit" 
+              pButton 
+              label="Actualizar Vehículo" 
+              icon="pi pi-check" 
+              class="p-button-success p-button-lg"
+              [loading]="loading"
+              [disabled]="vehicleForm.invalid">
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <div *ngIf="loading && !vehicle" class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-20 text-center">
+      <div class="flex flex-col items-center justify-center">
+        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center mb-6">
+          <i class="pi pi-spin pi-spinner text-white text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">Cargando vehículo...</h3>
+        <p class="text-gray-500">Por favor espera mientras cargamos la información</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

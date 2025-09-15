@@ -1,0 +1,110 @@
+<div class="container">
+  <h2>Actualizar Cita</h2>
+  
+  <div *ngIf="loading" class="loading">
+    <p>Cargando cita...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+    <button class="btn btn-secondary" (click)="loadAppointment()">Reintentar</button>
+  </div>
+
+  <form *ngIf="!loading && !error" (ngSubmit)="onSubmit()" #appointmentForm="ngForm">
+    <div class="form-group">
+      <label for="clientId">ID del Cliente:</label>
+      <input 
+        type="number" 
+        id="clientId" 
+        name="clientId" 
+        [(ngModel)]="appointment.clientId" 
+        required 
+        class="form-control"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="vehicleId">ID del Vehículo:</label>
+      <input 
+        type="number" 
+        id="vehicleId" 
+        name="vehicleId" 
+        [(ngModel)]="appointment.vehicleId" 
+        required 
+        class="form-control"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="mechanicId">ID del Mecánico:</label>
+      <input 
+        type="number" 
+        id="mechanicId" 
+        name="mechanicId" 
+        [(ngModel)]="appointment.mechanicId" 
+        required 
+        class="form-control"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="serviceId">ID del Servicio:</label>
+      <input 
+        type="number" 
+        id="serviceId" 
+        name="serviceId" 
+        [(ngModel)]="appointment.serviceId" 
+        required 
+        class="form-control"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="appointmentDate">Fecha de la Cita:</label>
+      <input 
+        type="datetime-local" 
+        id="appointmentDate" 
+        name="appointmentDate" 
+        [(ngModel)]="appointment.appointmentDate" 
+        required 
+        class="form-control"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="status">Estado:</label>
+      <select 
+        id="status" 
+        name="status" 
+        [(ngModel)]="appointment.status" 
+        required 
+        class="form-control"
+      >
+        <option value="scheduled">Programada</option>
+        <option value="in-progress">En Progreso</option>
+        <option value="completed">Completada</option>
+        <option value="cancelled">Cancelada</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="notes">Notas:</label>
+      <textarea 
+        id="notes" 
+        name="notes" 
+        [(ngModel)]="appointment.notes" 
+        class="form-control" 
+        rows="3"
+      ></textarea>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="btn btn-primary" [disabled]="!appointmentForm.form.valid || loading">
+        {{ loading ? 'Actualizando...' : 'Actualizar Cita' }}
+      </button>
+      <button type="button" class="btn btn-secondary" (click)="cancel()">
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,351 @@
+<div class="page-container">
+  <div class="page-wrapper">
+    <!-- Header -->
+    <div class="page-header">
+      <div style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h1 class="page-title">
+            <i class="pi pi-wrench" style="margin-right: 0.75rem; color: #f59e0b;"></i>
+            Órdenes de Trabajo
+          </h1>
+          <p class="page-subtitle">Administra las órdenes de trabajo del taller</p>
+        </div>
+        <div>
+          <button 
+            pButton 
+            type="button" 
+            label="Nueva Orden" 
+            icon="pi pi-plus" 
+            class="p-button-success p-button-lg"
+            (click)="createWorkOrder()">
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros y búsqueda -->
+    <div class="work-orders-filters">
+      <div class="work-orders-filters-content">
+        <div class="work-orders-filters-header">
+          <h3 class="work-orders-filters-title">
+            <i class="pi pi-filter" style="margin-right: 0.75rem; color: #f59e0b;"></i>
+            Filtros y Búsqueda
+          </h3>
+          <button 
+            type="button" 
+            class="work-orders-clear-filters"
+            (click)="clearFilters()">
+            <i class="pi pi-refresh"></i>
+            Limpiar filtros
+          </button>
+        </div>
+        <div class="work-orders-filters-grid">
+          <div class="work-orders-filter-group">
+            <label class="work-orders-filter-label">Buscar</label>
+            <div class="work-orders-filter-input">
+              <i class="pi pi-search"></i>
+              <input 
+                type="text" 
+                pInputText 
+                name="ngModel"                 [(ngModel)]="searchTerm" 
+                name="searchTerm"
+                (input)="onSearch()"
+                placeholder="Buscar por descripción, cliente o notas...">
+            </div>
+          </div>
+          <div class="work-orders-filter-group">
+            <label class="work-orders-filter-label">Estado</label>
+            <p-select 
+              name="ngModel"               [(ngModel)]="statusFilter" 
+              name="statusFilter"
+              [options]="statusOptions"
+              (onChange)="onStatusFilterChange()"
+              placeholder="Filtrar por estado"
+              style="width: 100%;">
+            </p-select>
+          </div>
+          <div class="work-orders-filter-group">
+            <label class="work-orders-filter-label">Prioridad</label>
+            <p-select 
+              name="ngModel"               [(ngModel)]="priorityFilter" 
+              name="priorityFilter"
+              [options]="priorityOptions"
+              (onChange)="onPriorityFilterChange()"
+              placeholder="Filtrar por prioridad"
+              style="width: 100%;">
+            </p-select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de órdenes de trabajo -->
+    <div class="page-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin: 0; display: flex; align-items: center;">
+          <i class="pi pi-list" style="margin-right: 0.75rem; color: #3b82f6;"></i>
+          Lista de Órdenes de Trabajo
+        </h3>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 0.875rem; color: #6b7280;">{{ filteredWorkOrders.length }} órdenes</span>
+          <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></div>
+        </div>
+      </div>
+      <p-table 
+        [value]="filteredWorkOrders" 
+        [loading]="loading"
+        [paginator]="true" 
+        [rows]="8"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} órdenes"
+        [rowsPerPageOptions]="[5,10,25,50]"
+        styleClass="modern-datatable">
+        
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-left">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-wrench" style="color: #f59e0b;"></i>
+                <span>Orden #</span>
+              </div>
+            </th>
+            <th class="text-left">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-user" style="color: #6b7280;"></i>
+                <span>Cliente</span>
+              </div>
+            </th>
+            <th class="text-left">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-car" style="color: #6b7280;"></i>
+                <span>Vehículo</span>
+              </div>
+            </th>
+            <th class="text-left">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-wrench" style="color: #6b7280;"></i>
+                <span>Mecánico</span>
+              </div>
+            </th>
+            <th class="text-left">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-cog" style="color: #6b7280;"></i>
+                <span>Servicio</span>
+              </div>
+            </th>
+            <th class="text-left">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-file-edit" style="color: #6b7280;"></i>
+                <span>Descripción</span>
+              </div>
+            </th>
+            <th class="text-center">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="pi pi-circle-fill" style="color: #6b7280;"></i>
+                <span>Estado</span>
+              </div>
+            </th>
+            <th class="text-center">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="pi pi-exclamation-triangle" style="color: #6b7280;"></i>
+                <span>Prioridad</span>
+              </div>
+            </th>
+            <th class="text-right">
+              <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem;">
+                <i class="pi pi-dollar" style="color: #6b7280;"></i>
+                <span>Costos</span>
+              </div>
+            </th>
+            <th class="text-center">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="pi pi-clock" style="color: #6b7280;"></i>
+                <span>Horas</span>
+              </div>
+            </th>
+            <th class="text-center">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="pi pi-calendar" style="color: #6b7280;"></i>
+                <span>Fechas</span>
+              </div>
+            </th>
+            <th class="text-left">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-file" style="color: #6b7280;"></i>
+                <span>Notas</span>
+              </div>
+            </th>
+            <th class="text-center">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="pi pi-cog" style="color: #6b7280;"></i>
+                <span>Acciones</span>
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="body" let-workOrder>
+          <tr class="hover:bg-amber-50/50 transition-colors duration-200">
+            <td class="py-4">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="width: 2.5rem; height: 2.5rem; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                  <i class="pi pi-wrench" style="color: white; font-size: 1rem;"></i>
+                </div>
+                <div>
+                  <div style="font-weight: 600; color: #1f2937;">#{{ workOrder.id }}</div>
+                  <div style="font-size: 0.875rem; color: #6b7280;">{{ workOrder.startDate | date:'dd/MM/yyyy' }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="py-4">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div style="width: 2rem; height: 2rem; background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                  <span style="color: white; font-size: 0.75rem; font-weight: 700;">{{ getClientName(workOrder.clientId).charAt(0).toUpperCase() }}</span>
+                </div>
+                <span style="color: #374151; font-weight: 500;">{{ getClientName(workOrder.clientId) }}</span>
+              </div>
+            </td>
+            <td class="py-4">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div style="width: 2rem; height: 2rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                  <i class="pi pi-car" style="color: white; font-size: 0.75rem;"></i>
+                </div>
+                <span style="color: #374151; font-weight: 500;">{{ getVehicleInfo(workOrder.vehicleId) }}</span>
+              </div>
+            </td>
+            <td class="py-4">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div style="width: 2rem; height: 2rem; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                  <i class="pi pi-wrench" style="color: white; font-size: 0.75rem;"></i>
+                </div>
+                <span style="color: #374151; font-weight: 500;">{{ getMechanicName(workOrder.mechanicId) }}</span>
+              </div>
+            </td>
+            <td class="py-4">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <div style="width: 2rem; height: 2rem; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                  <i class="pi pi-cog" style="color: white; font-size: 0.75rem;"></i>
+                </div>
+                <span style="color: #374151; font-weight: 500;">{{ getServiceName(workOrder.serviceId) }}</span>
+              </div>
+            </td>
+            <td class="py-4">
+              <span style="color: #6b7280; font-size: 0.875rem;" *ngIf="workOrder.description; else noDescription">
+                {{ workOrder.description | slice:0:50 }}{{ workOrder.description.length > 50 ? '...' : '' }}
+              </span>
+              <ng-template #noDescription>
+                <span style="color: #9ca3af; font-style: italic;">Sin descripción</span>
+              </ng-template>
+            </td>
+            <td class="py-4 text-center">
+              <p-tag 
+                [value]="getStatusText(workOrder.status)" 
+                [severity]="getStatusSeverity(workOrder.status)"
+                style="font-weight: 600;">
+              </p-tag>
+            </td>
+            <td class="py-4 text-center">
+              <p-tag 
+                [value]="getPriorityText(workOrder.priority)" 
+                [severity]="getPrioritySeverity(workOrder.priority)"
+                style="font-weight: 600;">
+              </p-tag>
+            </td>
+            <td class="py-4 text-right">
+              <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.25rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="font-size: 0.75rem; color: #6b7280;">Mano obra:</span>
+                  <span style="font-weight: 600; color: #3b82f6;">${{ workOrder.laborCost | number:'1.2-2' }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="font-size: 0.75rem; color: #6b7280;">Repuestos:</span>
+                  <span style="font-weight: 600; color: #f59e0b;">${{ workOrder.partsCost | number:'1.2-2' }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <i class="pi pi-dollar" style="color: #10b981; font-size: 0.875rem;"></i>
+                  <span style="font-weight: 700; color: #10b981; font-size: 1rem;">Total: ${{ workOrder.totalCost | number:'1.2-2' }}</span>
+                </div>
+              </div>
+            </td>
+            <td class="py-4 text-center">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="font-size: 0.875rem; color: #6b7280;">Est: {{ workOrder.estimatedHours }}h</span>
+                  <span style="color: #d1d5db;">|</span>
+                  <span style="font-size: 0.875rem; color: #6b7280;">Real: {{ workOrder.actualHours || 'N/A' }}h</span>
+                </div>
+                <div style="width: 100%; height: 0.25rem; background: #e5e7eb; border-radius: 0.125rem; overflow: hidden;">
+                  <div style="width: {{ getProgressPercentage(workOrder) }}%; height: 100%; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); transition: width 0.3s ease;"></div>
+                </div>
+              </div>
+            </td>
+            <td class="py-4 text-center">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <i class="pi pi-calendar-plus" style="color: #10b981; font-size: 0.75rem;"></i>
+                  <span style="font-size: 0.75rem; color: #6b7280;">Inicio:</span>
+                  <span style="font-weight: 600; color: #10b981; font-size: 0.875rem;">{{ workOrder.startDate | date:'dd/MM/yy' }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;" *ngIf="workOrder.endDate">
+                  <i class="pi pi-calendar-times" style="color: #ef4444; font-size: 0.75rem;"></i>
+                  <span style="font-size: 0.75rem; color: #6b7280;">Fin:</span>
+                  <span style="font-weight: 600; color: #ef4444; font-size: 0.875rem;">{{ workOrder.endDate | date:'dd/MM/yy' }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;" *ngIf="!workOrder.endDate">
+                  <span style="font-size: 0.75rem; color: #9ca3af; font-style: italic;">Sin fecha fin</span>
+                </div>
+              </div>
+            </td>
+            <td class="py-4">
+              <span style="color: #6b7280; font-size: 0.875rem;" *ngIf="workOrder.notes && workOrder.notes.trim(); else noNotes">
+                {{ workOrder.notes | slice:0:30 }}{{ workOrder.notes.length > 30 ? '...' : '' }}
+              </span>
+              <ng-template #noNotes>
+                <span style="color: #9ca3af; font-style: italic; font-size: 0.875rem;">Sin notas</span>
+              </ng-template>
+            </td>
+            <td class="py-4 text-center">
+              <div style="display: flex; justify-content: center; gap: 0.5rem;">
+                <button 
+                  pButton 
+                  type="button" 
+                  icon="pi pi-pencil" 
+                  class="p-button-warning p-button-sm p-button-rounded" 
+                  (click)="editWorkOrder(workOrder.id)" 
+                  pTooltip="Editar orden">
+                </button>
+                <button 
+                  pButton 
+                  type="button" 
+                  icon="pi pi-trash" 
+                  class="p-button-danger p-button-sm p-button-rounded" 
+                  (click)="deleteWorkOrder(workOrder.id)" 
+                  pTooltip="Eliminar orden">
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="13" class="text-center py-16">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                <div style="width: 5rem; height: 5rem; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                  <i class="pi pi-wrench" style="font-size: 2.5rem; color: #9ca3af;"></i>
+                </div>
+                <div>
+                  <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">No se encontraron órdenes de trabajo</h3>
+                  <p style="color: #6b7280;">Intenta ajustar los filtros de búsqueda</p>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

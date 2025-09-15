@@ -1,0 +1,238 @@
+<div class="page-container">
+  <div class="page-wrapper">
+    <!-- Header -->
+    <div class="page-header">
+      <div style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h1 class="page-title">
+            <i class="pi pi-users" style="margin-right: 0.75rem; color: #3b82f6;"></i>
+            Clientes
+          </h1>
+          <p class="page-subtitle">Administra la información de tus clientes</p>
+        </div>
+        <div>
+          <button 
+            pButton 
+            type="button" 
+            label="Nuevo Cliente" 
+            icon="pi pi-plus" 
+            class="p-button-success p-button-lg"
+            (click)="createClient()">
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros y búsqueda -->
+    <div class="page-card">
+      <div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin: 0; display: flex; align-items: center;">
+            <i class="pi pi-filter" style="margin-right: 0.75rem; color: #3b82f6;"></i>
+            Filtros y Búsqueda
+          </h3>
+          <button 
+            type="button" 
+            class="p-button p-button-text"
+            (click)="clearFilters()">
+            <i class="pi pi-refresh"></i>
+            Limpiar filtros
+          </button>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Buscar</label>
+            <div style="position: relative;">
+              <i class="pi pi-search" style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; z-index: 10;"></i>
+              <input 
+                type="text" 
+                pInputText 
+                class="form-control"
+                style="padding-left: 2.5rem !important;"
+                [(ngModel)]="searchTerm" 
+                name="searchTerm"
+                (input)="onSearch()"
+                placeholder="Buscar por nombre, email o teléfono...">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Estado</label>
+            <p-select 
+              [(ngModel)]="statusFilter" 
+              name="statusFilter"
+              [options]="statusOptions" 
+              (onChange)="onStatusFilterChange()"
+              placeholder="Filtrar por estado"
+              style="width: 100%;">
+            </p-select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de clientes -->
+    <div class="page-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin: 0; display: flex; align-items: center;">
+          <i class="pi pi-list" style="margin-right: 0.75rem; color: #3b82f6;"></i>
+          Lista de Clientes
+        </h3>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 0.875rem; color: #6b7280;">{{ filteredClients.length }} clientes</span>
+          <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></div>
+        </div>
+      </div>
+      <p-table 
+        [value]="filteredClients" 
+        [loading]="loading"
+        [paginator]="true" 
+        [rows]="8"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} clientes"
+        [rowsPerPageOptions]="[5,10,25,50]"
+        styleClass="modern-datatable">
+        
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-left">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-user" style="color: #3b82f6;"></i>
+                <span>Cliente</span>
+              </div>
+            </th>
+            <th class="text-left">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-envelope" style="color: #6b7280;"></i>
+                <span>Email</span>
+              </div>
+            </th>
+            <th class="text-left">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-phone" style="color: #6b7280;"></i>
+                <span>Teléfono</span>
+              </div>
+            </th>
+            <th class="text-left">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-map-marker" style="color: #6b7280;"></i>
+                <span>Dirección</span>
+              </div>
+            </th>
+            <th class="text-center">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="pi pi-circle-fill" style="color: #6b7280;"></i>
+                <span>Estado</span>
+              </div>
+            </th>
+            <th class="text-center">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="pi pi-calendar" style="color: #6b7280;"></i>
+                <span>Fechas</span>
+              </div>
+            </th>
+            <th class="text-center">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="pi pi-cog" style="color: #6b7280;"></i>
+                <span>Acciones</span>
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="body" let-client>
+          <tr style="transition: background-color 0.2s ease;">
+            <td style="padding: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="width: 2.5rem; height: 2.5rem; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                  <i class="pi pi-user" style="color: white; font-size: 1rem;"></i>
+                </div>
+                <div>
+                  <div style="font-weight: 600; color: #1f2937;">{{ client.name }}</div>
+                  <div style="font-size: 0.875rem; color: #6b7280;">ID: {{ client.id }}</div>
+                </div>
+              </div>
+            </td>
+            <td style="padding: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-envelope" style="color: #6b7280; font-size: 0.875rem;"></i>
+                <span style="color: #374151;">{{ client.email }}</span>
+              </div>
+            </td>
+            <td style="padding: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-phone" style="color: #6b7280; font-size: 0.875rem;"></i>
+                <span style="color: #374151;">{{ client.phone }}</span>
+              </div>
+            </td>
+            <td style="padding: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-map-marker" style="color: #6b7280; font-size: 0.875rem;"></i>
+                <span style="color: #374151;">{{ client.address }}</span>
+              </div>
+            </td>
+            <td style="padding: 1rem; text-align: center;">
+              <p-tag 
+                [value]="getStatusLabel(client.active)" 
+                [severity]="getStatusSeverity(client.active)"
+                style="font-weight: 600;">
+              </p-tag>
+            </td>
+            <td style="padding: 1rem; text-align: center;">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <i class="pi pi-calendar-plus" style="color: #10b981; font-size: 0.75rem;"></i>
+                  <span style="font-size: 0.75rem; color: #6b7280;">Creado:</span>
+                  <span style="font-weight: 600; color: #10b981; font-size: 0.875rem;">{{ client.createdAt | date:'dd/MM/yy' }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <i class="pi pi-calendar-times" style="color: #ef4444; font-size: 0.75rem;"></i>
+                  <span style="font-size: 0.75rem; color: #6b7280;">Actualizado:</span>
+                  <span style="font-weight: 600; color: #ef4444; font-size: 0.875rem;">{{ client.updatedAt | date:'dd/MM/yy' }}</span>
+                </div>
+              </div>
+            </td>
+            <td style="padding: 1rem; text-align: center;">
+              <div style="display: flex; justify-content: center; gap: 0.5rem;">
+                <button 
+                  pButton 
+                  type="button" 
+                  icon="pi pi-pencil" 
+                  class="p-button-warning p-button-sm p-button-rounded" 
+                  (click)="editClient(client)" 
+                  pTooltip="Editar cliente">
+                </button>
+                <button 
+                  pButton 
+                  type="button" 
+                  icon="pi pi-trash" 
+                  class="p-button-danger p-button-sm p-button-rounded" 
+                  (click)="deleteClient(client)" 
+                  pTooltip="Eliminar cliente">
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 4rem;">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                <div style="width: 5rem; height: 5rem; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                  <i class="pi pi-users" style="font-size: 2.5rem; color: #9ca3af;"></i>
+                </div>
+                <div>
+                  <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">No se encontraron clientes</h3>
+                  <p style="color: #6b7280;">Intenta ajustar los filtros de búsqueda</p>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<p-confirmDialog></p-confirmDialog>
+<p-toast></p-toast>

@@ -1,87 +1,51 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { DataService } from '../../services/data.service';
-import { OrdenTrabajo, Cliente, Vehiculo } from '../../models';
+import { CardModule } from 'primeng/card';
+import { ButtonModule } from 'primeng/button';
+import { TagModule } from 'primeng/tag';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, CardModule, ButtonModule, TagModule],
   templateUrl: './dashboard.html',
-  styleUrls: ['./dashboard.css']
+  styleUrls: ['./dashboard.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class DashboardComponent implements OnInit {
   stats: any = {};
-  ordenesRecientes: OrdenTrabajo[] = [];
-  clientes: Cliente[] = [];
-  vehiculos: Vehiculo[] = [];
 
   constructor(private dataService: DataService) {}
 
   ngOnInit() {
-    this.loadDashboardData();
+    this.loadStats();
   }
 
-  loadDashboardData() {
-    // Cargar estadísticas
-    this.stats = this.dataService.getDashboardStats();
+  loadStats() {
+    this.dataService.getTotalClientes().subscribe(total => this.stats.totalClientes = total);
+    this.dataService.getTotalVehiculos().subscribe(total => this.stats.totalVehiculos = total);
+    this.dataService.getOrdenesPendientes().subscribe(total => this.stats.ordenesPendientes = total);
+    this.dataService.getOrdenesCompletadas().subscribe(total => this.stats.ordenesCompletadas = total);
+    this.dataService.getTotalServicios().subscribe(total => this.stats.totalServicios = total);
+    this.dataService.getTotalRepuestos().subscribe(total => this.stats.totalRepuestos = total);
     
-    // Cargar órdenes recientes
-    this.dataService.getOrdenesTrabajo().subscribe(ordenes => {
-      this.ordenesRecientes = ordenes.slice(0, 5); // Solo las 5 más recientes
+    // Nuevas estadísticas
+    this.dataService.getTotalAppointments().subscribe(total => this.stats.totalAppointments = total);
+    this.dataService.getTotalInsurance().subscribe(total => this.stats.totalInsurance = total);
+    this.dataService.getTotalMechanics().subscribe(total => this.stats.totalMechanics = total);
+    this.dataService.getTotalPayments().subscribe(total => this.stats.totalPayments = total);
+    this.dataService.getTotalWorkOrders().subscribe(total => this.stats.totalWorkOrders = total);
+  }
+
+  getCurrentTime(): string {
+    return new Date().toLocaleString('es-ES', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
-    
-    // Cargar clientes y vehículos para mostrar información
-    this.dataService.getClientes().subscribe(clientes => {
-      this.clientes = clientes;
-    });
-    
-    this.dataService.getVehiculos().subscribe(vehiculos => {
-      this.vehiculos = vehiculos;
-    });
-  }
-
-  getClienteName(idVehiculo: number): string {
-    const vehiculo = this.vehiculos.find(v => v.idVehiculo === idVehiculo);
-    if (vehiculo) {
-      const cliente = this.clientes.find(c => c.idCliente === vehiculo.idCliente);
-      return cliente ? cliente.nombre : 'N/A';
-    }
-    return 'N/A';
-  }
-
-  getVehiculoInfo(idVehiculo: number): string {
-    const vehiculo = this.vehiculos.find(v => v.idVehiculo === idVehiculo);
-    if (vehiculo) {
-      return `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.placa})`;
-    }
-    return 'N/A';
-  }
-
-  getEstadoClass(estado: string): string {
-    switch (estado) {
-      case 'diagnostico':
-        return 'badge-warning';
-      case 'reparacion':
-        return 'badge-info';
-      case 'listo':
-        return 'badge-success';
-      default:
-        return 'badge-secondary';
-    }
-  }
-
-  getEstadoText(estado: string): string {
-    switch (estado) {
-      case 'diagnostico':
-        return 'Diagnóstico';
-      case 'reparacion':
-        return 'Reparación';
-      case 'listo':
-        return 'Listo';
-      default:
-        return estado;
-    }
   }
 }

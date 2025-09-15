@@ -1,0 +1,192 @@
+<div class="page-container">
+  <div class="page-wrapper">
+    <!-- Header -->
+    <div class="page-header">
+      <div style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h1 class="page-title">
+            <i class="pi pi-box" style="margin-right: 0.75rem; color: #3b82f6;"></i>
+            Crear Nuevo Repuesto
+          </h1>
+          <p class="page-subtitle">Completa la información del repuesto</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="page-card">
+      <div>
+        <form [formGroup]="partForm" (ngSubmit)="onSubmit()" class="space-y-8">
+      
+          <!-- Nombre del Repuesto -->
+          <div class="form-group">
+            <label for="name" class="form-label flex items-center">
+              <i class="pi pi-tag mr-2 text-red-500"></i>
+              Nombre del Repuesto *
+            </label>
+            <input 
+              type="text" 
+              id="name"
+              pInputText 
+              formControlName="name"
+              placeholder="Ej: Filtro de aceite, Pastillas de freno"
+              [class.p-invalid]="isFieldInvalid('name')"
+              class="form-control">
+            <small 
+              *ngIf="getFieldError('name')" 
+              class="p-error block mt-2 text-sm font-medium">
+              {{ getFieldError('name') }}
+            </small>
+          </div>
+
+          <!-- Descripción -->
+          <div class="form-group">
+            <label for="description" class="form-label flex items-center">
+              <i class="pi pi-file-edit mr-2 text-orange-500"></i>
+              Descripción *
+            </label>
+            <textarea 
+              id="description"
+              pInputTextarea 
+              formControlName="description"
+              placeholder="Describe las características y especificaciones del repuesto"
+              [class.p-invalid]="isFieldInvalid('description')"
+              rows="4"
+              class="form-control">
+            </textarea>
+            <small 
+              *ngIf="getFieldError('description')" 
+              class="p-error block mt-2 text-sm font-medium">
+              {{ getFieldError('description') }}
+            </small>
+          </div>
+
+          <!-- Número de Parte y Marca -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="form-group">
+              <label for="partNumber" class="form-label flex items-center">
+                <i class="pi pi-key mr-2 text-purple-500"></i>
+                Número de Parte *
+              </label>
+              <input 
+                type="text" 
+                id="partNumber"
+                pInputText 
+                formControlName="partNumber"
+                placeholder="Ej: OF-1234, BF-5678"
+                [class.p-invalid]="isFieldInvalid('partNumber')"
+                class="form-control font-mono">
+              <small 
+                *ngIf="getFieldError('partNumber')" 
+                class="p-error block mt-2 text-sm font-medium">
+                {{ getFieldError('partNumber') }}
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="brand" class="form-label flex items-center">
+                <i class="pi pi-star mr-2 text-green-500"></i>
+                Marca *
+              </label>
+              <input 
+                type="text" 
+                id="brand"
+                pInputText 
+                formControlName="brand"
+                placeholder="Ej: Bosch, Mann, Brembo"
+                [class.p-invalid]="isFieldInvalid('brand')"
+                class="form-control">
+              <small 
+                *ngIf="getFieldError('brand')" 
+                class="p-error block mt-2 text-sm font-medium">
+                {{ getFieldError('brand') }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Precio y Stock -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="form-group">
+              <label for="price" class="form-label flex items-center">
+                <i class="pi pi-dollar mr-2 text-blue-500"></i>
+                Precio (USD) *
+              </label>
+              <p-inputNumber 
+                formControlName="price"
+                mode="currency"
+                currency="USD"
+                locale="en-US"
+                placeholder="0.00"
+                [class.p-invalid]="isFieldInvalid('price')"
+                style="width: 100%;">
+              </p-inputNumber>
+              <small 
+                *ngIf="getFieldError('price')" 
+                class="p-error block mt-2 text-sm font-medium">
+                {{ getFieldError('price') }}
+              </small>
+            </div>
+
+            <div class="form-group">
+              <label for="stock" class="form-label flex items-center">
+                <i class="pi pi-shopping-cart mr-2 text-teal-500"></i>
+                Stock Inicial *
+              </label>
+              <p-inputNumber 
+                formControlName="stock"
+                placeholder="0"
+                [min]="0"
+                [class.p-invalid]="isFieldInvalid('stock')"
+                style="width: 100%;">
+              </p-inputNumber>
+              <small 
+                *ngIf="getFieldError('stock')" 
+                class="p-error block mt-2 text-sm font-medium">
+                {{ getFieldError('stock') }}
+              </small>
+            </div>
+          </div>
+
+          <!-- Estado Activo -->
+          <div class="form-group">
+            <div class="flex items-center p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-200">
+              <p-checkbox 
+                formControlName="active" 
+                [binary]="true" 
+                inputId="active"
+                class="mr-4">
+              </p-checkbox>
+              <label for="active" class="text-lg font-semibold text-gray-700 flex items-center">
+                <i class="pi pi-check-circle mr-2 text-green-500"></i>
+                Repuesto activo
+              </label>
+            </div>
+          </div>
+
+          <!-- Botones -->
+          <div class="flex justify-end gap-6 pt-8 border-t border-gray-200">
+            <button 
+              type="button" 
+              pButton 
+              label="Cancelar" 
+              icon="pi pi-times" 
+              class="p-button-secondary p-button-lg"
+              (click)="onCancel()">
+            </button>
+            <button 
+              type="submit" 
+              pButton 
+              label="Crear Repuesto" 
+              icon="pi pi-check" 
+              class="p-button-success p-button-lg"
+              [loading]="loading"
+              [disabled]="partForm.invalid">
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

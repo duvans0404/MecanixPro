@@ -1,0 +1,190 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-6">
+  <div class="max-w-4xl mx-auto">
+    <!-- Header -->
+    <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-10 mb-8 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/10 to-indigo-400/10 rounded-full -translate-y-32 translate-x-32"></div>
+      <div class="relative z-10">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-blue-600 to-indigo-600 mb-3">
+              <i class="pi pi-user-edit mr-4 text-blue-500"></i>
+              Editar Cliente
+            </h1>
+            <p class="text-xl text-gray-600 font-medium">Modifica la información del cliente</p>
+          </div>
+          <div class="hidden lg:block">
+            <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
+              <i class="pi pi-user-edit text-white text-3xl"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-10 relative overflow-hidden" *ngIf="client">
+      <div class="absolute top-0 left-0 w-48 h-48 bg-gradient-to-br from-blue-400/5 to-indigo-400/5 rounded-full -translate-y-24 -translate-x-24"></div>
+      <div class="relative z-10">
+        <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="space-y-8">
+      
+          <!-- Nombre Completo -->
+          <div class="form-group">
+            <label for="name" class="form-label flex items-center">
+              <i class="pi pi-user mr-2 text-blue-500"></i>
+              Nombre Completo *
+            </label>
+            <input 
+              type="text" 
+              id="name"
+              pInputText 
+              formControlName="name"
+              placeholder="Ingresa el nombre completo"
+              [class.p-invalid]="isFieldInvalid('name')"
+              class="form-control">
+            <small 
+              *ngIf="getFieldError('name')" 
+              class="p-error block mt-2 text-sm font-medium">
+              {{ getFieldError('name') }}
+            </small>
+          </div>
+
+          <!-- Email -->
+          <div class="form-group">
+            <label for="email" class="form-label flex items-center">
+              <i class="pi pi-envelope mr-2 text-green-500"></i>
+              Email *
+            </label>
+            <input 
+              type="email" 
+              id="email"
+              pInputText 
+              formControlName="email"
+              placeholder="cliente@ejemplo.com"
+              [class.p-invalid]="isFieldInvalid('email')"
+              class="form-control">
+            <small 
+              *ngIf="getFieldError('email')" 
+              class="p-error block mt-2 text-sm font-medium">
+              {{ getFieldError('email') }}
+            </small>
+          </div>
+
+          <!-- Teléfono -->
+          <div class="form-group">
+            <label for="phone" class="form-label flex items-center">
+              <i class="pi pi-phone mr-2 text-purple-500"></i>
+              Teléfono *
+            </label>
+            <input 
+              type="tel" 
+              id="phone"
+              pInputText 
+              formControlName="phone"
+              placeholder="+1 (555) 123-4567"
+              [class.p-invalid]="isFieldInvalid('phone')"
+              class="form-control">
+            <small 
+              *ngIf="getFieldError('phone')" 
+              class="p-error block mt-2 text-sm font-medium">
+              {{ getFieldError('phone') }}
+            </small>
+          </div>
+
+          <!-- Dirección -->
+          <div class="form-group">
+            <label for="address" class="form-label flex items-center">
+              <i class="pi pi-map-marker mr-2 text-orange-500"></i>
+              Dirección *
+            </label>
+            <textarea 
+              id="address"
+              pInputTextarea 
+              formControlName="address"
+              placeholder="Ingresa la dirección completa"
+              [class.p-invalid]="isFieldInvalid('address')"
+              rows="4"
+              class="form-control">
+            </textarea>
+            <small 
+              *ngIf="getFieldError('address')" 
+              class="p-error block mt-2 text-sm font-medium">
+              {{ getFieldError('address') }}
+            </small>
+          </div>
+
+          <!-- Nueva Contraseña -->
+          <div class="form-group">
+            <label for="password" class="form-label flex items-center">
+              <i class="pi pi-key mr-2 text-teal-500"></i>
+              Nueva Contraseña
+              <span class="text-sm text-gray-500 ml-2">(dejar vacío para mantener la actual)</span>
+            </label>
+            <input 
+              type="password" 
+              id="password"
+              pInputText 
+              formControlName="password"
+              placeholder="Mínimo 6 caracteres"
+              [class.p-invalid]="isFieldInvalid('password')"
+              class="form-control">
+            <small 
+              *ngIf="getFieldError('password')" 
+              class="p-error block mt-2 text-sm font-medium">
+              {{ getFieldError('password') }}
+            </small>
+          </div>
+
+          <!-- Estado Activo -->
+          <div class="form-group">
+            <div class="flex items-center p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl border border-green-200">
+              <p-checkbox 
+                formControlName="active" 
+                [binary]="true" 
+                inputId="active"
+                class="mr-4">
+              </p-checkbox>
+              <label for="active" class="text-lg font-semibold text-gray-700 flex items-center">
+                <i class="pi pi-check-circle mr-2 text-green-500"></i>
+                Cliente activo
+              </label>
+            </div>
+          </div>
+
+          <!-- Botones -->
+          <div class="flex justify-end gap-6 pt-8 border-t border-gray-200">
+            <button 
+              type="button" 
+              pButton 
+              label="Cancelar" 
+              icon="pi pi-times" 
+              class="p-button-secondary p-button-lg"
+              (click)="onCancel()">
+            </button>
+            <button 
+              type="submit" 
+              pButton 
+              label="Actualizar Cliente" 
+              icon="pi pi-check" 
+              class="p-button-success p-button-lg"
+              [loading]="loading"
+              [disabled]="clientForm.invalid">
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Loading state -->
+    <div *ngIf="loading && !client" class="bg-white rounded-3xl shadow-2xl border border-gray-100 p-20 text-center">
+      <div class="flex flex-col items-center justify-center">
+        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mb-6">
+          <i class="pi pi-spin pi-spinner text-white text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">Cargando cliente...</h3>
+        <p class="text-gray-500">Por favor espera mientras cargamos la información</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

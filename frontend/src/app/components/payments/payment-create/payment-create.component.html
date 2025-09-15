@@ -1,0 +1,163 @@
+<div class="page-container">
+  <div class="page-wrapper">
+    <!-- Header -->
+    <div class="page-header">
+      <div style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h1 class="page-title">
+            <i class="pi pi-credit-card" style="margin-right: 0.75rem; color: #3b82f6;"></i>
+            Crear Nuevo Pago
+          </h1>
+          <p class="page-subtitle">Completa la información del pago</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario -->
+    <div class="page-card">
+      <div>
+        <form (ngSubmit)="onSubmit()" #paymentForm="ngForm" class="space-y-8">
+      
+          <!-- Orden de Trabajo y Monto -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="form-group">
+              <label for="workOrderId" class="form-label flex items-center">
+                <i class="pi pi-wrench mr-2 text-blue-500"></i>
+                ID de la Orden de Trabajo *
+              </label>
+              <input 
+                type="number" 
+                id="workOrderId"
+                name="workOrderId" 
+                [(ngModel)]="payment.workOrderId" 
+                required
+                placeholder="123"
+                class="form-control">
+            </div>
+
+            <div class="form-group">
+              <label for="amount" class="form-label flex items-center">
+                <i class="pi pi-dollar mr-2 text-green-500"></i>
+                Monto (USD) *
+              </label>
+              <p-inputNumber 
+                [(ngModel)]="payment.amount" 
+                name="amount"
+                mode="currency"
+                currency="USD"
+                locale="en-US"
+                placeholder="0.00"
+                required
+                style="width: 100%;">
+              </p-inputNumber>
+            </div>
+          </div>
+
+          <!-- Método de Pago y Estado -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="form-group">
+              <label for="paymentMethod" class="form-label flex items-center">
+                <i class="pi pi-credit-card mr-2 text-purple-500"></i>
+                Método de Pago *
+              </label>
+              <p-select 
+                [(ngModel)]="payment.paymentMethod" 
+                [options]="paymentMethodOptions"
+                placeholder="Selecciona el método de pago"
+                name="paymentMethod"
+                required
+                style="width: 100%;">
+              </p-select>
+            </div>
+
+            <div class="form-group">
+              <label for="status" class="form-label flex items-center">
+                <i class="pi pi-circle-fill mr-2 text-orange-500"></i>
+                Estado *
+              </label>
+              <p-select 
+                [(ngModel)]="payment.status" 
+                [options]="statusOptions"
+                placeholder="Selecciona el estado"
+                name="status"
+                required
+                style="width: 100%;">
+              </p-select>
+            </div>
+          </div>
+
+          <!-- Fecha de Pago -->
+          <div class="form-group">
+            <label for="paymentDate" class="form-label flex items-center">
+              <i class="pi pi-calendar mr-2 text-teal-500"></i>
+              Fecha de Pago *
+            </label>
+            <p-datepicker 
+              [(ngModel)]="payment.paymentDate" 
+              name="paymentDate"
+              required
+              placeholder="Selecciona la fecha y hora del pago"
+              dateFormat="dd/mm/yy"
+              [showTime]="true"
+              hourFormat="24"
+              style="width: 100%;">
+            </p-datepicker>
+          </div>
+
+          <!-- ID de Transacción -->
+          <div class="form-group">
+            <label for="transactionId" class="form-label flex items-center">
+              <i class="pi pi-tag mr-2 text-indigo-500"></i>
+              ID de Transacción
+            </label>
+            <input 
+              type="text" 
+              id="transactionId"
+              name="transactionId" 
+              [(ngModel)]="payment.transactionId" 
+              placeholder="TXN-123456789"
+              class="form-control font-mono">
+          </div>
+
+          <!-- Notas -->
+          <div class="form-group">
+            <label for="notes" class="form-label flex items-center">
+              <i class="pi pi-file-edit mr-2 text-gray-500"></i>
+              Notas
+            </label>
+            <textarea 
+              id="notes"
+              name="notes" 
+              [(ngModel)]="payment.notes" 
+              placeholder="Información adicional sobre el pago..."
+              rows="4"
+              class="form-control">
+            </textarea>
+          </div>
+
+          <!-- Botones -->
+          <div class="flex justify-end gap-6 pt-8 border-t border-gray-200">
+            <button 
+              type="button" 
+              pButton 
+              label="Limpiar" 
+              icon="pi pi-refresh" 
+              class="p-button-secondary p-button-lg"
+              (click)="resetForm()">
+            </button>
+            <button 
+              type="submit" 
+              pButton 
+              label="Crear Pago" 
+              icon="pi pi-check" 
+              class="p-button-success p-button-lg"
+              [disabled]="!paymentForm.form.valid">
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

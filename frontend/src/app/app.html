@@ -1,13 +1,97 @@
 <div class="app-container">
-  <app-navbar></app-navbar>
-  
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <!-- Contenido principal -->
   <div class="main-content">
-    <app-sidebar></app-sidebar>
-    
-    <div class="content-area">
-      <router-outlet></router-outlet>
-    </div>
+    <!-- Header -->
+    <header class="global-header">
+      <div class="header-content">
+        <!-- Título de la página -->
+        <div class="header-title-section">
+          <div class="header-logo">
+            <div class="logo-icon">
+              <i class="pi pi-cog"></i>
+            </div>
+            <div class="logo-text">
+              <h1 class="app-title">MecanixPro</h1>
+              <span class="app-subtitle">Sistema de Gestión de Taller</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acciones del header -->
+        <div class="header-actions">
+          <!-- Toggle de tema -->
+          <button 
+            type="button" 
+            (click)="toggleTheme()"
+            class="header-action-button theme-toggle"
+            [title]="isDarkMode ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'">
+            <i class="pi" [class.pi-sun]="isDarkMode" [class.pi-moon]="!isDarkMode"></i>
+          </button>
+          
+          <!-- Notificaciones -->
+          <button class="header-action-button notifications-button">
+            <i class="pi pi-bell"></i>
+            <span class="notification-badge">3</span>
+          </button>
+
+          <!-- Perfil de usuario -->
+          <div class="user-profile">
+            <div class="user-avatar">
+              <i class="pi pi-user"></i>
+            </div>
+            <div class="user-info">
+              <span class="user-name">Admin</span>
+              <span class="user-role">Administrador</span>
+            </div>
+            <button class="profile-dropdown-button">
+              <i class="pi pi-chevron-down"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 relative overflow-y-auto focus:outline-none">
+      <div class="py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200">
+      <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+          <div class="flex items-center space-x-4">
+            <div class="flex items-center">
+              <div class="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+                <i class="pi pi-cog text-white text-sm"></i>
+              </div>
+              <span class="ml-2 text-sm font-medium text-gray-900">MecanixPro</span>
+            </div>
+            <span class="text-sm text-gray-500">© 2024 Sistema de Gestión de Taller</span>
+          </div>
+          <div class="flex items-center space-x-6 mt-4 md:mt-0">
+            <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+              <i class="pi pi-envelope mr-1"></i>
+              Soporte
+            </a>
+            <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+              <i class="pi pi-question-circle mr-1"></i>
+              Ayuda
+            </a>
+            <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors">
+              <i class="pi pi-cog mr-1"></i>
+              Configuración
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
   </div>
-  
-  <app-footer></app-footer>
 </div>

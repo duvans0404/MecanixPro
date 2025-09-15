@@ -1,120 +1,475 @@
-<div class="dashboard">
-  <div class="dashboard-header">
-    <h1>Dashboard - MecanixPro</h1>
-    <p>Bienvenido al sistema de gestión de taller mecánico</p>
-  </div>
+<div class="dashboard-container">
+  <div class="dashboard-wrapper">
+    <!-- Header del dashboard -->
+    <div class="dashboard-header">
+      <div class="dashboard-header-content">
+        <div style="flex: 1;">
+          <h1 class="dashboard-title">
+            <i class="pi pi-chart-line" style="margin-right: 1rem; color: #3b82f6;"></i>
+            Dashboard
+          </h1>
+          <p class="dashboard-subtitle">Bienvenido al sistema de gestión de taller mecánico</p>
+          <div class="dashboard-status">
+            <p-tag 
+              severity="success" 
+              value="Sistema en línea" 
+              icon="pi pi-check-circle"
+              style="padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 600;">
+            </p-tag>
+            <div style="display: flex; align-items: center; gap: 0.5rem; color: #6b7280;">
+              <i class="pi pi-clock" style="font-size: 0.875rem;"></i>
+              <span style="font-size: 0.875rem; font-weight: 500;">Última actualización: {{ getCurrentTime() }}</span>
+            </div>
+          </div>
+        </div>
+        <div style="display: none;" class="lg:block">
+          <div class="dashboard-icon">
+            <i class="pi pi-cog"></i>
+          </div>
+        </div>
+      </div>
+    </div>
   
-  <!-- Tarjetas de estadísticas -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-icon">👥</div>
-      <div class="stat-content">
-        <h3 class="stat-number">{{ stats.totalClientes }}</h3>
-        <p class="stat-label">Clientes Registrados</p>
-      </div>
-    </div>
-    
-    <div class="stat-card">
-      <div class="stat-icon">��</div>
-      <div class="stat-content">
-        <h3 class="stat-number">{{ stats.totalVehiculos }}</h3>
-        <p class="stat-label">Vehículos</p>
-      </div>
-    </div>
-    
-    <div class="stat-card">
-      <div class="stat-icon">🔧</div>
-      <div class="stat-content">
-        <h3 class="stat-number">{{ stats.ordenesPendientes }}</h3>
-        <p class="stat-label">Órdenes Pendientes</p>
-      </div>
-    </div>
-    
-    <div class="stat-card">
-      <div class="stat-icon">✅</div>
-      <div class="stat-content">
-        <h3 class="stat-number">{{ stats.ordenesCompletadas }}</h3>
-        <p class="stat-label">Órdenes Completadas</p>
-      </div>
-    </div>
-    
-    <div class="stat-card">
-      <div class="stat-icon">⚙️</div>
-      <div class="stat-content">
-        <h3 class="stat-number">{{ stats.totalServicios }}</h3>
-        <p class="stat-label">Servicios Disponibles</p>
-      </div>
-    </div>
-    
-    <div class="stat-card">
-      <div class="stat-icon">🔩</div>
-      <div class="stat-content">
-        <h3 class="stat-number">{{ stats.totalRepuestos }}</h3>
-        <p class="stat-label">Repuestos en Stock</p>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Sección de acciones rápidas -->
-  <div class="quick-actions">
-    <h2>Acciones Rápidas</h2>
-    <div class="actions-grid">
-      <button class="action-btn" routerLink="/ordenes-trabajo">
-        <span class="action-icon">➕</span>
-        <span>Nueva Orden de Trabajo</span>
-      </button>
-      
-      <button class="action-btn" routerLink="/clientes">
-        <span class="action-icon">👤</span>
-        <span>Agregar Cliente</span>
-      </button>
-      
-      <button class="action-btn" routerLink="/vehiculos">
-        <span class="action-icon">🚗</span>
-        <span>Registrar Vehículo</span>
-      </button>
-      
-      <button class="action-btn" routerLink="/pagos">
-        <span class="action-icon">💳</span>
-        <span>Registrar Pago</span>
-      </button>
-    </div>
-  </div>
-  
-  <!-- Resumen de órdenes recientes -->
-  <div class="recent-orders">
-    <h2>Órdenes de Trabajo Recientes</h2>
-    <div class="table-container">
-      <table class="table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Cliente</th>
-            <th>Vehículo</th>
-            <th>Estado</th>
-            <th>Fecha</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let orden of ordenesRecientes">
-            <td>#{{ orden.idOT }}</td>
-            <td>{{ getClienteName(orden.idVehiculo) }}</td>
-            <td>{{ getVehiculoInfo(orden.idVehiculo) }}</td>
-            <td>
-              <span class="badge" [ngClass]="getEstadoClass(orden.estado)">
-                {{ getEstadoText(orden.estado) }}
+    <!-- Tarjetas de estadísticas -->
+    <div class="stats-grid">
+      <!-- Tarjeta de Clientes -->
+      <div class="stat-card">
+        <div class="stat-card-content">
+          <div class="stat-card-header">
+            <div class="stat-card-icon-container">
+              <div class="stat-card-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
+                <i class="pi pi-users" style="font-size: 1.5rem;"></i>
+              </div>
+              <div class="stat-card-info">
+                <p class="stat-card-label">Clientes</p>
+                <p class="stat-card-value">{{ stats.totalClientes || 0 }}</p>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="stat-card-badge" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); color: #166534; border-color: #bbf7d0;">
+                <i class="pi pi-arrow-up" style="margin-right: 0.25rem; font-size: 0.75rem;"></i>
+                +12%
               </span>
-            </td>
-            <td>{{ orden.fechaCreacion | date:'short' }}</td>
-            <td>
-              <button class="btn btn-primary btn-sm" routerLink="/ordenes-trabajo/{{ orden.idOT }}">
-                Ver Detalles
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+            </div>
+          </div>
+          
+          <div class="stat-card-actions">
+            <a routerLink="/clients" class="stat-card-link" style="color: #3b82f6;">
+              Ver detalles
+              <i class="pi pi-arrow-right" style="margin-left: 0.5rem; font-size: 0.75rem;"></i>
+            </a>
+            <a routerLink="/clients/create" class="stat-card-action-button" style="background: #dbeafe; color: #3b82f6;">
+              <i class="pi pi-plus" style="font-size: 0.875rem;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Tarjeta de Vehículos -->
+      <div class="stat-card">
+        <div class="stat-card-content">
+          <div class="stat-card-header">
+            <div class="stat-card-icon-container">
+              <div class="stat-card-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <i class="pi pi-car" style="font-size: 1.5rem;"></i>
+              </div>
+              <div class="stat-card-info">
+                <p class="stat-card-label">Vehículos</p>
+                <p class="stat-card-value">{{ stats.totalVehiculos || 0 }}</p>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="stat-card-badge" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); color: #166534; border-color: #bbf7d0;">
+                <i class="pi pi-arrow-up" style="margin-right: 0.25rem; font-size: 0.75rem;"></i>
+                +8%
+              </span>
+            </div>
+          </div>
+          
+          <div class="stat-card-actions">
+            <a routerLink="/vehicles" class="stat-card-link" style="color: #10b981;">
+              Ver detalles
+              <i class="pi pi-arrow-right" style="margin-left: 0.5rem; font-size: 0.75rem;"></i>
+            </a>
+            <a routerLink="/vehicles/create" class="stat-card-action-button" style="background: #dcfce7; color: #10b981;">
+              <i class="pi pi-plus" style="font-size: 0.875rem;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Servicios -->
+      <div class="stat-card">
+        <div class="stat-card-content">
+          <div class="stat-card-header">
+            <div class="stat-card-icon-container">
+              <div class="stat-card-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                <i class="pi pi-wrench" style="font-size: 1.5rem;"></i>
+              </div>
+              <div class="stat-card-info">
+                <p class="stat-card-label">Servicios</p>
+                <p class="stat-card-value">{{ stats.totalServicios || 0 }}</p>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="stat-card-badge" style="background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%); color: #92400e; border-color: #fed7aa;">
+                <i class="pi pi-arrow-up" style="margin-right: 0.25rem; font-size: 0.75rem;"></i>
+                +15%
+              </span>
+            </div>
+          </div>
+          
+          <div class="stat-card-actions">
+            <a routerLink="/services" class="stat-card-link" style="color: #f59e0b;">
+              Ver detalles
+              <i class="pi pi-arrow-right" style="margin-left: 0.5rem; font-size: 0.75rem;"></i>
+            </a>
+            <a routerLink="/services/create" class="stat-card-action-button" style="background: #fef3c7; color: #f59e0b;">
+              <i class="pi pi-plus" style="font-size: 0.875rem;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Repuestos -->
+      <div class="stat-card">
+        <div class="stat-card-content">
+          <div class="stat-card-header">
+            <div class="stat-card-icon-container">
+              <div class="stat-card-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+                <i class="pi pi-box" style="font-size: 1.5rem;"></i>
+              </div>
+              <div class="stat-card-info">
+                <p class="stat-card-label">Repuestos</p>
+                <p class="stat-card-value">{{ stats.totalRepuestos || 0 }}</p>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="stat-card-badge" style="background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%); color: #7c2d12; border-color: #e9d5ff;">
+                <i class="pi pi-arrow-up" style="margin-right: 0.25rem; font-size: 0.75rem;"></i>
+                +5%
+              </span>
+            </div>
+          </div>
+          
+          <div class="stat-card-actions">
+            <a routerLink="/parts" class="stat-card-link" style="color: #8b5cf6;">
+              Ver detalles
+              <i class="pi pi-arrow-right" style="margin-left: 0.5rem; font-size: 0.75rem;"></i>
+            </a>
+            <a routerLink="/parts/create" class="stat-card-action-button" style="background: #f3e8ff; color: #8b5cf6;">
+              <i class="pi pi-plus" style="font-size: 0.875rem;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Órdenes Pendientes -->
+      <div class="stat-card">
+        <div class="stat-card-content">
+          <div class="stat-card-header">
+            <div class="stat-card-icon-container">
+              <div class="stat-card-icon" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);">
+                <i class="pi pi-clock" style="font-size: 1.5rem;"></i>
+              </div>
+              <div class="stat-card-info">
+                <p class="stat-card-label">Órdenes Pendientes</p>
+                <p class="stat-card-value">{{ stats.ordenesPendientes || 0 }}</p>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="stat-card-badge" style="background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%); color: #c2410c; border-color: #fdba74; animation: pulse 2s infinite;">
+                <i class="pi pi-exclamation-triangle" style="margin-right: 0.25rem; font-size: 0.75rem;"></i>
+                Urgente
+              </span>
+            </div>
+          </div>
+          
+          <div class="stat-card-actions">
+            <a routerLink="/work-orders" class="stat-card-link" style="color: #f97316;">
+              Ver órdenes
+              <i class="pi pi-arrow-right" style="margin-left: 0.5rem; font-size: 0.75rem;"></i>
+            </a>
+            <a routerLink="/work-orders/create" class="stat-card-action-button" style="background: #fed7aa; color: #f97316;">
+              <i class="pi pi-plus" style="font-size: 0.875rem;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Órdenes Completadas -->
+      <div class="stat-card">
+        <div class="stat-card-content">
+          <div class="stat-card-header">
+            <div class="stat-card-icon-container">
+              <div class="stat-card-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <i class="pi pi-check-circle" style="font-size: 1.5rem;"></i>
+              </div>
+              <div class="stat-card-info">
+                <p class="stat-card-label">Órdenes Completadas</p>
+                <p class="stat-card-value">{{ stats.ordenesCompletadas || 0 }}</p>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="stat-card-badge" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%); color: #166534; border-color: #bbf7d0;">
+                <i class="pi pi-arrow-up" style="margin-right: 0.25rem; font-size: 0.75rem;"></i>
+                +20%
+              </span>
+            </div>
+          </div>
+          
+          <div class="stat-card-actions">
+            <a routerLink="/work-orders" class="stat-card-link" style="color: #10b981;">
+              Ver historial
+              <i class="pi pi-arrow-right" style="margin-left: 0.5rem; font-size: 0.75rem;"></i>
+            </a>
+            <div class="stat-card-action-button" style="background: #dcfce7; color: #10b981;">
+              <i class="pi pi-check-circle" style="font-size: 0.875rem;"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Citas -->
+      <div class="stat-card">
+        <div class="stat-card-content">
+          <div class="stat-card-header">
+            <div class="stat-card-icon-container">
+              <div class="stat-card-icon" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
+                <i class="pi pi-calendar" style="font-size: 1.5rem;"></i>
+              </div>
+              <div class="stat-card-info">
+                <p class="stat-card-label">Citas</p>
+                <p class="stat-card-value">{{ stats.totalAppointments || 0 }}</p>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="stat-card-badge" style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); color: #3730a3; border-color: #c7d2fe;">
+                <i class="pi pi-arrow-up" style="margin-right: 0.25rem; font-size: 0.75rem;"></i>
+                +18%
+              </span>
+            </div>
+          </div>
+          
+          <div class="stat-card-actions">
+            <a routerLink="/appointments" class="stat-card-link" style="color: #6366f1;">
+              Ver citas
+              <i class="pi pi-arrow-right" style="margin-left: 0.5rem; font-size: 0.75rem;"></i>
+            </a>
+            <a routerLink="/appointments/create" class="stat-card-action-button" style="background: #e0e7ff; color: #6366f1;">
+              <i class="pi pi-plus" style="font-size: 0.875rem;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Seguros -->
+      <div class="stat-card">
+        <div class="stat-card-content">
+          <div class="stat-card-header">
+            <div class="stat-card-icon-container">
+              <div class="stat-card-icon" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+                <i class="pi pi-shield" style="font-size: 1.5rem;"></i>
+              </div>
+              <div class="stat-card-info">
+                <p class="stat-card-label">Seguros</p>
+                <p class="stat-card-value">{{ stats.totalInsurance || 0 }}</p>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="stat-card-badge" style="background: linear-gradient(135deg, #cffafe 0%, #a5f3fc 100%); color: #155e75; border-color: #a5f3fc;">
+                <i class="pi pi-arrow-up" style="margin-right: 0.25rem; font-size: 0.75rem;"></i>
+                +7%
+              </span>
+            </div>
+          </div>
+          
+          <div class="stat-card-actions">
+            <a routerLink="/insurance" class="stat-card-link" style="color: #06b6d4;">
+              Ver seguros
+              <i class="pi pi-arrow-right" style="margin-left: 0.5rem; font-size: 0.75rem;"></i>
+            </a>
+            <a routerLink="/insurance/create" class="stat-card-action-button" style="background: #cffafe; color: #06b6d4;">
+              <i class="pi pi-plus" style="font-size: 0.875rem;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Mecánicos -->
+      <div class="stat-card">
+        <div class="stat-card-content">
+          <div class="stat-card-header">
+            <div class="stat-card-icon-container">
+              <div class="stat-card-icon" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);">
+                <i class="pi pi-users" style="font-size: 1.5rem;"></i>
+              </div>
+              <div class="stat-card-info">
+                <p class="stat-card-label">Mecánicos</p>
+                <p class="stat-card-value">{{ stats.totalMechanics || 0 }}</p>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="stat-card-badge" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); color: #be185d; border-color: #fbcfe8;">
+                <i class="pi pi-arrow-up" style="margin-right: 0.25rem; font-size: 0.75rem;"></i>
+                +3%
+              </span>
+            </div>
+          </div>
+          
+          <div class="stat-card-actions">
+            <a routerLink="/mechanics" class="stat-card-link" style="color: #ec4899;">
+              Ver mecánicos
+              <i class="pi pi-arrow-right" style="margin-left: 0.5rem; font-size: 0.75rem;"></i>
+            </a>
+            <a routerLink="/mechanics/create" class="stat-card-action-button" style="background: #fce7f3; color: #ec4899;">
+              <i class="pi pi-plus" style="font-size: 0.875rem;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta de Pagos -->
+      <div class="stat-card">
+        <div class="stat-card-content">
+          <div class="stat-card-header">
+            <div class="stat-card-icon-container">
+              <div class="stat-card-icon" style="background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);">
+                <i class="pi pi-credit-card" style="font-size: 1.5rem;"></i>
+              </div>
+              <div class="stat-card-info">
+                <p class="stat-card-label">Pagos</p>
+                <p class="stat-card-value">{{ stats.totalPayments || 0 }}</p>
+              </div>
+            </div>
+            <div style="text-align: right;">
+              <span class="stat-card-badge" style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); color: #166534; border-color: #dcfce7;">
+                <i class="pi pi-arrow-up" style="margin-right: 0.25rem; font-size: 0.75rem;"></i>
+                +25%
+              </span>
+            </div>
+          </div>
+          
+          <div class="stat-card-actions">
+            <a routerLink="/payments" class="stat-card-link" style="color: #84cc16;">
+              Ver pagos
+              <i class="pi pi-arrow-right" style="margin-left: 0.5rem; font-size: 0.75rem;"></i>
+            </a>
+            <a routerLink="/payments/create" class="stat-card-action-button" style="background: #f0fdf4; color: #84cc16;">
+              <i class="pi pi-plus" style="font-size: 0.875rem;"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Acciones rápidas -->
+    <div class="quick-actions">
+      <div class="quick-actions-content">
+        <div class="quick-actions-header">
+          <div>
+            <h2 class="quick-actions-title">
+              <i class="pi pi-bolt" style="margin-right: 1rem; color: #f59e0b;"></i>
+              Acciones Rápidas
+            </h2>
+            <p class="quick-actions-subtitle">Accede rápidamente a las funciones más utilizadas</p>
+          </div>
+          <div style="display: none;" class="lg:flex items-center space-x-4">
+            <div class="quick-actions-icon">
+              <i class="pi pi-bolt"></i>
+            </div>
+            <div style="text-align: right;">
+              <span style="font-size: 1.125rem; font-weight: 700; color: #374151;">Acceso directo</span>
+              <p style="font-size: 0.875rem; color: #6b7280; margin: 0;">Funciones principales</p>
+            </div>
+          </div>
+        </div>
+      
+        <div class="quick-actions-grid">
+          <a routerLink="/clients/create" class="quick-action-item">
+            <div class="quick-action-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);">
+              <i class="pi pi-user-plus"></i>
+            </div>
+            <div class="quick-action-info">
+              <p class="quick-action-title">Nuevo Cliente</p>
+              <p class="quick-action-description">Registrar cliente</p>
+            </div>
+          </a>
+          
+          <a routerLink="/vehicles/create" class="quick-action-item">
+            <div class="quick-action-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+              <i class="pi pi-car"></i>
+            </div>
+            <div class="quick-action-info">
+              <p class="quick-action-title">Nuevo Vehículo</p>
+              <p class="quick-action-description">Registrar vehículo</p>
+            </div>
+          </a>
+          
+          <a routerLink="/appointments/create" class="quick-action-item">
+            <div class="quick-action-icon" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
+              <i class="pi pi-calendar-plus"></i>
+            </div>
+            <div class="quick-action-info">
+              <p class="quick-action-title">Nueva Cita</p>
+              <p class="quick-action-description">Agendar cita</p>
+            </div>
+          </a>
+          
+          <a routerLink="/work-orders/create" class="quick-action-item">
+            <div class="quick-action-icon" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);">
+              <i class="pi pi-file-edit"></i>
+            </div>
+            <div class="quick-action-info">
+              <p class="quick-action-title">Nueva Orden</p>
+              <p class="quick-action-description">Crear orden de trabajo</p>
+            </div>
+          </a>
+        </div>
+        
+        <!-- Segunda fila de acciones rápidas -->
+        <div class="quick-actions-grid" style="margin-top: 1.5rem;">
+          <a routerLink="/services/create" class="quick-action-item">
+            <div class="quick-action-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+              <i class="pi pi-wrench"></i>
+            </div>
+            <div class="quick-action-info">
+              <p class="quick-action-title">Nuevo Servicio</p>
+              <p class="quick-action-description">Crear servicio</p>
+            </div>
+          </a>
+          
+          <a routerLink="/parts/create" class="quick-action-item">
+            <div class="quick-action-icon" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);">
+              <i class="pi pi-box"></i>
+            </div>
+            <div class="quick-action-info">
+              <p class="quick-action-title">Nuevo Repuesto</p>
+              <p class="quick-action-description">Agregar repuesto</p>
+            </div>
+          </a>
+          
+          <a routerLink="/mechanics/create" class="quick-action-item">
+            <div class="quick-action-icon" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);">
+              <i class="pi pi-user-plus"></i>
+            </div>
+            <div class="quick-action-info">
+              <p class="quick-action-title">Nuevo Mecánico</p>
+              <p class="quick-action-description">Registrar mecánico</p>
+            </div>
+          </a>
+          
+          <a routerLink="/insurance/create" class="quick-action-item">
+            <div class="quick-action-icon" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);">
+              <i class="pi pi-shield"></i>
+            </div>
+            <div class="quick-action-info">
+              <p class="quick-action-title">Nuevo Seguro</p>
+              <p class="quick-action-description">Registrar seguro</p>
+            </div>
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 </div>

@@ -1,0 +1,79 @@
+<div class="sidebar" [class.collapsed]="isCollapsed">
+  <!-- Header del sidebar -->
+  <div class="sidebar-header">
+    <div class="logo-container">
+      <div class="logo-icon">
+        <i class="pi pi-cog"></i>
+      </div>
+      <div class="logo-text" *ngIf="!isCollapsed">
+        <h2 class="logo-title">MecanixPro</h2>
+        <p class="logo-subtitle">Taller Mecánico</p>
+      </div>
+    </div>
+    <p-button 
+      [icon]="isCollapsed ? 'pi pi-angle-right' : 'pi pi-angle-left'"
+      [text]="true"
+      severity="secondary"
+      size="small"
+      (onClick)="toggleSidebar()"
+      class="toggle-btn">
+    </p-button>
+  </div>
+
+  <!-- Navegación principal -->
+  <nav class="sidebar-nav">
+    <ul class="nav-list">
+      <li class="nav-item" *ngFor="let item of menuItems">
+        <a 
+          [routerLink]="item.route" 
+          class="nav-link"
+          [class.active]="isActive(item.route)"
+          [class.has-children]="hasChildren(item)"
+        >
+          <div class="nav-icon" [class]="item.color">
+            <i [class]="item.icon"></i>
+          </div>
+          <span class="nav-text" *ngIf="!isCollapsed">{{ item.title }}</span>
+          <i class="pi pi-angle-down nav-arrow" *ngIf="hasChildren(item) && !isCollapsed"></i>
+        </a>
+        
+        <!-- Submenú -->
+        <ul class="submenu" *ngIf="hasChildren(item) && !isCollapsed">
+          <li class="submenu-item" *ngFor="let child of item.children">
+            <a 
+              [routerLink]="child.route" 
+              class="submenu-link"
+              [class.active]="isActive(child.route)"
+            >
+              <i [class]="child.icon" class="submenu-icon"></i>
+              <span class="submenu-text">{{ child.title }}</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Footer del sidebar -->
+  <div class="sidebar-footer" *ngIf="!isCollapsed">
+    <div class="user-info">
+      <p-avatar 
+        icon="pi pi-user" 
+        size="normal" 
+        shape="circle"
+        styleClass="user-avatar">
+      </p-avatar>
+      <div class="user-details">
+        <p class="user-name">Administrador</p>
+        <p class="user-role">Sistema</p>
+      </div>
+    </div>
+    <p-button 
+      icon="pi pi-sign-out"
+      [text]="true"
+      severity="secondary"
+      size="small"
+      class="logout-btn">
+    </p-button>
+  </div>
+</div>
