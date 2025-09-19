@@ -128,8 +128,8 @@ export class ServicesGetallComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sí, eliminar',
       rejectLabel: 'Cancelar',
-      accept: () => {
-        this.serviceService.deleteService(service.id.toString()).subscribe({
+        accept: () => {
+          this.serviceService.deleteService(service.id).subscribe({
           next: () => {
             this.messageService.add({
               severity: 'success',

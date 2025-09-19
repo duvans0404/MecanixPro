@@ -71,8 +71,8 @@ export class ServicesUpdateComponent implements OnInit {
   }
 
   loadService() {
-    this.loading = true;
-    this.serviceService.getService(this.serviceId).subscribe({
+  this.loading = true;
+  this.serviceService.getServiceById(Number(this.serviceId)).subscribe({
       next: (service) => {
         if (service) {
           this.service = service;
@@ -105,7 +105,7 @@ export class ServicesUpdateComponent implements OnInit {
       this.loading = true;
       const serviceData = this.serviceForm.value;
       
-      this.serviceService.updateService(this.serviceId, serviceData).subscribe({
+  this.serviceService.updateService(Number(this.serviceId), serviceData).subscribe({
         next: (service) => {
           this.messageService.add({
             severity: 'success',

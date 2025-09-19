@@ -1,95 +1,33 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { MechanicI } from '../models/mechanic.model';
 
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { MechanicI } from '../models/mechanic.model';
 @Injectable({
   providedIn: 'root'
 })
 export class MechanicService {
-  
-  private mechanics: MechanicI[] = [
-    {
-      id: 1,
-      firstName: 'Roberto',
-      lastName: 'Silva',
-      email: 'roberto.silva@taller.com',
-      phone: '300-111-2222',
-      specialization: 'engine',
-      experienceYears: 8,
-      hourlyRate: 45000,
-      isAvailable: true,
-      createdAt: new Date('2024-01-01'),
-      updatedAt: new Date('2024-01-01')
-    },
-    {
-      id: 2,
-      firstName: 'Luis',
-      lastName: 'Mendoza',
-      email: 'luis.mendoza@taller.com',
-      phone: '300-333-4444',
-      specialization: 'brakes',
-      experienceYears: 5,
-      hourlyRate: 40000,
-      isAvailable: true,
-      createdAt: new Date('2024-01-01'),
-      updatedAt: new Date('2024-01-01')
-    },
-    {
-      id: 3,
-      firstName: 'Diego',
-      lastName: 'Ramírez',
-      email: 'diego.ramirez@taller.com',
-      phone: '300-555-6666',
-      specialization: 'electrical',
-      experienceYears: 6,
-      hourlyRate: 42000,
-      isAvailable: false,
-      createdAt: new Date('2024-01-01'),
-      updatedAt: new Date('2024-01-01')
-    }
-  ];
+  private apiUrl = '/api/mechanics';
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
   getMechanics(): Observable<MechanicI[]> {
-    return of(this.mechanics);
+    return this.http.get<MechanicI[]>(this.apiUrl);
   }
 
-  getMechanicById(id: number): Observable<MechanicI | undefined> {
-    const mechanic = this.mechanics.find(m => m.id === id);
-    return of(mechanic);
+  getMechanicById(id: number): Observable<MechanicI> {
+    return this.http.get<MechanicI>(`${this.apiUrl}/${id}`);
   }
 
-  createMechanic(mechanic: MechanicI): Observable<MechanicI> {
-    const newMechanic: MechanicI = {
-      ...mechanic,
-      id: this.mechanics.length + 1,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    this.mechanics.push(newMechanic);
-    return of(newMechanic);
+  createMechanic(mechanic: Partial<MechanicI>): Observable<MechanicI> {
+    return this.http.post<MechanicI>(this.apiUrl, mechanic);
   }
 
-  updateMechanic(id: number, mechanic: MechanicI): Observable<MechanicI> {
-    const index = this.mechanics.findIndex(m => m.id === id);
-    if (index !== -1) {
-      this.mechanics[index] = {
-        ...mechanic,
-        id,
-        updatedAt: new Date()
-      };
-      return of(this.mechanics[index]);
-    }
-    throw new Error('Mechanic not found');
+  updateMechanic(id: number, mechanic: Partial<MechanicI>): Observable<MechanicI> {
+    return this.http.put<MechanicI>(`${this.apiUrl}/${id}`, mechanic);
   }
 
   deleteMechanic(id: number): Observable<void> {
-    const index = this.mechanics.findIndex(m => m.id === id);
-    if (index !== -1) {
-      this.mechanics.splice(index, 1);
-      return of(void 0);
-    }
-    throw new Error('Mechanic not found');
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

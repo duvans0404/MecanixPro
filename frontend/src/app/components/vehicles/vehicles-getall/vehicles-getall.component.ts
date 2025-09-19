@@ -148,7 +148,7 @@ export class VehiclesGetallComponent implements OnInit {
       acceptLabel: 'Sí, eliminar',
       rejectLabel: 'Cancelar',
       accept: () => {
-        this.vehicleService.deleteVehicle(vehicle.id.toString()).subscribe({
+          this.vehicleService.deleteVehicle(vehicle.id).subscribe({
           next: () => {
             this.messageService.add({
               severity: 'success',

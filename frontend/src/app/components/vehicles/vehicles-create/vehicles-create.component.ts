@@ -84,7 +84,7 @@ export class VehiclesCreateComponent implements OnInit {
       this.loading = true;
       const vehicleData = this.vehicleForm.value;
       
-      this.vehicleService.addVehicle(vehicleData).subscribe({
+  this.vehicleService.createVehicle(vehicleData).subscribe({
         next: (vehicle) => {
           this.messageService.add({
             severity: 'success',

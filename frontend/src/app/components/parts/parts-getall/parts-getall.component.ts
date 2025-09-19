@@ -134,8 +134,8 @@ export class PartsGetallComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Sí, eliminar',
       rejectLabel: 'Cancelar',
-      accept: () => {
-        this.partService.deletePart(part.id.toString()).subscribe({
+        accept: () => {
+          this.partService.deletePart(part.id).subscribe({
           next: () => {
             this.messageService.add({
               severity: 'success',

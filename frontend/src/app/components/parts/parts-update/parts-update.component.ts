@@ -61,8 +61,8 @@ export class PartsUpdateComponent implements OnInit {
   }
 
   loadPart() {
-    this.loading = true;
-    this.partService.getPart(this.partId).subscribe({
+  this.loading = true;
+  this.partService.getPartById(Number(this.partId)).subscribe({
       next: (part) => {
         if (part) {
           this.part = part;
@@ -96,7 +96,7 @@ export class PartsUpdateComponent implements OnInit {
       this.loading = true;
       const partData = this.partForm.value;
       
-      this.partService.updatePart(this.partId, partData).subscribe({
+  this.partService.updatePart(Number(this.partId), partData).subscribe({
         next: (part) => {
           this.messageService.add({
             severity: 'success',

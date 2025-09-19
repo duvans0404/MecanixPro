@@ -66,7 +66,7 @@ export class ServicesCreateComponent implements OnInit {
       this.loading = true;
       const serviceData = this.serviceForm.value;
       
-      this.serviceService.addService(serviceData).subscribe({
+  this.serviceService.createService(serviceData).subscribe({
         next: (service) => {
           this.messageService.add({
             severity: 'success',

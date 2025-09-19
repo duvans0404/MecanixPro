@@ -55,8 +55,7 @@ export class PartsCreateComponent implements OnInit {
     if (this.partForm.valid) {
       this.loading = true;
       const partData = this.partForm.value;
-      
-      this.partService.addPart(partData).subscribe({
+      this.partService.createPart(partData).subscribe({
         next: (part) => {
           this.messageService.add({
             severity: 'success',

@@ -67,8 +67,8 @@ export class VehiclesUpdateComponent implements OnInit {
   }
 
   loadVehicle() {
-    this.loading = true;
-    this.vehicleService.getVehicle(this.vehicleId).subscribe({
+  this.loading = true;
+  this.vehicleService.getVehicleById(Number(this.vehicleId)).subscribe({
       next: (vehicle) => {
         if (vehicle) {
           this.vehicle = vehicle;
@@ -118,7 +118,7 @@ export class VehiclesUpdateComponent implements OnInit {
       this.loading = true;
       const vehicleData = this.vehicleForm.value;
       
-      this.vehicleService.updateVehicle(this.vehicleId, vehicleData).subscribe({
+  this.vehicleService.updateVehicle(Number(this.vehicleId), vehicleData).subscribe({
         next: (vehicle) => {
           this.messageService.add({
             severity: 'success',
