@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, of, tap, map } from 'rxjs';
+import { finalize, shareReplay, timeout as rxTimeout } from 'rxjs/operators';
 import { AuthResponse, AuthUser, TokenPayload } from '../models/auth.model';
 
 const ACCESS_TOKEN_KEY = 'mp_access_token';
@@ -42,6 +43,9 @@ export class AuthService {
     })
   );
 
+  // Single-flight refresh handling
+  private refreshRequest$?: Observable<{ accessToken: string; refreshToken: string }>;
+
   get accessToken(): string | null {
     return localStorage.getItem(ACCESS_TOKEN_KEY);
   }
@@ -63,7 +67,16 @@ export class AuthService {
   }
 
   login(username: string, password: string): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>('/api/auth/login', { username, password }).pipe(
+    const headers = {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    };
+    
+    return this.http.post<AuthResponse>('/api/auth/login', 
+      { username, password }, 
+      { headers }
+    ).pipe(
+      rxTimeout(15000),
       tap((res) => this.handleAuthSuccess(res))
     );
   }
@@ -89,6 +102,7 @@ export class AuthService {
       '/api/auth/refresh',
       { refreshToken }
     ).pipe(
+      rxTimeout(15000),
       tap((res) => {
         localStorage.setItem(ACCESS_TOKEN_KEY, res.accessToken);
         localStorage.setItem(REFRESH_TOKEN_KEY, res.refreshToken);
@@ -97,8 +111,29 @@ export class AuthService {
     );
   }
 
+  // Returns a valid access token, refreshing once if needed (single-flight)
+  ensureRefreshed(): Observable<string | null> {
+    const token = this.accessToken;
+    if (token && !isExpired(token)) {
+      return of(token);
+    }
+    if (!this.refreshToken) {
+      return of(null);
+    }
+    if (!this.refreshRequest$) {
+      this.refreshRequest$ = this.refresh().pipe(
+        shareReplay(1),
+        finalize(() => {
+          this.refreshRequest$ = undefined;
+        })
+      );
+    }
+    return this.refreshRequest$.pipe(map((res) => res.accessToken ?? this.accessToken));
+  }
+
   getProfile(): Observable<{ user: AuthUser }> {
     return this.http.get<{ user: AuthUser }>('/api/auth/profile').pipe(
+      rxTimeout(15000),
       tap(({ user }) => this.currentUserSubject.next(user))
     );
   }
