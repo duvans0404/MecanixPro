@@ -239,8 +239,9 @@
 
 /* Always show vertical scrollbar in main content to prevent layout shift */
 .modern-main-content main {
-  overflow-y: scroll; /* shows scrollbar even when short */
+  overflow-y: auto;
   scroll-behavior: smooth;
+  padding-bottom: 120px; /* prevent visual clash with footer on short pages */
 }
 
 @media (max-width: 768px) {
@@ -250,24 +251,25 @@
   }
 }
 
+/* Very small devices: keep key elements usable */
+@media (max-width: 480px) {
+  .header-content { padding: 0.75rem; }
+  .modern-main-content main { padding-bottom: 100px; }
+}
+
 /* Pretty custom scrollbars (WebKit) */
-.page-card::-webkit-scrollbar,
-.modern-main-content main::-webkit-scrollbar {
+/* Narrow scope to optional elements to avoid always-visible scrollbars */
+/* .modern-main-content main::-webkit-scrollbar {
   width: 8px;
 }
-.page-card::-webkit-scrollbar-track,
-.modern-main-content main::-webkit-scrollbar-track {
-  background: transparent;
-}
-.page-card::-webkit-scrollbar-thumb,
+.modern-main-content main::-webkit-scrollbar-track { background: transparent; }
 .modern-main-content main::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, rgba(99,102,241,0.35), rgba(59,130,246,0.35));
   border-radius: 8px;
 }
-.page-card::-webkit-scrollbar-thumb:hover,
 .modern-main-content main::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, rgba(99,102,241,0.6), rgba(59,130,246,0.6));
-}
+} */
 
 /* Firefox scrollbar */
 .page-card,

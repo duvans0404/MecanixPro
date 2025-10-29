@@ -1,7 +1,7 @@
-<div class="auth-page">
-  <div class="auth-bg" aria-hidden="true"></div>
+<div class="auth-page anim-fade-in">
+  <div class="auth-bg anim-fade-in" aria-hidden="true"></div>
 
-  <div class="auth-card">
+  <div class="auth-card anim-slide-down">
     <div class="auth-header">
       <div class="brand">
         <div class="logo">MP</div>
@@ -12,7 +12,7 @@
       </div>
     </div>
 
-    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <form class="auth-form anim-fade-in-up" [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <div class="form-control" [class.invalid]="form.controls.username.invalid && (form.controls.username.touched || submitted)">
         <label for="username">Usuario o Email</label>
         <div class="input-wrapper">
@@ -39,7 +39,7 @@
 
       <button class="btn-primary" type="submit" [disabled]="loading">
         <span class="btn-content">
-          <i class="pi pi-sign-in"></i>
+          <i class="pi pi-sign-in" [class.anim-pulse]="loading"></i>
           {{ loading ? 'Entrando…' : 'Entrar' }}
         </span>
       </button>

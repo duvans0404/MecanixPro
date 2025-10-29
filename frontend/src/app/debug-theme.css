@@ -1,0 +1,82 @@
+/* Debug styles for dark theme - temporary */
+html[data-theme="dark"] .modern-header,
+html.dark-theme .modern-header {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border-bottom-color: var(--border-color) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+html[data-theme="dark"] .modern-sidebar,
+html.dark-theme .modern-sidebar {
+  background: linear-gradient(180deg, var(--surface-0) 0%, var(--surface-50) 100%) !important;
+  border-right: 1px solid var(--border-color) !important;
+}
+
+html[data-theme="dark"] .modern-main-content,
+html.dark-theme .modern-main-content {
+  background: linear-gradient(135deg, var(--surface-50) 0%, var(--surface-100) 100%) !important;
+}
+
+html[data-theme="dark"] .brand-title,
+html.dark-theme .brand-title {
+  color: var(--text-color) !important;
+}
+
+html[data-theme="dark"] .brand-subtitle,
+html.dark-theme .brand-subtitle {
+  color: var(--text-color-secondary) !important;
+}
+
+html[data-theme="dark"] .search-input,
+html.dark-theme .search-input {
+  background: var(--surface-100) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-color) !important;
+}
+
+html[data-theme="dark"] .search-input::placeholder,
+html.dark-theme .search-input::placeholder {
+  color: var(--text-color-secondary) !important;
+}
+
+html[data-theme="dark"] .action-btn,
+html.dark-theme .action-btn {
+  background: var(--surface-100) !important;
+  color: var(--text-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+html[data-theme="dark"] .action-btn:hover,
+html.dark-theme .action-btn:hover {
+  background: var(--surface-200) !important;
+}
+
+html[data-theme="dark"] .theme-toggle-btn:hover,
+html.dark-theme .theme-toggle-btn:hover {
+  background: var(--warning-color) !important;
+  color: white !important;
+}
+
+html[data-theme="dark"] .glass-effect,
+html.dark-theme .glass-effect {
+  background: rgba(15, 23, 42, 0.8) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Debug indicator for theme applied */
+html[data-theme="dark"]::before,
+html.dark-theme::before {
+  content: "🌙 DARK MODE ACTIVE";
+  position: fixed;
+  top: 50px;
+  right: 10px;
+  background: #22c55e;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  z-index: 10000;
+  font-size: 11px;
+  font-weight: bold;
+}

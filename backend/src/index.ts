@@ -43,9 +43,41 @@ const allowedOrigins = envOrigins.length ? envOrigins : defaultOrigins;
 app.use(
   cors({
     origin: (origin, callback) => {
+      // Allow all origins in development if CORS_ALLOW_ALL is set
+      if (process.env.CORS_ALLOW_ALL === 'true') {
+        return callback(null, true);
+      }
+      
       // Allow same-origin or tools without origin (e.g., curl, server-side)
       if (!origin) return callback(null, true);
+      
+      // Allow any localhost origin for development (any port)
+      if (origin && origin.startsWith('http://localhost:')) {
+        return callback(null, true);
+      }
+      
+      // Allow 127.0.0.1 origins for development
+      if (origin && origin.startsWith('http://127.0.0.1:')) {
+        return callback(null, true);
+      }
+      
+      // Allow any frontend development servers (Vite, Webpack, etc.)
+      if (origin && (
+        origin.includes('localhost') ||
+        origin.includes('127.0.0.1') ||
+        origin.includes('0.0.0.0')
+      )) {
+        return callback(null, true);
+      }
+      
+      // Allow specific configured origins
       if (allowedOrigins.includes(origin)) return callback(null, true);
+      
+      // For development mode, log rejected origins to help debugging
+      if (process.env.NODE_ENV !== 'production') {
+        console.log(`CORS: Rejecting origin: ${origin}`);
+      }
+      
       return callback(new Error(`CORS not allowed for origin: ${origin}`));
     },
     credentials: true,

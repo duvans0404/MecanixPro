@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
+import { timeout, catchError, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -36,13 +37,30 @@ export class RegisterComponent {
     if (this.form.invalid || this.loading) return;
     this.loading = true;
 
-    this.auth.register(this.form.value as any).subscribe({
+    this.auth.register(this.form.value as any).pipe(
+      timeout(10000), // 10 segundos de timeout
+      catchError(err => {
+        console.error('Register error:', err);
+        if (err.name === 'TimeoutError') {
+          return throwError(() => ({ error: { message: 'El servidor no responde. Intenta de nuevo.' } }));
+        }
+        return throwError(() => err);
+      })
+    ).subscribe({
       next: () => {
+        this.loading = false;
         this.router.navigateByUrl('/dashboard');
       },
       error: (err) => {
+        console.error('Register error:', err);
         this.error = err?.error?.message || 'Error en el registro';
         this.loading = false;
+      },
+      complete: () => {
+        // Asegurar que loading se resetee siempre
+        if (this.loading) {
+          this.loading = false;
+        }
       }
     });
   }

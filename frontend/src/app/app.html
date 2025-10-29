@@ -1,5 +1,11 @@
 <ng-container *ngIf="!isAuthRoute; else authOnly">
 <div class="modern-app-layout" [attr.data-theme]="isDarkMode ? 'dark' : 'light'">
+  <!-- Barra de progreso global de navegación -->
+  <div class="top-progress" [class.is-active]="isNavigating || (loadingService.isLoading$ | async)"></div>
+  <div class="loading-overlay" [class.is-active]="isNavigating || (loadingService.isLoading$ | async)" aria-busy="true" aria-live="polite">
+    <div class="mp-spinner"></div>
+  </div>
+
   <!-- Modern Sidebar -->
   <ng-container [ngSwitch]="displayRole">
     <sidebar-admin *ngSwitchCase="'ADMIN'" [isCollapsed]="sidebarCollapsed"></sidebar-admin>
@@ -13,12 +19,12 @@
   <!-- Main Content Area -->
   <div class="modern-main-content">
     <!-- Modern Header with Glass Effect -->
-    <header class="modern-header glass-effect">
+    <header class="modern-header glass-effect anim-slide-down">
       <div class="header-wrapper">
         <!-- Brand Section -->
         <div class="brand-section">
-          <div class="brand-logo">
-            <div class="logo-gradient">
+          <div class="brand-logo hover-raise">
+            <div class="logo-gradient anim-pop">
               <i class="pi pi-cog"></i>
             </div>
             <div class="brand-text">
@@ -30,7 +36,7 @@
 
         <!-- Search Bar -->
         <div class="search-section">
-          <div class="search-container">
+          <div class="search-container anim-fade-in-down">
             <i class="pi pi-search search-icon"></i>
             <input 
               type="text" 
@@ -46,32 +52,32 @@
           <button 
             type="button" 
             (click)="toggleTheme()"
-            class="action-btn theme-toggle-btn"
+            class="action-btn theme-toggle-btn hover-raise"
             [title]="isDarkMode ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'">
             <i class="pi" [class.pi-sun]="isDarkMode" [class.pi-moon]="!isDarkMode"></i>
           </button>
           
           <!-- Quick Actions -->
-          <button class="action-btn quick-action-btn" title="Nueva Orden de Trabajo">
+          <button class="action-btn quick-action-btn hover-raise" title="Nueva Orden de Trabajo">
             <i class="pi pi-plus"></i>
           </button>
           
           <!-- Notifications -->
-          <button class="action-btn notifications-btn" title="Notificaciones">
+          <button class="action-btn notifications-btn hover-raise" title="Notificaciones">
             <i class="pi pi-bell"></i>
             <span class="notification-indicator">3</span>
           </button>
 
           <!-- User Profile / Auth Actions -->
           <ng-container *ngIf="isAuthenticated; else guestLinks">
-            <div class="user-profile-modern">
+            <div class="user-profile-modern hover-raise">
               <div class="user-avatar-modern">
                 <img src="/assets/images/default-avatar.svg" alt="Avatar" class="avatar-image">
               </div>
               <div class="user-details">
                 <span class="user-name-modern">{{ displayName || 'Usuario' }}</span>
-                <div class="user-roles" *ngIf="sortedRoles?.length">
-                  <span class="role-badge" *ngFor="let role of sortedRoles" [ngClass]="roleBadgeClass(role)" [attr.title]="roleTitle(role)">{{ role }}</span>
+                <div class="user-roles" *ngIf="displayRole as mainRole">
+                  <span class="role-badge" [ngClass]="roleBadgeClass(mainRole)" [attr.title]="roleTitle(mainRole)">{{ mainRole }}</span>
                 </div>
               </div>
               <button class="profile-menu-btn" (click)="logout()" title="Cerrar sesión">
@@ -90,10 +96,10 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1 relative overflow-y-auto focus:outline-none">
+    <main class="flex-1 relative overflow-y-auto focus:outline-none anim-fade-in">
       <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <router-outlet></router-outlet>
+          <router-outlet #outlet="outlet" [@routeAnimations]="prepareRoute(outlet)"></router-outlet>
         </div>
       </div>
     </main>

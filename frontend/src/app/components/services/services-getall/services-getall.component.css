@@ -1,51 +1,87 @@
-/* Modern Service List Styles */
-.page-container {
-  padding: 2rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-  min-height: 100vh;
+/* Modern Service List Styles - Usando estilos modernos globales */
+/* 
+  Este componente ahora usa las clases globales modernas:
+  - .modern-page-container en lugar de .page-container
+  - .page-header, .page-title, .page-subtitle globales
+  - .modern-card en lugar de .page-card
+  - .table-container-modern y .table-modern para tablas
+*/
+
+/* Estilos específicos solo para servicios */
+.service-status-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
-.page-header {
-  margin-bottom: 2rem;
+
+.service-status-badge.active {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
 }
-.page-title {
-  font-size: 2rem;
+
+.service-status-badge.inactive {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.service-price {
   font-weight: 700;
-  color: #6366f1;
+  color: var(--primary-color);
+  font-size: 1.125rem;
+}
+
+.service-description {
+  color: var(--text-color-secondary);
+  font-size: 0.875rem;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.service-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-btn-small {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: var(--surface-100);
+  border-radius: 8px;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-color-secondary);
 }
-.page-subtitle {
-  color: #64748b;
-  font-size: 1rem;
-  margin: 0;
+
+.action-btn-small:hover {
+  background: var(--primary-color);
+  color: white;
+  transform: scale(1.1);
 }
-.page-card {
-  background: #fff;
-  border-radius: 1.5rem;
-  box-shadow: 0 8px 32px -8px rgba(99,102,241,0.08);
-  padding: 2rem;
-  margin-bottom: 2rem;
+
+.action-btn-small.danger:hover {
+  background: #ef4444;
 }
-.services-table {
-  width: 100%;
-  border-radius: 1rem;
-  box-shadow: 0 4px 16px -4px rgba(99,102,241,0.06);
-  background: #f1f5f9;
-  overflow: hidden;
+
+/* Dark mode específico para servicios */
+[data-theme="dark"] .service-description {
+  color: var(--text-color-secondary);
 }
-.services-table th, .services-table td {
-  padding: 1rem;
-  text-align: left;
-  color: #1e293b;
+
+[data-theme="dark"] .action-btn-small {
+  background: var(--surface-200);
 }
-.services-table th {
-  background: #e0e7ef;
-  font-weight: 600;
-  color: #6366f1;
-}
-.services-table tr {
-  transition: background 0.2s;
+
+[data-theme="dark"] .action-btn-small:hover {
+  background: var(--primary-color);
 }
 .services-table tr:hover {
   background: #e0e7ef;

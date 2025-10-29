@@ -26,3 +26,24 @@
 .sidebar-menu i {
   margin-right: 12px;
 }
+
+/* ========== DARK MODE MANAGER SIDEBAR ========== */
+[data-theme="dark"] .sidebar-manager {
+  background: var(--surface-900);
+  color: var(--text-color);
+  border-right: 1px solid var(--surface-200);
+}
+
+[data-theme="dark"] .sidebar-menu a {
+  color: var(--text-color-secondary);
+}
+
+[data-theme="dark"] .sidebar-menu a:hover {
+  background: var(--surface-200);
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .sidebar-menu a.active {
+  background: var(--primary-color);
+  color: white;
+}

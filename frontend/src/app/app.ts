@@ -1,11 +1,14 @@
 import { Component, OnInit, ViewEncapsulation, Renderer2, Inject } from '@angular/core';
+import { trigger, transition, style, animate, query, group } from '@angular/animations';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DOCUMENT } from '@angular/common';
 import { DataService } from './services/data.service';
+import { ThemeService } from './services/theme.service';
+import { LoadingService } from './services/loading.service';
 import { SidebarComponent } from './components/navigation/sidebar.component';
 import { AuthService } from './services/auth.service';
-import { Router } from '@angular/router';
+import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
 import { SidebarAdminComponent } from './components/navigation/sidebar-admin.component';
 import { SidebarManagerComponent } from './components/navigation/sidebar-manager.component';
 import { SidebarMechanicComponent } from './components/navigation/sidebar-mechanic.component';
@@ -23,8 +26,24 @@ import { GlobalModalsComponent } from './components/shared/global-modals.compone
     ConfirmDialogModule, GlobalModalsComponent
   ],
   templateUrl: './app.html',
-  styleUrls: ['./app.css', './app-modern.css', '../styles.css'],
-  encapsulation: ViewEncapsulation.None
+  styleUrls: ['./app.css', './app-modern.css', './debug-theme.css', '../styles.css'],
+  encapsulation: ViewEncapsulation.None,
+  animations: [
+    trigger('routeAnimations', [
+      transition('* <=> *', [
+        group([
+          query(':enter', [
+            style({ opacity: 0, transform: 'translateY(8px)' }),
+            animate('260ms cubic-bezier(.2,.7,.2,1)', style({ opacity: 1, transform: 'translateY(0)' }))
+          ], { optional: true }),
+          query(':leave', [
+            style({ opacity: 1, transform: 'translateY(0)' }),
+            animate('200ms ease-out', style({ opacity: 0, transform: 'translateY(-6px)' }))
+          ], { optional: true })
+        ])
+      ])
+    ])
+  ]
 })
 export class AppComponent implements OnInit {
   title = 'MecanixPro';
@@ -33,23 +52,49 @@ export class AppComponent implements OnInit {
   isDarkMode = false;
   sidebarCollapsed = false;
   currentUser: { username?: string; firstName?: string; lastName?: string } | null = null;
+  isNavigating = false;
+  private navStartAt = 0;
+  private navStopTimer: any = null;
 
   constructor(
     private dataService: DataService,
     private renderer: Renderer2,
     @Inject(DOCUMENT) private document: Document,
     private auth: AuthService,
-    private router: Router
+    private router: Router,
+    private themeService: ThemeService,
+    public loadingService: LoadingService
   ) {}
 
   ngOnInit() {
     this.loadStats();
-    this.initializeTheme();
+    // El tema se inicializa automáticamente en el servicio
+    this.themeService.isDarkMode$.subscribe(isDark => {
+      this.isDarkMode = isDark;
+    });
     this.initializeKeyboardShortcuts();
     if (this.auth.isAuthenticated()) {
       this.auth.getProfile().subscribe();
     }
-    this.auth.currentUser$.subscribe((u) => (this.currentUser = u));
+
+    // Barra de progreso durante navegación de rutas
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.setNavigating(true);
+      }
+      if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+        this.setNavigating(false);
+      }
+    });
+  }
+
+  // Métodos de tema ahora usan el servicio
+  get isDarkModeFromService(): boolean {
+    return this.themeService.isDarkMode;
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
 
   loadStats() {
@@ -67,34 +112,6 @@ export class AppComponent implements OnInit {
 
   closeMobileMenu() {
     this.mobileMenuOpen = false;
-  }
-
-  initializeTheme() {
-    // Verificar si hay una preferencia guardada en localStorage
-    const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
-    if (savedTheme) {
-      this.isDarkMode = savedTheme === 'dark';
-    } else {
-      this.isDarkMode = prefersDark;
-    }
-    
-    this.applyTheme();
-  }
-
-  toggleTheme() {
-    this.isDarkMode = !this.isDarkMode;
-    this.applyTheme();
-    localStorage.setItem('theme', this.isDarkMode ? 'dark' : 'light');
-  }
-
-  private applyTheme() {
-    if (this.isDarkMode) {
-      this.renderer.setAttribute(this.document.documentElement, 'data-theme', 'dark');
-    } else {
-      this.renderer.removeAttribute(this.document.documentElement, 'data-theme');
-    }
   }
 
   initializeKeyboardShortcuts() {
@@ -136,6 +153,40 @@ export class AppComponent implements OnInit {
 
   get isAuthenticated(): boolean {
     return this.auth.isAuthenticated();
+  }
+
+  prepareRoute(outlet: RouterOutlet): string | null {
+    if (!outlet || !outlet.isActivated) {
+      return null;
+    }
+    const data = outlet.activatedRouteData?.['animation'] as string | undefined;
+    if (data) return data;
+    const url = outlet.activatedRoute?.snapshot?.url?.map(s => s.path).join('/') ?? null;
+    return url;
+  }
+
+  private setNavigating(active: boolean) {
+    const minDurationMs = 2000;
+    if (active) {
+      this.navStartAt = Date.now();
+      if (this.navStopTimer) {
+        clearTimeout(this.navStopTimer);
+        this.navStopTimer = null;
+      }
+      this.isNavigating = true;
+      return;
+    }
+    // stop with minimum visible time
+    const elapsed = Date.now() - this.navStartAt;
+    const remaining = Math.max(0, minDurationMs - elapsed);
+    if (remaining === 0) {
+      this.isNavigating = false;
+    } else {
+      this.navStopTimer = setTimeout(() => {
+        this.isNavigating = false;
+        this.navStopTimer = null;
+      }, remaining);
+    }
   }
 
   get isAuthRoute(): boolean {

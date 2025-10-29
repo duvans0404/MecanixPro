@@ -53,3 +53,13 @@
 :host-context(html[data-theme='dark']) .input-wrapper{background:#0b1220;border-color:#334155}
 :host-context(html[data-theme='dark']) .input-wrapper input{color:#e2e8f0}
 :host-context(html[data-theme='dark']) .input-wrapper.select select{color:#e2e8f0}
+
+/* Spinner animation */
+.pi-spinner {
+	animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+	from { transform: rotate(0deg); }
+	to { transform: rotate(360deg); }
+}

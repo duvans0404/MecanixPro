@@ -316,4 +316,107 @@
   background: rgba(255, 255, 255, 0.5);
 }
 
+/* ========== DARK MODE SIDEBAR STYLES ========== */
+/* Enhanced dark mode styling for better contrast and visual appeal */
+
+[data-theme="dark"] .sidebar {
+  background: var(--surface-900);
+  border-right: 1px solid var(--surface-200);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .sidebar-header {
+  background: var(--surface-800);
+  border-bottom: 1px solid var(--surface-200);
+}
+
+[data-theme="dark"] .logo-icon {
+  background: linear-gradient(135deg, var(--primary-color) 0%, #8b5cf6 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+[data-theme="dark"] .logo-text {
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .logo-title {
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .logo-subtitle {
+  color: var(--text-color-secondary);
+}
+
+[data-theme="dark"] .nav-link {
+  color: var(--text-color-secondary);
+}
+
+[data-theme="dark"] .nav-link:hover {
+  background: var(--surface-200);
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .nav-link.active {
+  background: linear-gradient(135deg, var(--primary-color) 0%, #1d4ed8 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+[data-theme="dark"] .nav-link.active::before {
+  background: #1d4ed8;
+}
+
+[data-theme="dark"] .submenu {
+  background: var(--surface-100);
+}
+
+[data-theme="dark"] .submenu-link {
+  color: var(--text-color-secondary);
+}
+
+[data-theme="dark"] .submenu-link:hover {
+  background: var(--surface-200);
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .submenu-link.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+[data-theme="dark"] .user-info {
+  background: var(--surface-100);
+  border: 1px solid var(--surface-200);
+}
+
+[data-theme="dark"] .user-name {
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .user-role {
+  color: var(--text-color-secondary);
+}
+
+[data-theme="dark"] .logout-btn {
+  background: var(--surface-200);
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .logout-btn:hover {
+  background: var(--surface-300);
+  color: var(--text-color);
+}
+
+[data-theme="dark"] .sidebar::-webkit-scrollbar-track {
+  background: var(--surface-100);
+}
+
+[data-theme="dark"] .sidebar::-webkit-scrollbar-thumb {
+  background: var(--surface-300);
+}
+
+[data-theme="dark"] .sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--surface-400);
+}
+
 

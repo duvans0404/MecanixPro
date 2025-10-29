@@ -10,8 +10,7 @@ export const roleGuard: CanActivateFn = (route, state) => {
   const required = (route.data?.['roles'] as string[]) || [];
 
   if (!auth.isAuthenticated()) {
-    router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
-    return false;
+    return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
   }
 
   if (required.length === 0) return true;
@@ -31,15 +30,10 @@ export const roleGuard: CanActivateFn = (route, state) => {
         .map((v: string) => v.toUpperCase());
       return required.some((r) => fresh.includes(String(r).toUpperCase()));
     }),
-    tap((ok) => {
-      if (!ok) {
-        router.navigate(['/dashboard']);
-      }
-    }),
+    map((ok) => (ok ? true : router.createUrlTree(['/dashboard']))),
     // If profile fails, deny access
     catchError(() => {
-      router.navigate(['/dashboard']);
-      return of(false);
+      return of(router.createUrlTree(['/dashboard']));
     })
   );
 };

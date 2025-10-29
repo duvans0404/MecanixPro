@@ -3,6 +3,7 @@ import { authGuard } from './guards/auth.guard';
 import { roleGuard } from './guards/role.guard';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
+import { TestConnectionComponent } from './components/auth/test-connection/test-connection.component';
 import { DashboardComponent } from './components/dashboard/dashboard';
 
 // Clientes
@@ -55,6 +56,7 @@ export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  { path: 'test-connection', component: TestConnectionComponent },
   { path: 'forgot-password', component: AuthRecoveryTabsComponent },
   { path: 'reset-password', component: AuthRecoveryTabsComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },

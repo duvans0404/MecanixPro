@@ -5,6 +5,12 @@
   padding: 1.5rem;
 }
 
+/* Dark theme for dashboard */
+:root[data-theme="dark"] .dashboard-container,
+html.dark-theme .dashboard-container {
+  background: linear-gradient(135deg, var(--surface-50) 0%, var(--surface-100) 100%) !important;
+}
+
 .dashboard-wrapper {
   max-width: 80rem;
   margin: 0 auto;
@@ -22,6 +28,14 @@
   padding: 2.5rem;
   position: relative;
   overflow: hidden;
+}
+
+/* Dark theme for dashboard header */
+:root[data-theme="dark"] .dashboard-header,
+html.dark-theme .dashboard-header {
+  background: var(--surface-0) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4) !important;
 }
 
 .dashboard-header::before {
@@ -68,6 +82,12 @@
   z-index: 10;
 }
 
+/* Dark theme for dashboard subtitle */
+:root[data-theme="dark"] .dashboard-subtitle,
+html.dark-theme .dashboard-subtitle {
+  color: var(--text-color-secondary) !important;
+}
+
 /* Grid de estadísticas */
 .stats-grid {
   display: grid;
@@ -84,7 +104,14 @@
   border: 1px solid #f1f5f9;
   transition: all 0.3s ease;
   position: relative;
-  overflow: hidden;
+}
+
+/* Dark theme for stat cards */
+:root[data-theme="dark"] .stat-card,
+html.dark-theme .stat-card {
+  background: var(--surface-0) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
 }
 
 .stat-card:hover {
@@ -374,4 +401,183 @@
   .dashboard-title {
     font-size: 1.75rem;
   }
+}
+
+/* ========== DARK THEME STYLES ========== */
+/* Comprehensive dark theme support for dashboard */
+
+/* Main dashboard container */
+:root[data-theme="dark"] .dashboard-container,
+html.dark-theme .dashboard-container {
+  background: var(--surface-50) !important;
+  color: var(--text-color) !important;
+}
+
+:root[data-theme="dark"] .dashboard-wrapper,
+html.dark-theme .dashboard-wrapper {
+  background: transparent !important;
+}
+
+/* Dashboard header */
+:root[data-theme="dark"] .dashboard-header,
+html.dark-theme .dashboard-header {
+  background: var(--surface-0) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-color) !important;
+}
+
+:root[data-theme="dark"] .dashboard-header-content,
+html.dark-theme .dashboard-header-content {
+  color: var(--text-color) !important;
+}
+
+:root[data-theme="dark"] .dashboard-subtitle,
+html.dark-theme .dashboard-subtitle {
+  color: var(--text-color-secondary) !important;
+}
+
+:root[data-theme="dark"] .dashboard-status,
+html.dark-theme .dashboard-status {
+  color: var(--text-color-secondary) !important;
+}
+
+/* Stats grid and cards */
+:root[data-theme="dark"] .stats-grid,
+html.dark-theme .stats-grid {
+  background: transparent !important;
+}
+
+:root[data-theme="dark"] .stat-card,
+html.dark-theme .stat-card {
+  background: var(--surface-0) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+}
+
+:root[data-theme="dark"] .stat-card-content,
+html.dark-theme .stat-card-content {
+  background: transparent !important;
+  color: var(--text-color) !important;
+}
+
+:root[data-theme="dark"] .stat-card-header,
+html.dark-theme .stat-card-header {
+  background: transparent !important;
+}
+
+:root[data-theme="dark"] .stat-card-icon-container,
+html.dark-theme .stat-card-icon-container {
+  background: transparent !important;
+}
+
+:root[data-theme="dark"] .stat-card-info,
+html.dark-theme .stat-card-info {
+  background: transparent !important;
+}
+
+:root[data-theme="dark"] .stat-card-actions,
+html.dark-theme .stat-card-actions {
+  background: transparent !important;
+  border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .stat-card-link,
+html.dark-theme .stat-card-link {
+  color: var(--primary-color) !important;
+}
+
+:root[data-theme="dark"] .stat-card-link:hover,
+html.dark-theme .stat-card-link:hover {
+  color: var(--primary-color) !important;
+  opacity: 0.8;
+}
+
+/* Text elements */
+:root[data-theme="dark"] .stat-value,
+html.dark-theme .stat-value {
+  color: var(--text-color) !important;
+}
+
+:root[data-theme="dark"] .stat-label,
+html.dark-theme .stat-label {
+  color: var(--text-color-secondary) !important;
+}
+
+/* Action cards */
+:root[data-theme="dark"] .action-card,
+html.dark-theme .action-card {
+  background: var(--surface-0) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2) !important;
+  color: var(--text-color) !important;
+}
+
+:root[data-theme="dark"] .action-card:hover,
+html.dark-theme .action-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3) !important;
+  color: var(--text-color) !important;
+}
+
+/* Chart cards */
+:root[data-theme="dark"] .dashboard-chart-card,
+html.dark-theme .dashboard-chart-card {
+  background: var(--surface-0) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Widget cards */
+:root[data-theme="dark"] .dashboard-widget-card,
+html.dark-theme .dashboard-widget-card {
+  background: var(--surface-0) !important;
+  border-color: var(--border-color) !important;
+  box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.3) !important;
+}
+
+:root[data-theme="dark"] .widget-title,
+html.dark-theme .widget-title {
+  color: var(--text-color) !important;
+}
+
+:root[data-theme="dark"] .widget-list-title,
+html.dark-theme .widget-list-title {
+  color: var(--text-color) !important;
+}
+
+:root[data-theme="dark"] .widget-list-date,
+html.dark-theme .widget-list-date {
+  color: var(--text-color-secondary) !important;
+}
+
+:root[data-theme="dark"] .widget-list-empty,
+html.dark-theme .widget-list-empty {
+  color: var(--text-color-secondary) !important;
+}
+
+/* Quick actions */
+:root[data-theme="dark"] .quick-actions-title,
+html.dark-theme .quick-actions-title {
+  color: var(--text-color) !important;
+}
+
+:root[data-theme="dark"] .quick-actions-subtitle,
+html.dark-theme .quick-actions-subtitle {
+  color: var(--text-color-secondary) !important;
+}
+
+/* Dashboard title */
+:root[data-theme="dark"] .dashboard-title,
+html.dark-theme .dashboard-title {
+  color: var(--text-color) !important;
+}
+
+/* Stats container */
+:root[data-theme="dark"] .stat-card-label,
+html.dark-theme .stat-card-label {
+  color: var(--text-color-secondary) !important;
+}
+
+:root[data-theme="dark"] .stat-card-value,
+html.dark-theme .stat-card-value {
+  color: var(--text-color) !important;
 }
