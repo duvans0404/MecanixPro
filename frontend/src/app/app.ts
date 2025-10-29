@@ -55,6 +55,7 @@ export class AppComponent implements OnInit {
   isNavigating = false;
   private navStartAt = 0;
   private navStopTimer: any = null;
+  loadingMessage = 'Cargando…';
 
   constructor(
     private dataService: DataService,
@@ -80,6 +81,7 @@ export class AppComponent implements OnInit {
     // Barra de progreso durante navegación de rutas
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
+        this.loadingMessage = `Cargando… ${this.formatUrlTitle(event.url)}`;
         this.setNavigating(true);
       }
       if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
@@ -186,6 +188,20 @@ export class AppComponent implements OnInit {
         this.isNavigating = false;
         this.navStopTimer = null;
       }, remaining);
+    }
+  }
+
+  private formatUrlTitle(url: string): string {
+    try {
+      const clean = (url || '/').split('?')[0].replace(/^\//, '');
+      if (!clean) return 'inicio';
+      return clean
+        .split('/')
+        .map(seg => seg.replace(/[-_]/g, ' '))
+        .map(seg => seg.charAt(0).toUpperCase() + seg.slice(1))
+        .join(' › ');
+    } catch {
+      return '';
     }
   }
 

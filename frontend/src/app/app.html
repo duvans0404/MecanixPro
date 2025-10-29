@@ -3,7 +3,10 @@
   <!-- Barra de progreso global de navegación -->
   <div class="top-progress" [class.is-active]="isNavigating || (loadingService.isLoading$ | async)"></div>
   <div class="loading-overlay" [class.is-active]="isNavigating || (loadingService.isLoading$ | async)" aria-busy="true" aria-live="polite">
-    <div class="mp-spinner"></div>
+    <div class="loading-box">
+      <div class="mp-spinner"></div>
+      <div class="loading-text">{{ loadingMessage }}</div>
+    </div>
   </div>
 
   <!-- Modern Sidebar -->
