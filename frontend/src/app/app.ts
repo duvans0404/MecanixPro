@@ -96,9 +96,13 @@ export class AppComponent implements OnInit {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         this.loadingMessage = `Cargando… ${this.formatUrlTitle(event.url)}`;
+        this.document.title = `MecanixPro — ${this.loadingMessage}`;
         this.setNavigating(true);
       }
       if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+        const url = event instanceof NavigationEnd ? event.urlAfterRedirects : this.router.url;
+        const title = this.formatUrlTitle(url);
+        this.document.title = `MecanixPro — ${title}`;
         this.setNavigating(false);
       }
     });
