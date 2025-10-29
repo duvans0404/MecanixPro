@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { WorkOrder } from '../models/work-order.model';
+import { getChangedFields } from '../utils/diff.util';
 
 export const getAllWorkOrders = async (req: Request, res: Response) => {
   try {
@@ -36,7 +37,11 @@ export const updateWorkOrder = async (req: Request, res: Response) => {
   try {
     const workOrder = await WorkOrder.findByPk(req.params.id);
     if (!workOrder) return res.status(404).json({ error: 'Work order not found' });
-    await workOrder.update(req.body);
+    const { changes, changedKeys } = getChangedFields(workOrder, req.body);
+    if (changedKeys.length === 0) {
+      return res.status(200).json({ message: 'No changes detected', workOrder });
+    }
+    await workOrder.update(changes);
     res.json(workOrder);
   } catch (error) {
     console.error(error);

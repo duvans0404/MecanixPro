@@ -363,6 +363,16 @@
       </div>
     </div>
   
+    <!-- Gráficas visuales -->
+    <div class="dashboard-charts-grid">
+      <div class="dashboard-chart-card">
+        <p-chart type="bar" [data]="chartData" [options]="chartOptions" style="height: 320px;"></p-chart>
+      </div>
+      <div class="dashboard-chart-card">
+        <p-chart type="pie" [data]="pieData" [options]="pieOptions" style="height: 320px;"></p-chart>
+      </div>
+    </div>
+
     <!-- Acciones rápidas -->
     <div class="quick-actions">
       <div class="quick-actions-content">
@@ -467,6 +477,60 @@
               <p class="quick-action-title">Nuevo Seguro</p>
               <p class="quick-action-description">Registrar seguro</p>
             </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Widgets de resumen visual -->
+    <div class="dashboard-widgets-grid">
+      <!-- Próximos servicios -->
+      <div class="dashboard-widget-card">
+        <div class="widget-header">
+          <i class="pi pi-calendar-plus widget-icon widget-icon-blue"></i>
+          <span class="widget-title">Próximos Servicios</span>
+        </div>
+        <ul class="widget-list">
+          <li *ngFor="let s of stats.proximosServicios || []">
+            <span class="widget-list-title">{{ s.nombre }}</span>
+            <span class="widget-list-date">{{ s.fecha | date:'dd/MM/yyyy' }}</span>
+          </li>
+          <li *ngIf="!(stats.proximosServicios && stats.proximosServicios.length)">
+            <span class="widget-list-empty">No hay servicios próximos</span>
+          </li>
+        </ul>
+      </div>
+      <!-- Alertas -->
+      <div class="dashboard-widget-card">
+        <div class="widget-header">
+          <i class="pi pi-exclamation-triangle widget-icon widget-icon-red"></i>
+          <span class="widget-title">Alertas</span>
+        </div>
+        <ul class="widget-list">
+          <li *ngFor="let a of stats.alertas || []">
+            <span class="widget-list-title">{{ a.mensaje }}</span>
+            <span class="widget-list-date">{{ a.fecha | date:'dd/MM/yyyy' }}</span>
+          </li>
+          <li *ngIf="!(stats.alertas && stats.alertas.length)">
+            <span class="widget-list-empty">Sin alertas recientes</span>
+          </li>
+        </ul>
+      </div>
+      <!-- Accesos rápidos -->
+      <div class="dashboard-widget-card">
+        <div class="widget-header">
+          <i class="pi pi-bolt widget-icon widget-icon-green"></i>
+          <span class="widget-title">Accesos Rápidos</span>
+        </div>
+        <div class="widget-actions">
+          <a routerLink="/work-orders/create" class="widget-action-btn btn-blue">
+            <i class="pi pi-plus"></i> Nueva Orden
+          </a>
+          <a routerLink="/clients/create" class="widget-action-btn btn-green">
+            <i class="pi pi-user-plus"></i> Nuevo Cliente
+          </a>
+          <a routerLink="/payments" class="widget-action-btn btn-purple">
+            <i class="pi pi-credit-card"></i> Pagos
           </a>
         </div>
       </div>

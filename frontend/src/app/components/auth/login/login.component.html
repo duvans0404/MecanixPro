@@ -1,0 +1,58 @@
+<div class="auth-page">
+  <div class="auth-bg" aria-hidden="true"></div>
+
+  <div class="auth-card">
+    <div class="auth-header">
+      <div class="brand">
+        <div class="logo">MP</div>
+        <div class="brand-text">
+          <h1>MecanixPro</h1>
+          <p>Bienvenido de nuevo</p>
+        </div>
+      </div>
+    </div>
+
+    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="form-control" [class.invalid]="form.controls.username.invalid && (form.controls.username.touched || submitted)">
+        <label for="username">Usuario o Email</label>
+        <div class="input-wrapper">
+          <i class="pi pi-user"></i>
+          <input id="username" type="text" formControlName="username" placeholder="usuario o email" />
+        </div>
+        <small class="hint" *ngIf="form.controls.username.invalid && (form.controls.username.touched || submitted)">Campo requerido</small>
+      </div>
+
+      <div class="form-control" [class.invalid]="form.controls.password.invalid && (form.controls.password.touched || submitted)">
+        <label for="password">Contraseña</label>
+        <div class="input-wrapper">
+          <i class="pi pi-lock"></i>
+          <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="********" />
+          <button type="button" class="toggle-visibility" (click)="showPassword = !showPassword" [attr.aria-pressed]="showPassword">
+            <i class="pi" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+          </button>
+        </div>
+        <div class="field-hint">
+          <small class="hint" *ngIf="form.controls.password.invalid && (form.controls.password.touched || submitted)">Campo requerido</small>
+          <a class="forgot-link" routerLink="/forgot-password">¿Olvidaste tu contraseña?</a>
+        </div>
+      </div>
+
+      <button class="btn-primary" type="submit" [disabled]="loading">
+        <span class="btn-content">
+          <i class="pi pi-sign-in"></i>
+          {{ loading ? 'Entrando…' : 'Entrar' }}
+        </span>
+      </button>
+
+      <p class="error" *ngIf="error">
+        <i class="pi pi-exclamation-triangle"></i>
+        {{ error }}
+      </p>
+    </form>
+
+    <div class="auth-footer">
+      <span>¿No tienes cuenta?</span>
+      <a routerLink="/register">Crear cuenta</a>
+    </div>
+  </div>
+</div>

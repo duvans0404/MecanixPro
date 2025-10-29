@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Payment } from '../models/payment.model';
+import { getChangedFields } from '../utils/diff.util';
 
 export const getAllPayments = async (req: Request, res: Response) => {
   try {
@@ -36,7 +37,11 @@ export const updatePayment = async (req: Request, res: Response) => {
   try {
     const payment = await Payment.findByPk(req.params.id);
     if (!payment) return res.status(404).json({ error: 'Payment not found' });
-    await payment.update(req.body);
+    const { changes, changedKeys } = getChangedFields(payment, req.body);
+    if (changedKeys.length === 0) {
+      return res.status(200).json({ message: 'No changes detected', payment });
+    }
+    await payment.update(changes);
     res.json(payment);
   } catch (error) {
     console.error(error);

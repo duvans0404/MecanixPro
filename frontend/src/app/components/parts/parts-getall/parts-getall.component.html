@@ -24,39 +24,41 @@
     </div>
 
     <!-- Filtros y búsqueda -->
-    <div class="parts-filters">
-      <div class="parts-filters-content">
-        <div class="parts-filters-header">
-          <h3 class="parts-filters-title">
-            <i class="pi pi-filter" style="margin-right: 0.75rem; color: #ef4444;"></i>
+    <div class="page-card">
+      <div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin: 0; display: flex; align-items: center;">
+            <i class="pi pi-filter" style="margin-right: 0.75rem; color: #3b82f6;"></i>
             Filtros y Búsqueda
           </h3>
           <button 
             type="button" 
-            class="parts-clear-filters"
+            class="p-button p-button-text"
             (click)="clearFilters()">
             <i class="pi pi-refresh"></i>
             Limpiar filtros
           </button>
         </div>
-        <div class="parts-filters-grid">
-          <div class="parts-filter-group">
-            <label class="parts-filter-label">Buscar</label>
-            <div class="parts-filter-input">
-              <i class="pi pi-search"></i>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Buscar</label>
+            <div style="position: relative;">
+              <i class="pi pi-search" style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; z-index: 10;"></i>
               <input 
                 type="text" 
                 pInputText 
-                name="ngModel"                 [(ngModel)]="searchTerm" 
+                class="form-control"
+                style="padding-left: 2.5rem !important;"
+                [(ngModel)]="searchTerm" 
                 name="searchTerm"
                 (input)="onSearch()"
-                placeholder="Buscar por nombre, descripción, número de parte o marca...">
+                placeholder="Buscar por nombre, número de parte o marca...">
             </div>
           </div>
-          <div class="parts-filter-group">
-            <label class="parts-filter-label">Estado</label>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Estado</label>
             <p-select 
-              name="ngModel"               [(ngModel)]="statusFilter" 
+              [(ngModel)]="statusFilter" 
               name="statusFilter"
               [options]="statusOptions"
               (onChange)="onStatusFilterChange()"
@@ -64,10 +66,10 @@
               style="width: 100%;">
             </p-select>
           </div>
-          <div class="parts-filter-group">
-            <label class="parts-filter-label">Stock</label>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Stock</label>
             <p-select 
-              name="ngModel"               [(ngModel)]="stockFilter" 
+              [(ngModel)]="stockFilter" 
               name="stockFilter"
               [options]="stockOptions"
               (onChange)="onStockFilterChange()"
@@ -155,36 +157,34 @@
         </ng-template>
         
         <ng-template pTemplate="body" let-part>
-          <tr class="hover:bg-red-50/50 transition-colors duration-200">
-            <td class="py-4">
+          <tr>
+            <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6;">
               <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <div style="width: 2.5rem; height: 2.5rem; background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
-                  <i class="pi pi-box" style="color: white; font-size: 1rem;"></i>
+                <div style="width: 2.5rem; height: 2.5rem; border-radius: 0.5rem; background: #fef2f2; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                  <i class="pi pi-box" style="color: #ef4444; font-size: 1.25rem;"></i>
                 </div>
-                <div>
-                  <div style="font-weight: 600; color: #1f2937;">{{ part.name }}</div>
-                  <div style="font-size: 0.875rem; color: #6b7280;">ID: {{ part.id }}</div>
+                <div style="text-align: left;">
+                  <div style="font-weight: 600; color: #111827; margin-bottom: 0.125rem;">{{ part.name }}</div>
+                  <div style="font-size: 0.75rem; color: #6b7280;">ID: {{ part.id }}</div>
                 </div>
               </div>
             </td>
-            <td class="py-4">
-              <span style="font-family: 'Courier New', monospace; background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-weight: 600; color: #374151;">{{ part.partNumber }}</span>
+            <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6;">
+              <span style="font-family: 'Courier New', monospace; background: #f3f4f6; padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-weight: 600; color: #374151;">{{ part.partNumber }}</span>
             </td>
-            <td class="py-4">
+            <td style="padding: 1rem; border-bottom: 1px solid #f3f4f6;">
               <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <div style="width: 2rem; height: 2rem; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                  <i class="pi pi-star" style="color: white; font-size: 0.75rem;"></i>
-                </div>
+                <i class="pi pi-star" style="color: #f59e0b; font-size: 1rem;"></i>
                 <span style="color: #374151; font-weight: 500;">{{ part.brand }}</span>
               </div>
             </td>
-            <td class="py-4 text-right">
+            <td style="padding: 1rem; text-align: right; border-bottom: 1px solid #f3f4f6;">
               <div style="display: flex; align-items: center; justify-content: flex-end; gap: 0.5rem;">
                 <i class="pi pi-dollar" style="color: #10b981; font-size: 0.875rem;"></i>
                 <span style="font-weight: 700; color: #10b981; font-size: 1.125rem;">{{ formatPrice(part.price) }}</span>
               </div>
             </td>
-            <td class="py-4 text-center">
+            <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
               <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.5rem;">
                   <i class="pi pi-shopping-cart" style="color: #6b7280; font-size: 0.875rem;"></i>
@@ -197,18 +197,26 @@
                 </p-tag>
               </div>
             </td>
-            <td class="py-4 text-center">
+            <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
               <p-tag 
                 [value]="getStatusLabel(part.active)" 
                 [severity]="getStatusSeverity(part.active)"
                 style="font-weight: 600;">
               </p-tag>
             </td>
-            <td class="py-4 text-center">
+            <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
               <span style="color: #6b7280; font-size: 0.875rem;">{{ part.createdAt | date:'dd/MM/yyyy' }}</span>
             </td>
-            <td class="py-4 text-center">
+            <td style="padding: 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
               <div style="display: flex; justify-content: center; gap: 0.5rem;">
+                <button 
+                  pButton 
+                  type="button" 
+                  icon="pi pi-eye" 
+                  class="p-button-info p-button-sm p-button-rounded" 
+                  (click)="viewPart(part)" 
+                  pTooltip="Ver detalle">
+                </button>
                 <button 
                   pButton 
                   type="button" 
@@ -222,7 +230,7 @@
                   type="button" 
                   icon="pi pi-trash" 
                   class="p-button-danger p-button-sm p-button-rounded" 
-                  (click)="deletePart(part)" 
+                  (click)="confirmDeletePart(part)" 
                   pTooltip="Eliminar repuesto">
                 </button>
               </div>
@@ -232,14 +240,12 @@
         
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="8" class="text-center py-16">
+            <td colspan="8" style="padding: 4rem 1rem; text-align: center; border-bottom: 1px solid #f3f4f6;">
               <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
-                <div style="width: 5rem; height: 5rem; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                  <i class="pi pi-box" style="font-size: 2.5rem; color: #9ca3af;"></i>
-                </div>
+                <i class="pi pi-inbox" style="font-size: 3rem; color: #d1d5db;"></i>
                 <div>
-                  <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">No se encontraron repuestos</h3>
-                  <p style="color: #6b7280;">Intenta ajustar los filtros de búsqueda</p>
+                  <p style="font-size: 1rem; font-weight: 600; color: #374151; margin: 0 0 0.5rem 0;">No se encontraron repuestos</p>
+                  <p style="color: #6b7280; margin: 0;">Intenta ajustar los filtros de búsqueda</p>
                 </div>
               </div>
             </td>
@@ -250,5 +256,5 @@
   </div>
 </div>
 
-<p-confirmDialog></p-confirmDialog>
+<!-- Global p-confirmDialog is provided in app.html -->
 <p-toast></p-toast>

@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { WorkOrderPart } from '../models/work-order-part.model';
+import { getChangedFields } from '../utils/diff.util';
 
 export const getAllWorkOrderParts = async (req: Request, res: Response) => {
   try {
@@ -36,7 +37,11 @@ export const updateWorkOrderPart = async (req: Request, res: Response) => {
   try {
     const item = await WorkOrderPart.findByPk(req.params.id);
     if (!item) return res.status(404).json({ error: 'Work order part not found' });
-    await item.update(req.body);
+    const { changes, changedKeys } = getChangedFields(item, req.body);
+    if (changedKeys.length === 0) {
+      return res.status(200).json({ message: 'No changes detected', item });
+    }
+    await item.update(changes);
     res.json(item);
   } catch (error) {
     console.error(error);

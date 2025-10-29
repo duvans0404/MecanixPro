@@ -1,0 +1,28 @@
+.sidebar-manager {
+  width: 220px;
+  background: #23272f;
+  color: #fff;
+  height: 100vh;
+}
+.sidebar-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.sidebar-menu li {
+  margin: 0;
+}
+.sidebar-menu a {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+.sidebar-menu a:hover {
+  background: #2c313a;
+}
+.sidebar-menu i {
+  margin-right: 12px;
+}

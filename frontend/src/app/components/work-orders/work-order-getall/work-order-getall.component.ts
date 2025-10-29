@@ -15,11 +15,13 @@ import { ClientService } from '../../../services/client.service';
 import { VehicleService } from '../../../services/vehicle.service';
 import { MechanicService } from '../../../services/mechanic.service';
 import { ServiceService } from '../../../services/service.service';
+import { ModalService } from '../../../services/modal.service';
 import { WorkOrder } from '../../../models/work-order.model';
 import { Client } from '../../../models/client.model';
 import { Vehicle } from '../../../models/vehicle.model';
 import { Mechanic } from '../../../models/mechanic.model';
 import { Service } from '../../../models/service.model';
+import { TagSeverity } from '../../../models/ui.model';
 
 @Component({
   selector: 'app-work-order-getall',
@@ -35,11 +37,11 @@ import { Service } from '../../../models/service.model';
     ToastModule,
     TagModule
   ],
-  providers: [ConfirmationService, MessageService],
   templateUrl: './work-order-getall.component.html',
   encapsulation: ViewEncapsulation.None
 })
 export class WorkOrderGetallComponent implements OnInit {
+
   workOrders: WorkOrder[] = [];
   filteredWorkOrders: WorkOrder[] = [];
   clients: Client[] = [];
@@ -75,8 +77,22 @@ export class WorkOrderGetallComponent implements OnInit {
     private serviceService: ServiceService,
     private router: Router,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private modalService: ModalService
   ) {}
+
+
+  /**
+   * Devuelve el objeto de estilos para la barra de progreso de horas.
+   */
+  getProgressBarStyle(workOrder: any): { [key: string]: string } {
+    return {
+      width: this.getProgressPercentage(workOrder) + '%',
+      height: '100%',
+      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+      transition: 'width 0.3s ease'
+    };
+  }
 
   ngOnInit() {
     this.loadWorkOrders();
@@ -195,6 +211,8 @@ export class WorkOrderGetallComponent implements OnInit {
       message: `¿Estás seguro de que quieres eliminar esta orden de trabajo?`,
       header: 'Confirmar Eliminación',
       icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
       acceptLabel: 'Sí, eliminar',
       rejectLabel: 'Cancelar',
       accept: () => {
@@ -224,10 +242,54 @@ export class WorkOrderGetallComponent implements OnInit {
     this.router.navigate(['/work-orders/create']);
   }
 
-  getStatusSeverity(status: string): string {
+  viewWorkOrder(workOrder: WorkOrder) {
+    const config = ModalService.formatWorkOrderData
+      ? ModalService.formatWorkOrderData(workOrder)
+      : { title: 'Detalle de Orden', sections: [] };
+    config.headerColor = 'rgba(245, 158, 11, 0.2)';
+    config.title = 'Ver Detalle de la Orden';
+    this.modalService.openViewModal(config);
+  }
+
+  confirmDeleteWorkOrder(workOrder: WorkOrder) {
+    this.modalService.openDeleteModal(
+      {
+        title: '¿Eliminar Orden de Trabajo?',
+        message: 'Esta acción no se puede deshacer. La orden será eliminada permanentemente.',
+        itemName: `#${workOrder.id} - ${this.getClientName(workOrder.clientId)}`,
+        itemLabel: 'Orden a eliminar:',
+        showWarning: true,
+        warningMessage: '⚠️ Se perderá toda la información relacionada con esta orden.'
+      },
+      () => this.executeDeleteWorkOrder(workOrder.id)
+    );
+  }
+
+  private executeDeleteWorkOrder(id: number) {
+    this.workOrderService.deleteWorkOrder(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Orden de trabajo eliminada correctamente'
+        });
+        this.loadWorkOrders();
+      },
+      error: (error) => {
+        console.error('Error eliminando orden de trabajo:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al eliminar la orden de trabajo'
+        });
+      }
+    });
+  }
+
+  getStatusSeverity(status: string): TagSeverity {
     switch (status) {
       case 'pending': return 'info';
-      case 'in-progress': return 'warning';
+      case 'in-progress': return 'warn';
       case 'completed': return 'success';
       case 'cancelled': return 'danger';
       default: return 'info';
@@ -244,10 +306,10 @@ export class WorkOrderGetallComponent implements OnInit {
     }
   }
 
-  getPrioritySeverity(priority: string): string {
+  getPrioritySeverity(priority: string): TagSeverity {
     switch (priority) {
       case 'low': return 'info';
-      case 'medium': return 'warning';
+      case 'medium': return 'warn';
       case 'high': return 'danger';
       case 'urgent': return 'danger';
       default: return 'info';

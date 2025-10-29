@@ -8,3 +8,4 @@ export * from './service.model';
 export * from './part.model';
 export * from './work-order.model';
 export * from './payment.model';
+export * from './ui.model';

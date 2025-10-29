@@ -9,6 +9,7 @@ import { SelectModule } from 'primeng/select';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { TagModule } from 'primeng/tag';
+import { DatePickerModule } from 'primeng/datepicker';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { AppointmentService } from '../../../services/appointment.service';
 import { ClientService } from '../../../services/client.service';
@@ -20,6 +21,8 @@ import { Client } from '../../../models/client.model';
 import { Vehicle } from '../../../models/vehicle.model';
 import { Mechanic } from '../../../models/mechanic.model';
 import { Service } from '../../../models/service.model';
+import { TagSeverity } from '../../../models/ui.model';
+import { ModalService } from '../../../services/modal.service';
 
 @Component({
   selector: 'app-appointment-getall',
@@ -33,9 +36,10 @@ import { Service } from '../../../models/service.model';
     SelectModule,
     ConfirmDialogModule,
     ToastModule,
-    TagModule
+    TagModule,
+    DatePickerModule
   ],
-  providers: [ConfirmationService, MessageService],
+  
   templateUrl: './appointment-getall.component.html',
   encapsulation: ViewEncapsulation.None
 })
@@ -67,7 +71,8 @@ export class AppointmentGetallComponent implements OnInit {
     private serviceService: ServiceService,
     private router: Router,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private modalService: ModalService
   ) {}
 
   ngOnInit() {
@@ -178,48 +183,145 @@ export class AppointmentGetallComponent implements OnInit {
     this.applyFilters();
   }
 
+  viewAppointment(appointment: Appointment) {
+    const config = {
+      title: 'Detalles de la Cita',
+      subtitle: `${this.getClientName(appointment.clientId.toString())} - ${this.getVehicleInfo(appointment.vehicleId.toString())}`,
+      headerIcon: 'pi pi-calendar',
+      headerColor: 'rgba(99, 102, 241, 0.2)',
+      sections: [
+        {
+          title: 'Información de la Cita',
+          icon: 'pi pi-calendar',
+          fields: [
+            { 
+              label: 'Fecha', 
+              value: appointment.appointmentDate, 
+              icon: 'pi pi-calendar', 
+              type: 'datetime' as const
+            },
+            { 
+              label: 'Estado', 
+              value: this.getStatusText(appointment.status),
+              type: 'badge' as const,
+              badgeClass: this.getStatusSeverity(appointment.status) === 'success' ? 'badge-success' : 
+                          this.getStatusSeverity(appointment.status) === 'warn' ? 'badge-warning' :
+                          this.getStatusSeverity(appointment.status) === 'danger' ? 'badge-danger' : 'badge-info'
+            },
+            { 
+              label: 'Notas', 
+              value: appointment.notes || 'Sin notas', 
+              icon: 'pi pi-file-edit', 
+              type: 'text' as const
+            }
+          ]
+        },
+        {
+          title: 'Cliente y Vehículo',
+          icon: 'pi pi-user',
+          fields: [
+            { 
+              label: 'Cliente', 
+              value: this.getClientName(appointment.clientId.toString()), 
+              icon: 'pi pi-user', 
+              type: 'text' as const
+            },
+            { 
+              label: 'Vehículo', 
+              value: this.getVehicleInfo(appointment.vehicleId.toString()), 
+              icon: 'pi pi-car', 
+              type: 'text' as const
+            }
+          ]
+        },
+        {
+          title: 'Servicio y Mecánico',
+          icon: 'pi pi-cog',
+          fields: [
+            { 
+              label: 'Servicio', 
+              value: this.getServiceName(appointment.serviceId.toString()), 
+              icon: 'pi pi-cog', 
+              type: 'text' as const
+            },
+            { 
+              label: 'Mecánico Asignado', 
+              value: this.getMechanicName(appointment.mechanicId.toString()), 
+              icon: 'pi pi-wrench', 
+              type: 'text' as const
+            }
+          ]
+        }
+      ],
+      showEdit: true,
+      showDelete: true
+    };
+    
+    this.modalService.openViewModal(config, {
+      onEdit: () => {
+        this.modalService.closeViewModal();
+        this.editAppointment(appointment.id);
+      },
+      onDelete: () => {
+        this.modalService.closeViewModal();
+        this.confirmDeleteAppointment(appointment);
+      }
+    });
+  }
+
   editAppointment(id: number) {
     this.router.navigate(['/appointments/update', id]);
   }
 
-  deleteAppointment(id: number) {
-    this.confirmationService.confirm({
-      message: `¿Estás seguro de que quieres eliminar esta cita?`,
-      header: 'Confirmar Eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sí, eliminar',
-      rejectLabel: 'Cancelar',
-      accept: () => {
-        this.appointmentService.deleteAppointment(id).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Éxito',
-              detail: 'Cita eliminada correctamente'
-            });
-            this.loadAppointments();
-          },
-          error: (error) => {
-            console.error('Error eliminando cita:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Error al eliminar la cita'
-            });
-          }
-        });
+  confirmDeleteAppointment(appointment: Appointment) {
+    this.modalService.openDeleteModal(
+      {
+        title: '¿Eliminar Cita?',
+        message: 'Esta acción no se puede deshacer. La cita será eliminada permanentemente.',
+        itemName: `${this.getClientName(appointment.clientId.toString())} - ${new Date(appointment.appointmentDate).toLocaleString()}`,
+        itemLabel: 'Cita a eliminar:',
+        showWarning: true,
+        warningMessage: '⚠️ Se perderá toda la información relacionada con esta cita.'
+      },
+      async () => {
+        try {
+          await this.appointmentService.deleteAppointment(appointment.id).toPromise();
+          this.messageService.add({
+            severity: 'success',
+            summary: '¡Éxito!',
+            detail: 'Cita eliminada correctamente',
+            life: 3000
+          });
+          this.loadAppointments();
+        } catch (error) {
+          console.error('Error eliminando cita:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al eliminar la cita',
+            life: 3000
+          });
+          throw error;
+        }
       }
-    });
+    );
+  }
+
+  deleteAppointment(id: number) {
+    const appointment = this.appointments.find(a => a.id === id);
+    if (appointment) {
+      this.confirmDeleteAppointment(appointment);
+    }
   }
 
   createAppointment() {
     this.router.navigate(['/appointments/create']);
   }
 
-  getStatusSeverity(status: string): string {
+  getStatusSeverity(status: string): TagSeverity {
     switch (status) {
       case 'scheduled': return 'info';
-      case 'in-progress': return 'warning';
+      case 'in-progress': return 'warn';
       case 'completed': return 'success';
       case 'cancelled': return 'danger';
       default: return 'info';

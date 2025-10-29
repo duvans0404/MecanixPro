@@ -1,4 +1,8 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
+import { roleGuard } from './guards/role.guard';
+import { LoginComponent } from './components/auth/login/login.component';
+import { RegisterComponent } from './components/auth/register/register.component';
 import { DashboardComponent } from './components/dashboard/dashboard';
 
 // Clientes
@@ -45,55 +49,61 @@ import { PaymentUpdateComponent } from './components/payments/payment-update/pay
 import { WorkOrderGetallComponent } from './components/work-orders/work-order-getall/work-order-getall.component';
 import { WorkOrderCreateComponent } from './components/work-orders/work-order-create/work-order-create.component';
 import { WorkOrderUpdateComponent } from './components/work-orders/work-order-update/work-order-update.component';
+import { AuthRecoveryTabsComponent } from './components/auth/auth-recovery-tabs/auth-recovery-tabs.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-  { path: 'dashboard', component: DashboardComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: 'forgot-password', component: AuthRecoveryTabsComponent },
+  { path: 'reset-password', component: AuthRecoveryTabsComponent },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   
   // Rutas de Clientes
-  { path: 'clients', component: ClientsGetallComponent },
-  { path: 'clients/create', component: ClientsCreateComponent },
-  { path: 'clients/update/:id', component: ClientsUpdateComponent },
+  { path: 'clients', component: ClientsGetallComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'clients/create', component: ClientsCreateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'clients/update/:id', component: ClientsUpdateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
   
   // Rutas de Vehículos
-  { path: 'vehicles', component: VehiclesGetallComponent },
-  { path: 'vehicles/create', component: VehiclesCreateComponent },
-  { path: 'vehicles/update/:id', component: VehiclesUpdateComponent },
+  { path: 'vehicles', component: VehiclesGetallComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'vehicles/create', component: VehiclesCreateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'vehicles/update/:id', component: VehiclesUpdateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
   
   // Rutas de Servicios
-  { path: 'services', component: ServicesGetallComponent },
-  { path: 'services/create', component: ServicesCreateComponent },
-  { path: 'services/update/:id', component: ServicesUpdateComponent },
+  { path: 'services', component: ServicesGetallComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'services/create', component: ServicesCreateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'services/update/:id', component: ServicesUpdateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
   
   // Rutas de Repuestos
-  { path: 'parts', component: PartsGetallComponent },
-  { path: 'parts/create', component: PartsCreateComponent },
-  { path: 'parts/update/:id', component: PartsUpdateComponent },
+  { path: 'parts', component: PartsGetallComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'parts/create', component: PartsCreateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER'] } },
+  { path: 'parts/update/:id', component: PartsUpdateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER'] } },
   
   // Rutas de Citas
-  { path: 'appointments', component: AppointmentGetallComponent },
-  { path: 'appointments/create', component: AppointmentCreateComponent },
-  { path: 'appointments/update/:id', component: AppointmentUpdateComponent },
+  { path: 'appointments', component: AppointmentGetallComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'appointments/create', component: AppointmentCreateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'appointments/update/:id', component: AppointmentUpdateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
   
   // Rutas de Seguros
-  { path: 'insurance', component: InsuranceGetallComponent },
-  { path: 'insurance/create', component: InsuranceCreateComponent },
-  { path: 'insurance/update/:id', component: InsuranceUpdateComponent },
+  { path: 'insurance', component: InsuranceGetallComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'insurance/create', component: InsuranceCreateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'insurance/update/:id', component: InsuranceUpdateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
   
   // Rutas de Mecánicos
-  { path: 'mechanics', component: MechanicGetallComponent },
-  { path: 'mechanics/create', component: MechanicCreateComponent },
-  { path: 'mechanics/update/:id', component: MechanicUpdateComponent },
+  { path: 'mechanics', component: MechanicGetallComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'mechanics/create', component: MechanicCreateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER'] } },
+  { path: 'mechanics/update/:id', component: MechanicUpdateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER'] } },
   
   // Rutas de Pagos
-  { path: 'payments', component: PaymentGetallComponent },
-  { path: 'payments/create', component: PaymentCreateComponent },
-  { path: 'payments/update/:id', component: PaymentUpdateComponent },
+  // Listar pagos: solo STAFF (ADMIN, MANAGER, RECEPTIONIST) como en backend isStaff
+  { path: 'payments', component: PaymentGetallComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'payments/create', component: PaymentCreateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'payments/update/:id', component: PaymentUpdateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER'] } },
   
   // Rutas de Órdenes de Trabajo
-  { path: 'work-orders', component: WorkOrderGetallComponent },
-  { path: 'work-orders/create', component: WorkOrderCreateComponent },
-  { path: 'work-orders/update/:id', component: WorkOrderUpdateComponent },
+  { path: 'work-orders', component: WorkOrderGetallComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','RECEPTIONIST'] } },
+  { path: 'work-orders/create', component: WorkOrderCreateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','MECHANIC'] } },
+  { path: 'work-orders/update/:id', component: WorkOrderUpdateComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ADMIN','MANAGER','MECHANIC'] } },
   
   { path: '**', redirectTo: '/dashboard' }
 ];

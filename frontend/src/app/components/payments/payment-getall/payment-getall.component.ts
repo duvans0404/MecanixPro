@@ -12,6 +12,7 @@ import { TagModule } from 'primeng/tag';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { PaymentService } from '../../../services/payment.service';
 import { Payment } from '../../../models/payment.model';
+import { TagSeverity } from '../../../models/ui.model';
 
 @Component({
   selector: 'app-payment-getall',
@@ -27,7 +28,7 @@ import { Payment } from '../../../models/payment.model';
     ToastModule,
     TagModule
   ],
-  providers: [ConfirmationService, MessageService],
+  
   templateUrl: './payment-getall.component.html',
   encapsulation: ViewEncapsulation.None
 })
@@ -136,6 +137,8 @@ export class PaymentGetallComponent implements OnInit {
       message: `¿Estás seguro de que quieres eliminar ${paymentName}?`,
       header: 'Confirmar Eliminación',
       icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
       acceptLabel: 'Sí, eliminar',
       rejectLabel: 'Cancelar',
       accept: () => {
@@ -176,7 +179,7 @@ export class PaymentGetallComponent implements OnInit {
     }
   }
 
-  getStatusSeverity(status: string): string {
+  getStatusSeverity(status: string): TagSeverity {
     switch (status) {
       case 'pending': return 'warn';
       case 'completed': return 'success';

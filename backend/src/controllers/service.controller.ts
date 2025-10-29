@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Service } from '../models/service.model';
+import { getChangedFields } from '../utils/diff.util';
 
 export const getAllServices = async (req: Request, res: Response) => {
   try {
@@ -36,7 +37,11 @@ export const updateService = async (req: Request, res: Response) => {
   try {
     const service = await Service.findByPk(req.params.id);
     if (!service) return res.status(404).json({ error: 'Service not found' });
-    await service.update(req.body);
+    const { changes, changedKeys } = getChangedFields(service, req.body);
+    if (changedKeys.length === 0) {
+      return res.status(200).json({ message: 'No changes detected', service });
+    }
+    await service.update(changes);
     res.json(service);
   } catch (error) {
     console.error(error);

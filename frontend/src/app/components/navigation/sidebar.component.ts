@@ -4,6 +4,8 @@ import { RouterModule, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { AvatarModule } from 'primeng/avatar';
+import { AuthService } from '../../services/auth.service';
+import { PermissionsService } from '../../services/permissions.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -16,7 +18,7 @@ export class SidebarComponent implements OnInit {
   isCollapsed = false;
   activeRoute = '';
 
-  menuItems = [
+  private menuItems = [
     {
       title: 'Dashboard',
       icon: 'pi pi-chart-line',
@@ -115,13 +117,34 @@ export class SidebarComponent implements OnInit {
     }
   ];
 
-  constructor(private router: Router) {}
+  visibleMenu: any[] = [];
+
+  constructor(private router: Router, private auth: AuthService, private perms: PermissionsService) {}
 
   ngOnInit() {
     this.activeRoute = this.router.url;
     this.router.events.subscribe(() => {
       this.activeRoute = this.router.url;
+      // Rebuild on navigation in case token/roles changed
+      this.buildVisibleMenu(this.auth.roles.map((r) => String(r).toUpperCase()));
     });
+
+    // React to role changes (login, refresh, logout)
+    this.auth.roles$.subscribe((roles) => {
+      this.buildVisibleMenu(roles);
+    });
+
+    // Initial build
+    this.buildVisibleMenu(this.auth.roles.map((r) => String(r).toUpperCase()));
+  }
+
+  private buildVisibleMenu(roles: string[]) {
+    this.visibleMenu = this.menuItems
+      .map((item) => ({
+        ...item,
+        children: item.children?.filter((c: any) => this.perms.canAccess(c.route, roles)) || []
+      }))
+      .filter((item) => this.perms.canAccess(item.route, roles) || (item.children && item.children.length > 0));
   }
 
   toggleSidebar() {

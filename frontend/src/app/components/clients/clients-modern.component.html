@@ -1,0 +1,371 @@
+<div class="modern-page-container fade-in">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-title-section">
+        <h1 class="page-title">
+          <i class="pi pi-users title-icon"></i>
+          Gestión de Clientes
+        </h1>
+        <p class="page-subtitle">
+          Administra y visualiza toda la información de tus clientes de manera eficiente
+        </p>
+      </div>
+      
+      <div class="header-actions">
+        <div class="search-bar-container">
+          <div class="search-input-wrapper">
+            <i class="pi pi-search search-icon"></i>
+            <input 
+              type="text" 
+              placeholder="Buscar clientes por nombre, email o teléfono..." 
+              class="search-input-modern"
+              [(ngModel)]="searchTerm"
+              (input)="onSearch()">
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button class="btn btn-secondary btn-icon" title="Filtros avanzados">
+            <i class="pi pi-filter"></i>
+            Filtros
+          </button>
+          
+          <button class="btn btn-secondary btn-icon" title="Exportar datos">
+            <i class="pi pi-download"></i>
+            Exportar
+          </button>
+          
+          <button class="btn btn-primary btn-icon" (click)="createClient()" title="Crear nuevo cliente">
+            <i class="pi pi-plus"></i>
+            Nuevo Cliente
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-section">
+    <div class="stats-grid">
+      <div class="stat-card-modern primary">
+        <div class="stat-icon-container">
+          <i class="pi pi-users"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number">{{ totalClients }}</div>
+          <div class="stat-label">Total Clientes</div>
+          <div class="stat-change positive">
+            <i class="pi pi-arrow-up"></i>
+            +12% este mes
+          </div>
+        </div>
+      </div>
+      
+      <div class="stat-card-modern success">
+        <div class="stat-icon-container">
+          <i class="pi pi-check-circle"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number">{{ activeClients }}</div>
+          <div class="stat-label">Clientes Activos</div>
+          <div class="stat-change positive">
+            <i class="pi pi-arrow-up"></i>
+            +8% este mes
+          </div>
+        </div>
+      </div>
+      
+      <div class="stat-card-modern warning">
+        <div class="stat-icon-container">
+          <i class="pi pi-star"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number">{{ vipClients }}</div>
+          <div class="stat-label">Clientes VIP</div>
+          <div class="stat-change neutral">
+            <i class="pi pi-minus"></i>
+            Sin cambios
+          </div>
+        </div>
+      </div>
+      
+      <div class="stat-card-modern info">
+        <div class="stat-icon-container">
+          <i class="pi pi-calendar"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number">{{ newClientsThisMonth }}</div>
+          <div class="stat-label">Nuevos este mes</div>
+          <div class="stat-change positive">
+            <i class="pi pi-arrow-up"></i>
+            +25% vs anterior
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters & View Options -->
+  <div class="filters-section">
+    <div class="filters-container">
+      <div class="filter-chips">
+        <button 
+          class="filter-chip"
+          [class.active]="activeFilter === 'all'"
+          (click)="setFilter('all')">
+          <span class="chip-label">Todos</span>
+          <span class="chip-count">{{ totalClients }}</span>
+        </button>
+        
+        <button 
+          class="filter-chip"
+          [class.active]="activeFilter === 'active'"
+          (click)="setFilter('active')">
+          <span class="chip-label">Activos</span>
+          <span class="chip-count">{{ activeClients }}</span>
+        </button>
+        
+        <button 
+          class="filter-chip"
+          [class.active]="activeFilter === 'vip'"
+          (click)="setFilter('vip')">
+          <span class="chip-label">VIP</span>
+          <span class="chip-count">{{ vipClients }}</span>
+        </button>
+        
+        <button 
+          class="filter-chip"
+          [class.active]="activeFilter === 'inactive'"
+          (click)="setFilter('inactive')">
+          <span class="chip-label">Inactivos</span>
+          <span class="chip-count">{{ inactiveClients }}</span>
+        </button>
+      </div>
+      
+      <div class="view-options">
+        <div class="view-toggle">
+          <button 
+            class="view-btn"
+            [class.active]="viewMode === 'grid'"
+            (click)="setViewMode('grid')"
+            title="Vista en cuadrícula">
+            <i class="pi pi-th-large"></i>
+          </button>
+          <button 
+            class="view-btn"
+            [class.active]="viewMode === 'list'"
+            (click)="setViewMode('list')"
+            title="Vista en lista">
+            <i class="pi pi-list"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Area -->
+  <div class="content-section">
+    <!-- Grid View -->
+    <div class="clients-grid" *ngIf="viewMode === 'grid'">
+      <div class="client-card-modern scale-in" *ngFor="let client of filteredClients; trackBy: trackByClientId">
+        <div class="client-card-header">
+          <div class="client-avatar">
+            <img [src]="client.avatar || '/assets/images/default-avatar.svg'" [alt]="client.name" class="avatar-image">
+            <div class="status-indicator" [class]="client.status.toLowerCase()"></div>
+          </div>
+          
+          <div class="client-actions">
+            <button class="action-btn-small" (click)="viewClient(client)" title="Ver detalles">
+              <i class="pi pi-eye"></i>
+            </button>
+            <button class="action-btn-small" (click)="editClient(client)" title="Editar">
+              <i class="pi pi-pencil"></i>
+            </button>
+            <button class="action-btn-small danger" (click)="deleteClient(client)" title="Eliminar">
+              <i class="pi pi-trash"></i>
+            </button>
+          </div>
+        </div>
+        
+        <div class="client-info">
+          <h3 class="client-name">{{ client.name }}</h3>
+          <p class="client-email">{{ client.email }}</p>
+          <p class="client-phone">{{ client.phone }}</p>
+          
+          <div class="client-badges">
+            <span class="badge" [class]="'badge-' + client.status.toLowerCase()">
+              {{ client.status }}
+            </span>
+            <span class="badge badge-info" *ngIf="client.isVip">VIP</span>
+          </div>
+        </div>
+        
+        <div class="client-stats">
+          <div class="stat-item">
+            <span class="stat-value">{{ client.vehicleCount }}</span>
+            <span class="stat-label">Vehículos</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">{{ client.workOrderCount }}</span>
+            <span class="stat-label">Órdenes</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">${{ client.totalSpent | number:'1.0-0' }}</span>
+            <span class="stat-label">Total gastado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table View -->
+    <div class="clients-table-container" *ngIf="viewMode === 'list'">
+      <div class="table-wrapper">
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th class="sortable" (click)="sort('name')">
+                <div class="th-content">
+                  <span>Cliente</span>
+                  <i class="pi pi-sort-alt sort-icon" [class.active]="sortField === 'name'"></i>
+                </div>
+              </th>
+              <th>Contacto</th>
+              <th class="sortable" (click)="sort('status')">
+                <div class="th-content">
+                  <span>Estado</span>
+                  <i class="pi pi-sort-alt sort-icon" [class.active]="sortField === 'status'"></i>
+                </div>
+              </th>
+              <th class="sortable" (click)="sort('vehicleCount')">
+                <div class="th-content">
+                  <span>Vehículos</span>
+                  <i class="pi pi-sort-alt sort-icon" [class.active]="sortField === 'vehicleCount'"></i>
+                </div>
+              </th>
+              <th class="sortable" (click)="sort('totalSpent')">
+                <div class="th-content">
+                  <span>Total Gastado</span>
+                  <i class="pi pi-sort-alt sort-icon" [class.active]="sortField === 'totalSpent'"></i>
+                </div>
+              </th>
+              <th class="sortable" (click)="sort('lastVisit')">
+                <div class="th-content">
+                  <span>Última Visita</span>
+                  <i class="pi pi-sort-alt sort-icon" [class.active]="sortField === 'lastVisit'"></i>
+                </div>
+              </th>
+              <th class="actions-column">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let client of filteredClients; trackBy: trackByClientId" class="table-row-modern">
+              <td class="client-cell">
+                <div class="client-info-row">
+                  <img [src]="client.avatar || '/assets/images/default-avatar.svg'" [alt]="client.name" class="client-avatar-small">
+                  <div class="client-details">
+                    <div class="client-name-row">
+                      {{ client.name }}
+                      <span class="vip-badge" *ngIf="client.isVip">VIP</span>
+                    </div>
+                    <div class="client-id">ID: {{ client.id }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="contact-info">
+                  <div class="email">{{ client.email }}</div>
+                  <div class="phone">{{ client.phone }}</div>
+                </div>
+              </td>
+              <td>
+                <span class="status-badge" [class]="'status-' + client.status.toLowerCase()">
+                  {{ client.status }}
+                </span>
+              </td>
+              <td>
+                <div class="number-badge">{{ client.vehicleCount }}</div>
+              </td>
+              <td>
+                <div class="amount-cell">
+                  ${{ client.totalSpent | number:'1.0-0' }}
+                </div>
+              </td>
+              <td>
+                <div class="date-cell">
+                  {{ client.lastVisit | date:'short' }}
+                </div>
+              </td>
+              <td class="actions-cell">
+                <div class="action-buttons-row">
+                  <button class="action-btn-table" (click)="viewClient(client)" title="Ver">
+                    <i class="pi pi-eye"></i>
+                  </button>
+                  <button class="action-btn-table" (click)="editClient(client)" title="Editar">
+                    <i class="pi pi-pencil"></i>
+                  </button>
+                  <button class="action-btn-table danger" (click)="deleteClient(client)" title="Eliminar">
+                    <i class="pi pi-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredClients.length === 0">
+      <div class="empty-content">
+        <div class="empty-icon">
+          <i class="pi pi-users"></i>
+        </div>
+        <h3 class="empty-title">No se encontraron clientes</h3>
+        <p class="empty-subtitle">
+          No hay clientes que coincidan con los filtros actuales.
+          <br>Intenta ajustar los criterios de búsqueda.
+        </p>
+        <button class="btn btn-primary" (click)="clearFilters()">
+          <i class="pi pi-refresh"></i>
+          Limpiar filtros
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-section" *ngIf="filteredClients.length > 0">
+    <div class="pagination-info">
+      Mostrando {{ startIndex + 1 }} - {{ endIndex }} de {{ totalFilteredClients }} clientes
+    </div>
+    
+    <div class="pagination-controls">
+      <button 
+        class="pagination-btn"
+        [disabled]="currentPage === 1"
+        (click)="previousPage()">
+        <i class="pi pi-chevron-left"></i>
+        Anterior
+      </button>
+      
+      <div class="page-numbers">
+        <button 
+          class="page-btn"
+          *ngFor="let page of visiblePages"
+          [class.active]="page === currentPage"
+          (click)="goToPage(page)">
+          {{ page }}
+        </button>
+      </div>
+      
+      <button 
+        class="pagination-btn"
+        [disabled]="currentPage === totalPages"
+        (click)="nextPage()">
+        Siguiente
+        <i class="pi pi-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

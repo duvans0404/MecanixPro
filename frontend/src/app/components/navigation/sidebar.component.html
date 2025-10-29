@@ -23,7 +23,7 @@
   <!-- Navegación principal -->
   <nav class="sidebar-nav">
     <ul class="nav-list">
-      <li class="nav-item" *ngFor="let item of menuItems">
+      <li class="nav-item" *ngFor="let item of visibleMenu">
         <a 
           [routerLink]="item.route" 
           class="nav-link"

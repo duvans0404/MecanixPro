@@ -1,0 +1,21 @@
+<div class="auth-page">
+  <div class="auth-card glass-effect">
+    <nav class="auth-tabs" role="tablist">
+      <button class="auth-tab" [class.active]="activeIndex === 0" (click)="onTabChange(0)" role="tab" aria-selected="{{activeIndex===0}}">
+        Iniciar sesión
+      </button>
+      <button class="auth-tab" [class.active]="activeIndex === 1" (click)="onTabChange(1)" role="tab" aria-selected="{{activeIndex===1}}">
+        Registrarse
+      </button>
+    </nav>
+    <section class="auth-panels">
+      <div class="auth-panel" *ngIf="activeIndex === 0">
+        <app-login></app-login>
+      </div>
+      <div class="auth-panel" *ngIf="activeIndex === 1">
+        <app-register></app-register>
+      </div>
+    </section>
+  </div>
+  
+</div>

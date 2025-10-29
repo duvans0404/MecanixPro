@@ -12,6 +12,7 @@ import { TagModule } from 'primeng/tag';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { InsuranceService } from '../../../services/insurance.service';
 import { Insurance } from '../../../models/insurance.model';
+import { TagSeverity } from '../../../models/ui.model';
 
 @Component({
   selector: 'app-insurance-getall',
@@ -27,7 +28,7 @@ import { Insurance } from '../../../models/insurance.model';
     ToastModule,
     TagModule
   ],
-  providers: [ConfirmationService, MessageService],
+  
   templateUrl: './insurance-getall.component.html',
   encapsulation: ViewEncapsulation.None
 })
@@ -133,6 +134,8 @@ export class InsuranceGetallComponent implements OnInit {
       message: `¿Estás seguro de que quieres eliminar ${insuranceName}?`,
       header: 'Confirmar Eliminación',
       icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
       acceptLabel: 'Sí, eliminar',
       rejectLabel: 'Cancelar',
       accept: () => {
@@ -176,7 +179,7 @@ export class InsuranceGetallComponent implements OnInit {
     return new Date(endDate) < new Date();
   }
 
-  getStatusSeverity(endDate: Date): string {
+  getStatusSeverity(endDate: Date): TagSeverity {
     return this.isExpired(endDate) ? 'danger' : 'success';
   }
 

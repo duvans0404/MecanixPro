@@ -1,55 +1,90 @@
-<div class="app-container">
-  <!-- Sidebar -->
-  <app-sidebar></app-sidebar>
+<ng-container *ngIf="!isAuthRoute; else authOnly">
+<div class="modern-app-layout" [attr.data-theme]="isDarkMode ? 'dark' : 'light'">
+  <!-- Modern Sidebar -->
+  <ng-container [ngSwitch]="displayRole">
+    <sidebar-admin *ngSwitchCase="'ADMIN'" [isCollapsed]="sidebarCollapsed"></sidebar-admin>
+    <sidebar-manager *ngSwitchCase="'MANAGER'" [isCollapsed]="sidebarCollapsed"></sidebar-manager>
+    <sidebar-mechanic *ngSwitchCase="'MECHANIC'" [isCollapsed]="sidebarCollapsed"></sidebar-mechanic>
+    <sidebar-receptionist *ngSwitchCase="'RECEPTIONIST'" [isCollapsed]="sidebarCollapsed"></sidebar-receptionist>
+    <sidebar-client *ngSwitchCase="'CLIENT'" [isCollapsed]="sidebarCollapsed"></sidebar-client>
+    <app-sidebar *ngSwitchDefault class="modern-sidebar"></app-sidebar>
+  </ng-container>
 
-  <!-- Contenido principal -->
-  <div class="main-content">
-    <!-- Header -->
-    <header class="global-header">
-      <div class="header-content">
-        <!-- Título de la página -->
-        <div class="header-title-section">
-          <div class="header-logo">
-            <div class="logo-icon">
+  <!-- Main Content Area -->
+  <div class="modern-main-content">
+    <!-- Modern Header with Glass Effect -->
+    <header class="modern-header glass-effect">
+      <div class="header-wrapper">
+        <!-- Brand Section -->
+        <div class="brand-section">
+          <div class="brand-logo">
+            <div class="logo-gradient">
               <i class="pi pi-cog"></i>
             </div>
-            <div class="logo-text">
-              <h1 class="app-title">MecanixPro</h1>
-              <span class="app-subtitle">Sistema de Gestión de Taller</span>
+            <div class="brand-text">
+              <h1 class="brand-title">MecanixPro</h1>
+              <span class="brand-subtitle">Gestión Inteligente de Taller</span>
             </div>
           </div>
         </div>
 
-        <!-- Acciones del header -->
-        <div class="header-actions">
-          <!-- Toggle de tema -->
+        <!-- Search Bar -->
+        <div class="search-section">
+          <div class="search-container">
+            <i class="pi pi-search search-icon"></i>
+            <input 
+              type="text" 
+              placeholder="Buscar clientes, vehículos, órdenes..." 
+              class="search-input">
+            <kbd class="search-shortcut">Ctrl+K</kbd>
+          </div>
+        </div>
+
+        <!-- Header Actions -->
+        <div class="header-actions-modern">
+          <!-- Theme Toggle -->
           <button 
             type="button" 
             (click)="toggleTheme()"
-            class="header-action-button theme-toggle"
+            class="action-btn theme-toggle-btn"
             [title]="isDarkMode ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'">
             <i class="pi" [class.pi-sun]="isDarkMode" [class.pi-moon]="!isDarkMode"></i>
           </button>
           
-          <!-- Notificaciones -->
-          <button class="header-action-button notifications-button">
+          <!-- Quick Actions -->
+          <button class="action-btn quick-action-btn" title="Nueva Orden de Trabajo">
+            <i class="pi pi-plus"></i>
+          </button>
+          
+          <!-- Notifications -->
+          <button class="action-btn notifications-btn" title="Notificaciones">
             <i class="pi pi-bell"></i>
-            <span class="notification-badge">3</span>
+            <span class="notification-indicator">3</span>
           </button>
 
-          <!-- Perfil de usuario -->
-          <div class="user-profile">
-            <div class="user-avatar">
-              <i class="pi pi-user"></i>
+          <!-- User Profile / Auth Actions -->
+          <ng-container *ngIf="isAuthenticated; else guestLinks">
+            <div class="user-profile-modern">
+              <div class="user-avatar-modern">
+                <img src="/assets/images/default-avatar.svg" alt="Avatar" class="avatar-image">
+              </div>
+              <div class="user-details">
+                <span class="user-name-modern">{{ displayName || 'Usuario' }}</span>
+                <div class="user-roles" *ngIf="sortedRoles?.length">
+                  <span class="role-badge" *ngFor="let role of sortedRoles" [ngClass]="roleBadgeClass(role)" [attr.title]="roleTitle(role)">{{ role }}</span>
+                </div>
+              </div>
+              <button class="profile-menu-btn" (click)="logout()" title="Cerrar sesión">
+                <i class="pi pi-sign-out"></i>
+              </button>
             </div>
-            <div class="user-info">
-              <span class="user-name">Admin</span>
-              <span class="user-role">Administrador</span>
+          </ng-container>
+          <ng-template #guestLinks>
+            <div class="user-profile-modern">
+              <button class="action-btn" routerLink="/login">Iniciar sesión</button>
+              <button class="action-btn" routerLink="/register">Registrarse</button>
             </div>
-            <button class="profile-dropdown-button">
-              <i class="pi pi-chevron-down"></i>
-            </button>
-          </div>
+          </ng-template>
         </div>
       </div>
     </header>
@@ -63,35 +98,49 @@
       </div>
     </main>
 
+    <!-- Global confirm dialog -->
+    <p-confirmDialog></p-confirmDialog>
+
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200">
-      <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col md:flex-row justify-between items-center">
-          <div class="flex items-center space-x-4">
-            <div class="flex items-center">
-              <div class="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
-                <i class="pi pi-cog text-white text-sm"></i>
-              </div>
-              <span class="ml-2 text-sm font-medium text-gray-900">MecanixPro</span>
-            </div>
-            <span class="text-sm text-gray-500">© 2024 Sistema de Gestión de Taller</span>
+    <footer class="modern-footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <i class="pi pi-cog"></i>
           </div>
-          <div class="flex items-center space-x-6 mt-4 md:mt-0">
-            <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors">
-              <i class="pi pi-envelope mr-1"></i>
-              Soporte
-            </a>
-            <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors">
-              <i class="pi pi-question-circle mr-1"></i>
-              Ayuda
-            </a>
-            <a href="#" class="text-sm text-gray-500 hover:text-gray-900 transition-colors">
-              <i class="pi pi-cog mr-1"></i>
-              Configuración
-            </a>
+          <div>
+            <span class="footer-title">MecanixPro</span>
+            <span class="footer-desc">Sistema de Gestión de Taller</span>
           </div>
         </div>
+        <div class="footer-links">
+          <a href="#" class="footer-link">
+            <i class="pi pi-envelope"></i>
+            <span>Soporte</span>
+          </a>
+          <a href="#" class="footer-link">
+            <i class="pi pi-question-circle"></i>
+            <span>Ayuda</span>
+          </a>
+          <a href="#" class="footer-link">
+            <i class="pi pi-cog"></i>
+            <span>Configuración</span>
+          </a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2024 MecanixPro. Todos los derechos reservados.</span>
       </div>
     </footer>
   </div>
 </div>
+</ng-container>
+
+<ng-template #authOnly>
+  <div class="auth-fullpage">
+    <router-outlet></router-outlet>
+  </div>
+</ng-template>
+
+<!-- Global Modals -->
+<app-global-modals></app-global-modals>

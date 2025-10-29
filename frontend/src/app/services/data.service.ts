@@ -202,6 +202,30 @@ export class DataService {
     }
   ];
 
+  private appointments = [
+    {
+      id: 1,
+      clientId: 1,
+      serviceName: 'Cambio de aceite',
+      date: new Date(Date.now() + 86400000),
+      status: 'SCHEDULED',
+    },
+    {
+      id: 2,
+      clientId: 2,
+      serviceName: 'Revisión general',
+      date: new Date(Date.now() + 2*86400000),
+      status: 'SCHEDULED',
+    },
+    {
+      id: 3,
+      clientId: 3,
+      serviceName: 'Alineación y balanceo',
+      date: new Date(Date.now() - 86400000),
+      status: 'COMPLETED',
+    }
+  ];
+
   // Métodos para obtener datos
   getClientes(): Observable<ClientI[]> {
     return of(this.clientes);
@@ -225,6 +249,10 @@ export class DataService {
 
   getOrdenesTrabajo(): Observable<WorkOrderI[]> {
     return of(this.ordenesTrabajo);
+  }
+
+  getAppointments(): Observable<any[]> {
+    return of(this.appointments);
   }
 
   // Métodos para obtener estadísticas del dashboard

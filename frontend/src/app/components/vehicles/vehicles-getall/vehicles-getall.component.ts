@@ -14,6 +14,7 @@ import { VehicleService } from '../../../services/vehicle.service';
 import { ClientService } from '../../../services/client.service';
 import { Vehicle } from '../../../models/vehicle.model';
 import { Client } from '../../../models/client.model';
+import { TagSeverity } from '../../../models/ui.model';
 
 @Component({
   selector: 'app-vehicles-getall',
@@ -29,7 +30,7 @@ import { Client } from '../../../models/client.model';
     ToastModule,
     TagModule
   ],
-  providers: [ConfirmationService, MessageService],
+  
   templateUrl: './vehicles-getall.component.html',
   encapsulation: ViewEncapsulation.None
 })
@@ -145,6 +146,8 @@ export class VehiclesGetallComponent implements OnInit {
       message: `¿Estás seguro de que quieres eliminar el vehículo ${vehicle.make} ${vehicle.model}?`,
       header: 'Confirmar Eliminación',
       icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
       acceptLabel: 'Sí, eliminar',
       rejectLabel: 'Cancelar',
       accept: () => {
@@ -174,7 +177,7 @@ export class VehiclesGetallComponent implements OnInit {
     this.router.navigate(['/vehicles/create']);
   }
 
-  getStatusSeverity(active: boolean): string {
+  getStatusSeverity(active: boolean): TagSeverity {
     return active ? 'success' : 'danger';
   }
 

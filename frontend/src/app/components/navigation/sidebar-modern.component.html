@@ -1,0 +1,181 @@
+<aside class="modern-sidebar-container" [class.collapsed]="isCollapsed">
+  <!-- Sidebar Header -->
+  <div class="sidebar-header-modern">
+    <div class="brand-container">
+      <div class="brand-icon-gradient">
+        <i class="pi pi-cog"></i>
+      </div>
+      <div class="brand-info" *ngIf="!isCollapsed">
+        <h2 class="brand-name">MecanixPro</h2>
+        <span class="brand-tagline">Sistema Avanzado</span>
+      </div>
+    </div>
+    
+    <!-- Collapse Toggle -->
+    <button 
+      class="collapse-toggle-btn"
+      (click)="toggleSidebar()"
+      [title]="isCollapsed ? 'Expandir sidebar' : 'Contraer sidebar'">
+      <i class="pi" [class.pi-chevron-left]="!isCollapsed" [class.pi-chevron-right]="isCollapsed"></i>
+    </button>
+  </div>
+
+  <!-- Quick Stats (only when expanded) -->
+  <div class="quick-stats-section" *ngIf="!isCollapsed">
+    <div class="quick-stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon success">
+          <i class="pi pi-check-circle"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">24</span>
+          <span class="stat-label">Completadas</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon warning">
+          <i class="pi pi-clock"></i>
+        </div>
+        <div class="stat-info">
+          <span class="stat-number">8</span>
+          <span class="stat-label">Pendientes</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav class="sidebar-navigation">
+    <!-- Primary Navigation -->
+    <ng-container *ngIf="primaryMenuItems.length">
+      <div class="nav-section">
+        <h3 class="nav-section-title" *ngIf="!isCollapsed">Principal</h3>
+        <ul class="nav-menu">
+          <li class="nav-menu-item" *ngFor="let item of primaryMenuItems">
+          <a 
+            [routerLink]="item.route" 
+            class="nav-menu-link"
+            routerLinkActive="active"
+            [class.has-badge]="item.badge"
+            [title]="isCollapsed ? item.title : ''">
+            
+            <div class="nav-link-content">
+              <div class="nav-icon-container" [class]="item.iconClass">
+                <i [class]="item.icon"></i>
+              </div>
+              
+              <div class="nav-text-container" *ngIf="!isCollapsed">
+                <span class="nav-title">{{ item.title }}</span>
+                <span class="nav-subtitle" *ngIf="item.subtitle">{{ item.subtitle }}</span>
+              </div>
+              
+              <div class="nav-badge" *ngIf="item.badge && !isCollapsed">
+                <span class="badge-text">{{ item.badge }}</span>
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Management Section -->
+    <ng-container *ngIf="managementMenuItems.length">
+      <div class="nav-section">
+        <h3 class="nav-section-title" *ngIf="!isCollapsed">Gestión</h3>
+        <ul class="nav-menu">
+          <li class="nav-menu-item" *ngFor="let item of managementMenuItems">
+          <div class="nav-group" [class.expanded]="item.expanded">
+            <!-- Parent Link -->
+            <a 
+              class="nav-menu-link group-parent"
+              (click)="toggleGroup(item)"
+              [title]="isCollapsed ? item.title : ''">
+              
+              <div class="nav-link-content">
+                <div class="nav-icon-container" [class]="item.iconClass">
+                  <i [class]="item.icon"></i>
+                </div>
+                
+                <div class="nav-text-container" *ngIf="!isCollapsed">
+                  <span class="nav-title">{{ item.title }}</span>
+                  <span class="nav-subtitle" *ngIf="item.subtitle">{{ item.subtitle }}</span>
+                </div>
+                
+                <div class="nav-expand-icon" *ngIf="!isCollapsed && item.children">
+                  <i class="pi" [class.pi-chevron-down]="item.expanded" [class.pi-chevron-right]="!item.expanded"></i>
+                </div>
+              </div>
+            </a>
+
+            <!-- Children -->
+            <ul class="nav-submenu" *ngIf="item.children && item.expanded && !isCollapsed">
+              <li class="nav-submenu-item" *ngFor="let child of item.children">
+                <a 
+                  [routerLink]="child.route" 
+                  class="nav-submenu-link"
+                  routerLinkActive="active">
+                  
+                  <div class="submenu-link-content">
+                    <div class="submenu-indicator"></div>
+                    <i [class]="child.icon" class="submenu-icon"></i>
+                    <span class="submenu-title">{{ child.title }}</span>
+                    <span class="submenu-badge" *ngIf="child.badge">{{ child.badge }}</span>
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Reports & Analytics -->
+    <ng-container *ngIf="reportsMenuItems.length">
+      <div class="nav-section">
+        <h3 class="nav-section-title" *ngIf="!isCollapsed">Reportes</h3>
+        <ul class="nav-menu">
+          <li class="nav-menu-item" *ngFor="let item of reportsMenuItems">
+          <a 
+            [routerLink]="item.route" 
+            class="nav-menu-link"
+            routerLinkActive="active"
+            [title]="isCollapsed ? item.title : ''">
+            
+            <div class="nav-link-content">
+              <div class="nav-icon-container" [class]="item.iconClass">
+                <i [class]="item.icon"></i>
+              </div>
+              
+              <div class="nav-text-container" *ngIf="!isCollapsed">
+                <span class="nav-title">{{ item.title }}</span>
+              </div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+
+
+  <!-- Sidebar Footer -->
+  <div class="sidebar-footer" *ngIf="!isCollapsed">
+    <div class="footer-content">
+      <div class="user-status">
+        <div class="status-indicator online"></div>
+        <span class="status-text">Sistema Activo</span>
+      </div>
+      
+      <div class="footer-actions">
+        <button class="footer-action-btn" title="Configuración">
+          <i class="pi pi-cog"></i>
+        </button>
+        <button class="footer-action-btn" title="Ayuda">
+          <i class="pi pi-question-circle"></i>
+        </button>
+      </div>
+    </div>
+    
+    <div class="version-info">
+      <span>MecanixPro v2.1.0</span>
+    </div>
+  </div>

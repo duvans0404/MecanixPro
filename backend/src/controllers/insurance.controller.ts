@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Insurance } from '../models/insurance.model';
+import { getChangedFields } from '../utils/diff.util';
 
 export const getAllInsurances = async (req: Request, res: Response) => {
   try {
@@ -36,7 +37,11 @@ export const updateInsurance = async (req: Request, res: Response) => {
   try {
     const insurance = await Insurance.findByPk(req.params.id);
     if (!insurance) return res.status(404).json({ error: 'Insurance not found' });
-    await insurance.update(req.body);
+    const { changes, changedKeys } = getChangedFields(insurance, req.body);
+    if (changedKeys.length === 0) {
+      return res.status(200).json({ message: 'No changes detected', insurance });
+    }
+    await insurance.update(changes);
     res.json(insurance);
   } catch (error) {
     console.error(error);

@@ -12,6 +12,8 @@ import { TagModule } from 'primeng/tag';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { PartService } from '../../../services/part.service';
 import { Part } from '../../../models/part.model';
+import { TagSeverity } from '../../../models/ui.model';
+import { ModalService } from '../../../services/modal.service';
 
 @Component({
   selector: 'app-parts-getall',
@@ -27,7 +29,7 @@ import { Part } from '../../../models/part.model';
     ToastModule,
     TagModule
   ],
-  providers: [ConfirmationService, MessageService],
+  
   templateUrl: './parts-getall.component.html',
   encapsulation: ViewEncapsulation.None
 })
@@ -56,7 +58,8 @@ export class PartsGetallComponent implements OnInit {
     private partService: PartService,
     private router: Router,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private modalService: ModalService
   ) {}
 
   ngOnInit() {
@@ -127,11 +130,54 @@ export class PartsGetallComponent implements OnInit {
     this.router.navigate(['/parts/update', part.id]);
   }
 
+  viewPart(part: Part) {
+    const config = ModalService.formatPartData(part);
+    config.headerColor = 'rgba(239, 68, 68, 0.2)';
+    config.title = 'Ver Detalle del Repuesto';
+    this.modalService.openViewModal(config);
+  }
+
+  confirmDeletePart(part: Part) {
+    this.modalService.openDeleteModal(
+      {
+        title: '¿Eliminar Repuesto?',
+        message: 'Esta acción no se puede deshacer. El repuesto será eliminado permanentemente.',
+        itemName: `${part.name} (${part.partNumber})`,
+        itemLabel: 'Repuesto a eliminar:',
+        showWarning: true,
+        warningMessage: '⚠️ Se perderá toda la información relacionada con este repuesto.'
+      },
+      () => this.executeDeletePart(part.id)
+    );
+  }
+
+  private executeDeletePart(partId: number) {
+    this.partService.deletePart(partId).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Repuesto eliminado correctamente'
+        });
+        this.loadParts();
+      },
+      error: (error) => {
+        console.error('Error eliminando repuesto:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al eliminar el repuesto'
+        });
+      }
+    });
+  }
+
   deletePart(part: Part) {
     this.confirmationService.confirm({
-      message: `¿Estás seguro de que quieres eliminar el repuesto ${part.name}?`,
+      message: `¿Estás seguro de que deseas eliminar el repuesto "${part.name}"?`,
       header: 'Confirmar Eliminación',
       icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
       acceptLabel: 'Sí, eliminar',
       rejectLabel: 'Cancelar',
         accept: () => {
@@ -161,7 +207,7 @@ export class PartsGetallComponent implements OnInit {
     this.router.navigate(['/parts/create']);
   }
 
-  getStatusSeverity(active: boolean): string {
+  getStatusSeverity(active: boolean): TagSeverity {
     return active ? 'success' : 'danger';
   }
 
@@ -169,7 +215,7 @@ export class PartsGetallComponent implements OnInit {
     return active ? 'Activo' : 'Inactivo';
   }
 
-  getStockSeverity(stock: number): string {
+  getStockSeverity(stock: number): TagSeverity {
     if (stock === 0) return 'danger';
     if (stock <= 10) return 'warn';
     return 'success';

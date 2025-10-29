@@ -24,39 +24,41 @@
     </div>
 
     <!-- Filtros y búsqueda -->
-    <div class="payments-filters">
-      <div class="payments-filters-content">
-        <div class="payments-filters-header">
-          <h3 class="payments-filters-title">
-            <i class="pi pi-filter" style="margin-right: 0.75rem; color: #8b5cf6;"></i>
+    <div class="page-card">
+      <div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin: 0; display: flex; align-items: center;">
+            <i class="pi pi-filter" style="margin-right: 0.75rem; color: #3b82f6;"></i>
             Filtros y Búsqueda
           </h3>
           <button 
             type="button" 
-            class="payments-clear-filters"
+            class="p-button p-button-text"
             (click)="clearFilters()">
             <i class="pi pi-refresh"></i>
             Limpiar filtros
           </button>
         </div>
-        <div class="payments-filters-grid">
-          <div class="payments-filter-group">
-            <label class="payments-filter-label">Buscar</label>
-            <div class="payments-filter-input">
-              <i class="pi pi-search"></i>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Buscar</label>
+            <div style="position: relative;">
+              <i class="pi pi-search" style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; z-index: 10;"></i>
               <input 
                 type="text" 
                 pInputText 
-                name="ngModel"                 [(ngModel)]="searchTerm" 
+                class="form-control"
+                style="padding-left: 2.5rem !important;"
+                [(ngModel)]="searchTerm" 
                 name="searchTerm"
                 (input)="onSearch()"
-                placeholder="Buscar por ID de pago, orden de trabajo o método de pago...">
+                placeholder="Buscar por ID o método de pago...">
             </div>
           </div>
-          <div class="payments-filter-group">
-            <label class="payments-filter-label">Estado</label>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Estado</label>
             <p-select 
-              name="ngModel"               [(ngModel)]="statusFilter" 
+              [(ngModel)]="statusFilter" 
               name="statusFilter"
               [options]="statusOptions"
               (onChange)="onStatusFilterChange()"
@@ -64,10 +66,10 @@
               style="width: 100%;">
             </p-select>
           </div>
-          <div class="payments-filter-group">
-            <label class="payments-filter-label">Método de Pago</label>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Método de Pago</label>
             <p-select 
-              name="ngModel"               [(ngModel)]="methodFilter" 
+              [(ngModel)]="methodFilter" 
               name="methodFilter"
               [options]="methodOptions"
               (onChange)="onMethodFilterChange()"
@@ -252,5 +254,5 @@
   </div>
 </div>
 
-<p-confirmDialog></p-confirmDialog>
+<!-- Global p-confirmDialog is provided in app.html -->
 <p-toast></p-toast>

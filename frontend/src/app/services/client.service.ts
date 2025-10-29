@@ -31,4 +31,13 @@ export class ClientService {
   deleteClient(id: string | number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  // Alias para compatibilidad con componentes modernos
+  create(client: Omit<ClientI, 'id'>): Observable<ClientI> {
+    return this.addClient(client as Partial<ClientI>);
+  }
+
+  update(id: string | number, client: Partial<ClientI>): Observable<ClientI> {
+    return this.updateClient(id, client);
+  }
 }

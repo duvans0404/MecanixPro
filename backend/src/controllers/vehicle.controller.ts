@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Vehicle } from '../models/vehicle.model';
+import { getChangedFields } from '../utils/diff.util';
 
 export const getAllVehicles = async (req: Request, res: Response) => {
   try {
@@ -36,7 +37,11 @@ export const updateVehicle = async (req: Request, res: Response) => {
   try {
     const vehicle = await Vehicle.findByPk(req.params.id);
     if (!vehicle) return res.status(404).json({ error: 'Vehicle not found' });
-    await vehicle.update(req.body);
+    const { changes, changedKeys } = getChangedFields(vehicle, req.body);
+    if (changedKeys.length === 0) {
+      return res.status(200).json({ message: 'No changes detected', vehicle });
+    }
+    await vehicle.update(changes);
     res.json(vehicle);
   } catch (error) {
     console.error(error);

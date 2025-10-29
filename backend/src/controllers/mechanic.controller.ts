@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Mechanic } from '../models/mechanic.model';
+import { getChangedFields } from '../utils/diff.util';
 
 export const getAllMechanics = async (req: Request, res: Response) => {
   try {
@@ -36,7 +37,11 @@ export const updateMechanic = async (req: Request, res: Response) => {
   try {
     const mechanic = await Mechanic.findByPk(req.params.id);
     if (!mechanic) return res.status(404).json({ error: 'Mechanic not found' });
-    await mechanic.update(req.body);
+    const { changes, changedKeys } = getChangedFields(mechanic, req.body);
+    if (changedKeys.length === 0) {
+      return res.status(200).json({ message: 'No changes detected', mechanic });
+    }
+    await mechanic.update(changes);
     res.json(mechanic);
   } catch (error) {
     console.error(error);

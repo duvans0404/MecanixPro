@@ -6,7 +6,6 @@
         <div>
           <h1 class="page-title">
             <i class="pi pi-wrench" style="margin-right: 0.75rem; color: #f59e0b;"></i>
-            Órdenes de Trabajo
           </h1>
           <p class="page-subtitle">Administra las órdenes de trabajo del taller</p>
         </div>
@@ -24,39 +23,41 @@
     </div>
 
     <!-- Filtros y búsqueda -->
-    <div class="work-orders-filters">
-      <div class="work-orders-filters-content">
-        <div class="work-orders-filters-header">
-          <h3 class="work-orders-filters-title">
+    <div class="page-card">
+      <div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin: 0; display: flex; align-items: center;">
             <i class="pi pi-filter" style="margin-right: 0.75rem; color: #f59e0b;"></i>
             Filtros y Búsqueda
           </h3>
           <button 
             type="button" 
-            class="work-orders-clear-filters"
+            class="p-button p-button-text"
             (click)="clearFilters()">
             <i class="pi pi-refresh"></i>
             Limpiar filtros
           </button>
         </div>
-        <div class="work-orders-filters-grid">
-          <div class="work-orders-filter-group">
-            <label class="work-orders-filter-label">Buscar</label>
-            <div class="work-orders-filter-input">
-              <i class="pi pi-search"></i>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Buscar</label>
+            <div style="position: relative;">
+              <i class="pi pi-search" style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; z-index: 10;"></i>
               <input 
                 type="text" 
                 pInputText 
-                name="ngModel"                 [(ngModel)]="searchTerm" 
+                class="form-control"
+                style="padding-left: 2.5rem !important;"
+                [(ngModel)]="searchTerm" 
                 name="searchTerm"
                 (input)="onSearch()"
                 placeholder="Buscar por descripción, cliente o notas...">
             </div>
           </div>
-          <div class="work-orders-filter-group">
-            <label class="work-orders-filter-label">Estado</label>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Estado</label>
             <p-select 
-              name="ngModel"               [(ngModel)]="statusFilter" 
+              [(ngModel)]="statusFilter" 
               name="statusFilter"
               [options]="statusOptions"
               (onChange)="onStatusFilterChange()"
@@ -64,10 +65,10 @@
               style="width: 100%;">
             </p-select>
           </div>
-          <div class="work-orders-filter-group">
-            <label class="work-orders-filter-label">Prioridad</label>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Prioridad</label>
             <p-select 
-              name="ngModel"               [(ngModel)]="priorityFilter" 
+              [(ngModel)]="priorityFilter" 
               name="priorityFilter"
               [options]="priorityOptions"
               (onChange)="onPriorityFilterChange()"
@@ -275,7 +276,7 @@
                   <span style="font-size: 0.875rem; color: #6b7280;">Real: {{ workOrder.actualHours || 'N/A' }}h</span>
                 </div>
                 <div style="width: 100%; height: 0.25rem; background: #e5e7eb; border-radius: 0.125rem; overflow: hidden;">
-                  <div style="width: {{ getProgressPercentage(workOrder) }}%; height: 100%; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); transition: width 0.3s ease;"></div>
+                  <div [ngStyle]="getProgressBarStyle(workOrder)"></div>
                 </div>
               </div>
             </td>
@@ -309,6 +310,14 @@
                 <button 
                   pButton 
                   type="button" 
+                  icon="pi pi-eye" 
+                  class="p-button-info p-button-sm p-button-rounded" 
+                  (click)="viewWorkOrder(workOrder)" 
+                  pTooltip="Ver detalle">
+                </button>
+                <button 
+                  pButton 
+                  type="button" 
                   icon="pi pi-pencil" 
                   class="p-button-warning p-button-sm p-button-rounded" 
                   (click)="editWorkOrder(workOrder.id)" 
@@ -319,7 +328,7 @@
                   type="button" 
                   icon="pi pi-trash" 
                   class="p-button-danger p-button-sm p-button-rounded" 
-                  (click)="deleteWorkOrder(workOrder.id)" 
+                  (click)="confirmDeleteWorkOrder(workOrder)" 
                   pTooltip="Eliminar orden">
                 </button>
               </div>
@@ -347,5 +356,5 @@
   </div>
 </div>
 
-<p-confirmDialog></p-confirmDialog>
+<!-- Global p-confirmDialog is provided in app.html -->
 <p-toast></p-toast>

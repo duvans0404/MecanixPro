@@ -12,6 +12,7 @@ import { TagModule } from 'primeng/tag';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { MechanicService } from '../../../services/mechanic.service';
 import { Mechanic } from '../../../models/mechanic.model';
+import { TagSeverity } from '../../../models/ui.model';
 
 @Component({
   selector: 'app-mechanic-getall',
@@ -27,7 +28,7 @@ import { Mechanic } from '../../../models/mechanic.model';
     ToastModule,
     TagModule
   ],
-  providers: [ConfirmationService, MessageService],
+  
   templateUrl: './mechanic-getall.component.html',
   encapsulation: ViewEncapsulation.None
 })
@@ -136,6 +137,8 @@ export class MechanicGetallComponent implements OnInit {
       message: `¿Estás seguro de que quieres eliminar ${mechanicName}?`,
       header: 'Confirmar Eliminación',
       icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
       acceptLabel: 'Sí, eliminar',
       rejectLabel: 'Cancelar',
       accept: () => {
@@ -177,7 +180,7 @@ export class MechanicGetallComponent implements OnInit {
     }
   }
 
-  getAvailabilitySeverity(isAvailable: boolean): string {
+  getAvailabilitySeverity(isAvailable: boolean): TagSeverity {
     return isAvailable ? 'success' : 'danger';
   }
 

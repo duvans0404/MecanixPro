@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { Part } from '../models/part.model';
+import { getChangedFields } from '../utils/diff.util';
 
 export const getAllParts = async (req: Request, res: Response) => {
   try {
@@ -36,7 +37,11 @@ export const updatePart = async (req: Request, res: Response) => {
   try {
     const part = await Part.findByPk(req.params.id);
     if (!part) return res.status(404).json({ error: 'Part not found' });
-    await part.update(req.body);
+    const { changes, changedKeys } = getChangedFields(part, req.body);
+    if (changedKeys.length === 0) {
+      return res.status(200).json({ message: 'No changes detected', part });
+    }
+    await part.update(changes);
     res.json(part);
   } catch (error) {
     console.error(error);

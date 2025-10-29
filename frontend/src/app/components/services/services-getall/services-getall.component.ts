@@ -12,6 +12,7 @@ import { TagModule } from 'primeng/tag';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ServiceService } from '../../../services/service.service';
 import { Service } from '../../../models/service.model';
+import { TagSeverity } from '../../../models/ui.model';
 
 @Component({
   selector: 'app-services-getall',
@@ -27,7 +28,7 @@ import { Service } from '../../../models/service.model';
     ToastModule,
     TagModule
   ],
-  providers: [ConfirmationService, MessageService],
+  
   templateUrl: './services-getall.component.html',
   encapsulation: ViewEncapsulation.None
 })
@@ -126,6 +127,8 @@ export class ServicesGetallComponent implements OnInit {
       message: `¿Estás seguro de que quieres eliminar el servicio ${service.name}?`,
       header: 'Confirmar Eliminación',
       icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass: 'p-button-text',
       acceptLabel: 'Sí, eliminar',
       rejectLabel: 'Cancelar',
         accept: () => {
@@ -155,7 +158,7 @@ export class ServicesGetallComponent implements OnInit {
     this.router.navigate(['/services/create']);
   }
 
-  getStatusSeverity(active: boolean): string {
+  getStatusSeverity(active: boolean): TagSeverity {
     return active ? 'success' : 'danger';
   }
 

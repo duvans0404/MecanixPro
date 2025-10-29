@@ -1,0 +1,25 @@
+<div class="auth-page">
+  <div class="auth-card glass-effect">
+    <nav class="auth-tabs" role="tablist">
+      <button class="auth-tab" [class.active]="activeIndex === 0" (click)="onTabChange(0)" role="tab" aria-selected="{{activeIndex===0}}">
+        Recuperar
+      </button>
+      <button *ngIf="hasToken" class="auth-tab" [class.active]="activeIndex === 1" (click)="onTabChange(1)" role="tab" aria-selected="{{activeIndex===1}}">
+        Restablecer
+      </button>
+    </nav>
+    <section class="auth-panels">
+      <div class="auth-panel" *ngIf="activeIndex === 0">
+        <app-forgot-password [panelMode]="true"></app-forgot-password>
+      </div>
+      <div class="auth-panel" *ngIf="hasToken && activeIndex === 1">
+        <app-reset-password [panelMode]="true"></app-reset-password>
+      </div>
+      <div style="text-align:center; margin-top: 18px;">
+        <a routerLink="/login" class="btn-secondary" style="display:inline-block; min-width:160px; text-decoration:none; padding:10px 0; border-radius:8px; background:linear-gradient(90deg,#e0e7ff,#f0f9ff); color:#2563eb; font-weight:600; box-shadow:0 2px 8px rgba(0,0,0,0.04); transition:background 0.2s; border:none;">
+          <i class="pi pi-home" style="margin-right:6px;"></i>Regresar al inicio
+        </a>
+      </div>
+    </section>
+  </div>
+</div>

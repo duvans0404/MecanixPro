@@ -24,39 +24,41 @@
     </div>
 
     <!-- Filtros y búsqueda -->
-    <div class="appointments-filters">
-      <div class="appointments-filters-content">
-        <div class="appointments-filters-header">
-          <h3 class="appointments-filters-title">
-            <i class="pi pi-filter" style="margin-right: 0.75rem; color: #6366f1;"></i>
+    <div class="page-card">
+      <div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin: 0; display: flex; align-items: center;">
+            <i class="pi pi-filter" style="margin-right: 0.75rem; color: #3b82f6;"></i>
             Filtros y Búsqueda
           </h3>
           <button 
             type="button" 
-            class="appointments-clear-filters"
+            class="p-button p-button-text"
             (click)="clearFilters()">
             <i class="pi pi-refresh"></i>
             Limpiar filtros
           </button>
         </div>
-        <div class="appointments-filters-grid">
-          <div class="appointments-filter-group">
-            <label class="appointments-filter-label">Buscar</label>
-            <div class="appointments-filter-input">
-              <i class="pi pi-search"></i>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Buscar</label>
+            <div style="position: relative;">
+              <i class="pi pi-search" style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; z-index: 10;"></i>
               <input 
                 type="text" 
                 pInputText 
-                name="ngModel"                 [(ngModel)]="searchTerm" 
+                class="form-control"
+                style="padding-left: 2.5rem !important;"
+                [(ngModel)]="searchTerm" 
                 name="searchTerm"
                 (input)="onSearch()"
                 placeholder="Buscar por cliente, vehículo o notas...">
             </div>
           </div>
-          <div class="appointments-filter-group">
-            <label class="appointments-filter-label">Estado</label>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Estado</label>
             <p-select 
-              name="ngModel"               [(ngModel)]="statusFilter" 
+              [(ngModel)]="statusFilter" 
               name="statusFilter"
               [options]="statusOptions"
               (onChange)="onStatusFilterChange()"
@@ -64,15 +66,15 @@
               style="width: 100%;">
             </p-select>
           </div>
-          <div class="appointments-filter-group">
-            <label class="appointments-filter-label">Fecha</label>
-            <p-calendar 
-              name="ngModel"               [(ngModel)]="dateFilter" 
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Fecha</label>
+            <p-datepicker 
+              [(ngModel)]="dateFilter" 
               name="dateFilter"
               (onSelect)="onDateFilterChange()"
               placeholder="Filtrar por fecha"
               style="width: 100%;">
-            </p-calendar>
+            </p-datepicker>
           </div>
         </div>
       </div>
@@ -154,10 +156,10 @@
         </ng-template>
         
         <ng-template pTemplate="body" let-appointment>
-          <tr class="hover:bg-indigo-50/50 transition-colors duration-200">
-            <td class="py-4">
+          <tr style="transition: background-color 0.2s ease;">
+            <td style="padding: 1rem;">
               <div style="display: flex; align-items: center; gap: 0.75rem;">
-                <div style="width: 2.5rem; height: 2.5rem; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center;">
+                <div style="width: 2.5rem; height: 2.5rem; background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                   <i class="pi pi-calendar" style="color: white; font-size: 1rem;"></i>
                 </div>
                 <div>
@@ -166,46 +168,38 @@
                 </div>
               </div>
             </td>
-            <td class="py-4">
+            <td style="padding: 1rem;">
               <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <div style="width: 2rem; height: 2rem; background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                  <span style="color: white; font-size: 0.75rem; font-weight: 700;">{{ getClientName(appointment.clientId).charAt(0).toUpperCase() }}</span>
-                </div>
-                <span style="color: #374151; font-weight: 500;">{{ getClientName(appointment.clientId) }}</span>
+                <i class="pi pi-user" style="color: #6b7280; font-size: 0.875rem;"></i>
+                <span style="color: #374151;">{{ getClientName(appointment.clientId) }}</span>
               </div>
             </td>
-            <td class="py-4">
+            <td style="padding: 1rem;">
               <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <div style="width: 2rem; height: 2rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                  <i class="pi pi-car" style="color: white; font-size: 0.75rem;"></i>
-                </div>
-                <span style="color: #374151; font-weight: 500;">{{ getVehicleInfo(appointment.vehicleId) }}</span>
+                <i class="pi pi-car" style="color: #6b7280; font-size: 0.875rem;"></i>
+                <span style="color: #374151;">{{ getVehicleInfo(appointment.vehicleId) }}</span>
               </div>
             </td>
-            <td class="py-4">
+            <td style="padding: 1rem;">
               <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <div style="width: 2rem; height: 2rem; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                  <i class="pi pi-wrench" style="color: white; font-size: 0.75rem;"></i>
-                </div>
-                <span style="color: #374151; font-weight: 500;">{{ getMechanicName(appointment.mechanicId) }}</span>
+                <i class="pi pi-wrench" style="color: #6b7280; font-size: 0.875rem;"></i>
+                <span style="color: #374151;">{{ getMechanicName(appointment.mechanicId) }}</span>
               </div>
             </td>
-            <td class="py-4">
+            <td style="padding: 1rem;">
               <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <div style="width: 2rem; height: 2rem; background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                  <i class="pi pi-cog" style="color: white; font-size: 0.75rem;"></i>
-                </div>
-                <span style="color: #374151; font-weight: 500;">{{ getServiceName(appointment.serviceId) }}</span>
+                <i class="pi pi-cog" style="color: #6b7280; font-size: 0.875rem;"></i>
+                <span style="color: #374151;">{{ getServiceName(appointment.serviceId) }}</span>
               </div>
             </td>
-            <td class="py-4 text-center">
+            <td style="padding: 1rem; text-align: center;">
               <p-tag 
                 [value]="getStatusText(appointment.status)" 
                 [severity]="getStatusSeverity(appointment.status)"
                 style="font-weight: 600;">
               </p-tag>
             </td>
-            <td class="py-4">
+            <td style="padding: 1rem;">
               <span style="color: #6b7280; font-size: 0.875rem;" *ngIf="appointment.notes; else noNotes">
                 {{ appointment.notes | slice:0:50 }}{{ appointment.notes.length > 50 ? '...' : '' }}
               </span>
@@ -213,8 +207,16 @@
                 <span style="color: #9ca3af; font-style: italic;">Sin notas</span>
               </ng-template>
             </td>
-            <td class="py-4 text-center">
+            <td style="padding: 1rem; text-align: center;">
               <div style="display: flex; justify-content: center; gap: 0.5rem;">
+                <button 
+                  pButton 
+                  type="button" 
+                  icon="pi pi-eye" 
+                  class="p-button-info p-button-sm p-button-rounded" 
+                  (click)="viewAppointment(appointment)" 
+                  pTooltip="Ver detalles">
+                </button>
                 <button 
                   pButton 
                   type="button" 
@@ -238,7 +240,7 @@
         
         <ng-template pTemplate="emptymessage">
           <tr>
-            <td colspan="8" class="text-center py-16">
+            <td colspan="8" style="text-align: center; padding: 4rem;">
               <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
                 <div style="width: 5rem; height: 5rem; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
                   <i class="pi pi-calendar" style="font-size: 2.5rem; color: #9ca3af;"></i>
@@ -256,5 +258,5 @@
   </div>
 </div>
 
-<p-confirmDialog></p-confirmDialog>
+<!-- Global p-confirmDialog is provided in app.html -->
 <p-toast></p-toast>

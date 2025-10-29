@@ -9,6 +9,9 @@ import { Part } from './part.model';
 import { Service } from './service.model';
 import { WorkOrderService } from './work-order-service.model';
 import { WorkOrderPart } from './work-order-part.model';
+import Role from './role.model';
+import User from './user.model';
+import UserRoleMap from './user-role.model';
 
 // Client - Vehicle
 Client.hasMany(Vehicle, { foreignKey: 'clientId' });
@@ -62,3 +65,7 @@ Part.belongsToMany(WorkOrder, { through: WorkOrderPart, foreignKey: 'partId', ot
 // WorkOrder - Service (many-to-many)
 WorkOrder.belongsToMany(Service, { through: WorkOrderService, foreignKey: 'workOrderId', otherKey: 'serviceId' });
 Service.belongsToMany(WorkOrder, { through: WorkOrderService, foreignKey: 'serviceId', otherKey: 'workOrderId' });
+
+// User - Role (many-to-many)
+User.belongsToMany(Role, { through: UserRoleMap, foreignKey: 'userId', otherKey: 'roleId', as: 'roles' });
+Role.belongsToMany(User, { through: UserRoleMap, foreignKey: 'roleId', otherKey: 'userId', as: 'users' });
