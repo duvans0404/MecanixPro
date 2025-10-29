@@ -56,6 +56,20 @@ export class AppComponent implements OnInit {
   private navStartAt = 0;
   private navStopTimer: any = null;
   loadingMessage = 'Cargando…';
+  private readonly segmentTitleMap: Record<string, string> = {
+    'dashboard': 'Dashboard',
+    'clients': 'Clientes',
+    'vehicles': 'Vehículos',
+    'services': 'Servicios',
+    'parts': 'Repuestos',
+    'appointments': 'Citas',
+    'insurance': 'Seguros',
+    'mechanics': 'Mecánicos',
+    'payments': 'Pagos',
+    'work-orders': 'Órdenes de Trabajo',
+    'login': 'Inicio de sesión',
+    'register': 'Registro'
+  };
 
   constructor(
     private dataService: DataService,
@@ -195,8 +209,15 @@ export class AppComponent implements OnInit {
     try {
       const clean = (url || '/').split('?')[0].replace(/^\//, '');
       if (!clean) return 'inicio';
-      return clean
+      const parts = clean
         .split('/')
+        .map(seg => seg.trim());
+      const mappedFirst = this.segmentTitleMap[parts[0]];
+      if (mappedFirst) {
+        const rest = parts.slice(1).map(seg => seg.replace(/[-_]/g, ' ')).map(seg => seg.charAt(0).toUpperCase() + seg.slice(1));
+        return [mappedFirst, ...rest].join(' › ');
+      }
+      return parts
         .map(seg => seg.replace(/[-_]/g, ' '))
         .map(seg => seg.charAt(0).toUpperCase() + seg.slice(1))
         .join(' › ');
