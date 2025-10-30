@@ -20,6 +20,7 @@ export class RegisterComponent {
   loading = false;
   error: string | null = null;
   submitted = false;
+  showPassword = false;
 
   form = this.fb.group({
     username: ['', [Validators.required, Validators.minLength(3)]],

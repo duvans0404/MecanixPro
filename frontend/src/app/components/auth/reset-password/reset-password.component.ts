@@ -23,6 +23,8 @@ export class ResetPasswordComponent {
   token: string | null = null;
   error: string | null = null;
   success = false;
+  showPassword = false;
+  showConfirmPassword = false;
 
   form = this.fb.group({
     password: ['', [Validators.required, Validators.minLength(6)]],
@@ -34,6 +36,36 @@ export class ResetPasswordComponent {
     if (!this.token) {
       this.error = 'Token inválido';
     }
+  }
+
+  getPasswordStrength(): string {
+    const password = this.form.controls.password.value || '';
+    let score = 0;
+    
+    if (password.length >= 6) score++;
+    if (password.length >= 8) score++;
+    if (/[a-z]/.test(password)) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/\d/.test(password)) score++;
+    if (/[^a-zA-Z\d]/.test(password)) score++;
+    
+    if (score <= 2) return 'weak';
+    if (score <= 4) return 'medium';
+    return 'strong';
+  }
+
+  getPasswordStrengthText(): string {
+    const strength = this.getPasswordStrength();
+    switch (strength) {
+      case 'weak': return 'Débil';
+      case 'medium': return 'Moderada';
+      case 'strong': return 'Fuerte';
+      default: return '';
+    }
+  }
+
+  goToLogin() {
+    this.router.navigateByUrl('/login');
   }
 
   submit() {

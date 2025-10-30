@@ -13,6 +13,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { PaymentService } from '../../../services/payment.service';
 import { Payment } from '../../../models/payment.model';
 import { TagSeverity } from '../../../models/ui.model';
+import { ModalService } from '../../../services/modal.service';
 
 @Component({
   selector: 'app-payment-getall',
@@ -61,7 +62,8 @@ export class PaymentGetallComponent implements OnInit {
     private paymentService: PaymentService,
     private router: Router,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private modalService: ModalService
   ) {}
 
   ngOnInit() {
@@ -131,37 +133,39 @@ export class PaymentGetallComponent implements OnInit {
 
   deletePayment(id: number) {
     const payment = this.payments.find(p => p.id === id);
-    const paymentName = payment ? `Pago #${payment.id}` : 'este pago';
+    const paymentName = payment ? `Pago #${payment.id} - $${payment.amount}` : 'este pago';
     
-    this.confirmationService.confirm({
-      message: `¿Estás seguro de que quieres eliminar ${paymentName}?`,
-      header: 'Confirmar Eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      acceptButtonStyleClass: 'p-button-danger',
-      rejectButtonStyleClass: 'p-button-text',
-      acceptLabel: 'Sí, eliminar',
-      rejectLabel: 'Cancelar',
-      accept: () => {
-        this.paymentService.deletePayment(id).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Éxito',
-              detail: 'Pago eliminado correctamente'
-            });
-            this.loadPayments();
-          },
-          error: (error) => {
-            console.error('Error eliminando pago:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Error al eliminar el pago'
-            });
-          }
-        });
+    this.modalService.openDeleteModal(
+      {
+        title: '¿Eliminar Pago?',
+        message: 'Esta acción no se puede deshacer. El pago será eliminado permanentemente.',
+        itemName: paymentName,
+        itemLabel: 'Pago a eliminar:',
+        showWarning: true,
+        warningMessage: '⚠️ Se eliminará toda la información del pago y no se podrá recuperar.'
+      },
+      async () => {
+        try {
+          await this.paymentService.deletePayment(id).toPromise();
+          this.messageService.add({
+            severity: 'success',
+            summary: '¡Éxito!',
+            detail: 'Pago eliminado correctamente',
+            life: 3000
+          });
+          this.loadPayments();
+        } catch (error) {
+          console.error('Error eliminando pago:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al eliminar el pago',
+            life: 3000
+          });
+          throw error; // Re-throw para que el modal maneje el error
+        }
       }
-    });
+    );
   }
 
   createPayment() {

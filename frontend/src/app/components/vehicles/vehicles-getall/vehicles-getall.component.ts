@@ -15,6 +15,7 @@ import { ClientService } from '../../../services/client.service';
 import { Vehicle } from '../../../models/vehicle.model';
 import { Client } from '../../../models/client.model';
 import { TagSeverity } from '../../../models/ui.model';
+import { ModalService } from '../../../services/modal.service';
 
 @Component({
   selector: 'app-vehicles-getall',
@@ -60,7 +61,8 @@ export class VehiclesGetallComponent implements OnInit {
     private clientService: ClientService,
     private router: Router,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private modalService: ModalService
   ) {}
 
   ngOnInit() {
@@ -142,35 +144,35 @@ export class VehiclesGetallComponent implements OnInit {
   }
 
   deleteVehicle(vehicle: Vehicle) {
-    this.confirmationService.confirm({
-      message: `¿Estás seguro de que quieres eliminar el vehículo ${vehicle.make} ${vehicle.model}?`,
-      header: 'Confirmar Eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      acceptButtonStyleClass: 'p-button-danger',
-      rejectButtonStyleClass: 'p-button-text',
-      acceptLabel: 'Sí, eliminar',
-      rejectLabel: 'Cancelar',
-      accept: () => {
-          this.vehicleService.deleteVehicle(vehicle.id).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Éxito',
-              detail: 'Vehículo eliminado correctamente'
-            });
-            this.loadVehicles();
-          },
-          error: (error) => {
-            console.error('Error eliminando vehículo:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Error al eliminar el vehículo'
-            });
-          }
-        });
+    this.modalService.openDeleteModal(
+      {
+        title: '¿Eliminar Vehículo?',
+        message: 'Esta acción no se puede deshacer. El vehículo será eliminado permanentemente.',
+        itemName: `${vehicle.make} ${vehicle.model}`,
+        itemLabel: 'Vehículo a eliminar:',
+        showWarning: true,
+        warningMessage: '⚠️ Se eliminarán también todas las citas y órdenes de trabajo relacionadas con este vehículo.'
+      },
+      async () => {
+        try {
+          await this.vehicleService.deleteVehicle(vehicle.id).toPromise();
+          this.messageService.add({
+            severity: 'success',
+            summary: '¡Éxito!',
+            detail: 'Vehículo eliminado correctamente',
+            life: 3000
+          });
+          await this.loadVehicles();
+        } catch (error) {
+          console.error('Error eliminando vehículo:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al eliminar el vehículo'
+          });
+        }
       }
-    });
+    );
   }
 
   createVehicle() {

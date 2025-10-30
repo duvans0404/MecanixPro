@@ -1,79 +1,141 @@
-<div class="auth-page">
-  <div class="auth-bg" aria-hidden="true"></div>
+<div class="auth-page anim-fade-in">
+  <!-- Enhanced animated background -->
+  <div class="auth-bg anim-fade-in" aria-hidden="true">
+    <div class="bg-pattern"></div>
+    <div class="floating-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+    </div>
+  </div>
 
-  <div class="auth-card">
+  <div class="auth-card anim-slide-down">
     <div class="auth-header">
       <div class="brand">
-        <div class="logo">MP</div>
-        <div class="brand-text">
-          <h1>Crear cuenta</h1>
-          <p>Únete a MecanixPro</p>
+        <div class="logo">
+          <i class="pi pi-user-plus"></i>
         </div>
+        <div class="brand-text">
+          <h1>Crear Cuenta</h1>
+          <p>Únete a nuestro equipo profesional</p>
+        </div>
+      </div>
+      <div class="welcome-badge">
+        <i class="pi pi-shield"></i>
+        <span>Registro Seguro</span>
       </div>
     </div>
 
-    <form class="auth-form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
-      <div class="grid">
-        <div class="form-control" [class.invalid]="form.controls.username.invalid && (form.controls.username.touched || submitted)">
-          <label for="username">Usuario</label>
-          <div class="input-wrapper">
-            <i class="pi pi-user"></i>
-            <input id="username" type="text" formControlName="username" placeholder="usuario" />
+    <form class="auth-form anim-fade-in-up" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="form-grid">
+        <!-- Usuario y Email -->
+        <div class="form-row">
+          <div class="form-control" [class.invalid]="form.controls.username.invalid && (form.controls.username.touched || submitted)">
+            <label for="username">
+              <i class="pi pi-user"></i>
+              Usuario
+            </label>
+            <div class="input-wrapper">
+              <input id="username" type="text" formControlName="username" placeholder="Ingresa tu nombre de usuario" />
+              <div class="input-highlight"></div>
+            </div>
+            <small class="hint" *ngIf="form.controls.username.invalid && (form.controls.username.touched || submitted)">
+              <i class="pi pi-exclamation-circle"></i>
+              Mínimo 3 caracteres
+            </small>
           </div>
-          <small class="hint" *ngIf="form.controls.username.invalid && (form.controls.username.touched || submitted)">
-            Mínimo 3 caracteres
-          </small>
-        </div>
 
-        <div class="form-control" [class.invalid]="form.controls.email.invalid && (form.controls.email.touched || submitted)">
-          <label for="email">Email</label>
-          <div class="input-wrapper">
-            <i class="pi pi-envelope"></i>
-            <input id="email" type="email" formControlName="email" placeholder="tu@email.com" />
-          </div>
-          <small class="hint" *ngIf="form.controls.email.invalid && (form.controls.email.touched || submitted)">
-            Ingresa un email válido
-          </small>
-        </div>
-
-        <div class="form-control" [class.invalid]="form.controls.password.invalid && (form.controls.password.touched || submitted)">
-          <label for="password">Contraseña</label>
-          <div class="input-wrapper">
-            <i class="pi pi-lock"></i>
-            <input id="password" type="password" formControlName="password" placeholder="********" />
-          </div>
-          <small class="hint" *ngIf="form.controls.password.invalid && (form.controls.password.touched || submitted)">
-            Mínimo 6 caracteres
-          </small>
-        </div>
-
-        <div class="form-control">
-          <label for="firstName">Nombre</label>
-          <div class="input-wrapper">
-            <i class="pi pi-id-card"></i>
-            <input id="firstName" type="text" formControlName="firstName" placeholder="Nombre" />
+          <div class="form-control" [class.invalid]="form.controls.email.invalid && (form.controls.email.touched || submitted)">
+            <label for="email">
+              <i class="pi pi-envelope"></i>
+              Correo Electrónico
+            </label>
+            <div class="input-wrapper">
+              <input id="email" type="email" formControlName="email" placeholder="tu@email.com" />
+              <div class="input-highlight"></div>
+            </div>
+            <small class="hint" *ngIf="form.controls.email.invalid && (form.controls.email.touched || submitted)">
+              <i class="pi pi-exclamation-circle"></i>
+              Ingresa un email válido
+            </small>
           </div>
         </div>
 
-        <div class="form-control">
-          <label for="lastName">Apellido</label>
-          <div class="input-wrapper">
-            <i class="pi pi-id-card"></i>
-            <input id="lastName" type="text" formControlName="lastName" placeholder="Apellido" />
+        <!-- Nombre y Apellido -->
+        <div class="form-row">
+          <div class="form-control" [class.invalid]="form.controls.firstName.invalid && (form.controls.firstName.touched || submitted)">
+            <label for="firstName">
+              <i class="pi pi-id-card"></i>
+              Nombre
+            </label>
+            <div class="input-wrapper">
+              <input id="firstName" type="text" formControlName="firstName" placeholder="Tu nombre" />
+              <div class="input-highlight"></div>
+            </div>
+            <small class="hint" *ngIf="form.controls.firstName.invalid && (form.controls.firstName.touched || submitted)">
+              <i class="pi pi-exclamation-circle"></i>
+              Campo requerido
+            </small>
+          </div>
+
+          <div class="form-control" [class.invalid]="form.controls.lastName.invalid && (form.controls.lastName.touched || submitted)">
+            <label for="lastName">
+              <i class="pi pi-id-card"></i>
+              Apellido
+            </label>
+            <div class="input-wrapper">
+              <input id="lastName" type="text" formControlName="lastName" placeholder="Tu apellido" />
+              <div class="input-highlight"></div>
+            </div>
+            <small class="hint" *ngIf="form.controls.lastName.invalid && (form.controls.lastName.touched || submitted)">
+              <i class="pi pi-exclamation-circle"></i>
+              Campo requerido
+            </small>
           </div>
         </div>
 
-        <div class="form-control">
-          <label for="role">Rol</label>
-          <div class="input-wrapper select">
-            <i class="pi pi-users"></i>
-            <select id="role" formControlName="role">
-              <option value="CLIENT">Cliente</option>
-              <option value="RECEPTIONIST">Recepcionista</option>
-              <option value="MECHANIC">Mecánico</option>
-              <option value="MANAGER">Manager</option>
-              <option value="ADMIN">Admin</option>
-            </select>
+        <!-- Contraseña y Rol -->
+        <div class="form-row">
+          <div class="form-control" [class.invalid]="form.controls.password.invalid && (form.controls.password.touched || submitted)">
+            <label for="password">
+              <i class="pi pi-lock"></i>
+              Contraseña
+            </label>
+            <div class="input-wrapper">
+              <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" placeholder="Mínimo 6 caracteres" />
+              <button type="button" class="toggle-visibility" (click)="showPassword = !showPassword" [attr.aria-pressed]="showPassword">
+                <i class="pi" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+              </button>
+              <div class="input-highlight"></div>
+            </div>
+            <small class="hint" *ngIf="form.controls.password.invalid && (form.controls.password.touched || submitted)">
+              <i class="pi pi-exclamation-circle"></i>
+              Mínimo 6 caracteres
+            </small>
+          </div>
+
+          <div class="form-control" [class.invalid]="form.controls.role.invalid && (form.controls.role.touched || submitted)">
+            <label for="role">
+              <i class="pi pi-users"></i>
+              Rol
+            </label>
+            <div class="input-wrapper select-wrapper">
+              <select id="role" formControlName="role">
+                <option value="" disabled>Selecciona un rol</option>
+                <option value="CLIENT">👤 Cliente</option>
+                <option value="RECEPTIONIST">📞 Recepcionista</option>
+                <option value="MECHANIC">🔧 Mecánico</option>
+                <option value="MANAGER">👔 Manager</option>
+                <option value="ADMIN">⚡ Administrador</option>
+              </select>
+              <i class="pi pi-chevron-down select-arrow"></i>
+              <div class="input-highlight"></div>
+            </div>
+            <small class="hint" *ngIf="form.controls.role.invalid && (form.controls.role.touched || submitted)">
+              <i class="pi pi-exclamation-circle"></i>
+              Selecciona un rol
+            </small>
           </div>
         </div>
       </div>
@@ -81,19 +143,25 @@
       <button class="btn-primary" type="submit" [disabled]="loading || form.invalid">
         <span class="btn-content">
           <i class="pi" [ngClass]="loading ? 'pi-spin pi-spinner' : 'pi-user-plus'"></i>
-          {{ loading ? 'Creando…' : 'Crear cuenta' }}
+          <span class="btn-text">{{ loading ? 'Creando cuenta...' : 'Crear Cuenta' }}</span>
         </span>
+        <div class="btn-glow"></div>
       </button>
 
-      <p class="error" *ngIf="error">
-        <i class="pi pi-exclamation-triangle"></i>
-        {{ error }}
-      </p>
+      <div class="error-container" *ngIf="error">
+        <div class="error-message">
+          <i class="pi pi-exclamation-triangle"></i>
+          <span>{{ error }}</span>
+        </div>
+      </div>
     </form>
 
     <div class="auth-footer">
       <span>¿Ya tienes cuenta?</span>
-      <a routerLink="/login">Iniciar sesión</a>
+      <a routerLink="/login">
+        <i class="pi pi-sign-in"></i>
+        Iniciar Sesión
+      </a>
     </div>
   </div>
 </div>
