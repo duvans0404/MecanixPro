@@ -13,6 +13,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ServiceService } from '../../../services/service.service';
 import { Service } from '../../../models/service.model';
 import { TagSeverity } from '../../../models/ui.model';
+import { ModalService } from '../../../services/modal.service';
 
 @Component({
   selector: 'app-services-getall',
@@ -54,7 +55,8 @@ export class ServicesGetallComponent implements OnInit {
     private serviceService: ServiceService,
     private router: Router,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private modalService: ModalService
   ) {}
 
   ngOnInit() {
@@ -123,35 +125,37 @@ export class ServicesGetallComponent implements OnInit {
   }
 
   deleteService(service: Service) {
-    this.confirmationService.confirm({
-      message: `¿Estás seguro de que quieres eliminar el servicio ${service.name}?`,
-      header: 'Confirmar Eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      acceptButtonStyleClass: 'p-button-danger',
-      rejectButtonStyleClass: 'p-button-text',
-      acceptLabel: 'Sí, eliminar',
-      rejectLabel: 'Cancelar',
-        accept: () => {
-          this.serviceService.deleteService(service.id).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Éxito',
-              detail: 'Servicio eliminado correctamente'
-            });
-            this.loadServices();
-          },
-          error: (error) => {
-            console.error('Error eliminando servicio:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Error al eliminar el servicio'
-            });
-          }
-        });
+    this.modalService.openDeleteModal(
+      {
+        title: '¿Eliminar Servicio?',
+        message: 'Esta acción no se puede deshacer. El servicio será eliminado permanentemente.',
+        itemName: service.name,
+        itemLabel: 'Servicio a eliminar:',
+        showWarning: true,
+        warningMessage: '⚠️ Se eliminarán también todas las citas y órdenes de trabajo que usen este servicio.'
+      },
+      async () => {
+        try {
+          await this.serviceService.deleteService(service.id).toPromise();
+          this.messageService.add({
+            severity: 'success',
+            summary: '¡Éxito!',
+            detail: 'Servicio eliminado correctamente',
+            life: 3000
+          });
+          this.loadServices();
+        } catch (error) {
+          console.error('Error eliminando servicio:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al eliminar el servicio',
+            life: 3000
+          });
+          throw error; // Re-throw para que el modal maneje el error
+        }
       }
-    });
+    );
   }
 
   createService() {

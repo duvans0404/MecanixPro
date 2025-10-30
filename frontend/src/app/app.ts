@@ -88,8 +88,21 @@ export class AppComponent implements OnInit {
       this.isDarkMode = isDark;
     });
     this.initializeKeyboardShortcuts();
+    
+    // Suscribirse a cambios en el usuario actual
+    this.auth.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
+    
     if (this.auth.isAuthenticated()) {
-      this.auth.getProfile().subscribe();
+      this.auth.getProfile().subscribe({
+        next: ({ user }) => {
+          this.currentUser = user;
+        },
+        error: (error) => {
+          console.error('Error loading user profile:', error);
+        }
+      });
     }
 
     // Barra de progreso durante navegación de rutas
@@ -176,12 +189,12 @@ export class AppComponent implements OnInit {
   }
 
   prepareRoute(outlet: RouterOutlet): string | null {
-    if (!outlet || !outlet.isActivated) {
+    if (!outlet || !outlet.isActivated || !outlet.activatedRoute) {
       return null;
     }
     const data = outlet.activatedRouteData?.['animation'] as string | undefined;
     if (data) return data;
-    const url = outlet.activatedRoute?.snapshot?.url?.map(s => s.path).join('/') ?? null;
+    const url = outlet.activatedRoute.snapshot?.url?.map(s => s.path).join('/') ?? null;
     return url;
   }
 

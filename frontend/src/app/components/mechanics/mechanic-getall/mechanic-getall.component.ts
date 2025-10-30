@@ -13,6 +13,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { MechanicService } from '../../../services/mechanic.service';
 import { Mechanic } from '../../../models/mechanic.model';
 import { TagSeverity } from '../../../models/ui.model';
+import { ModalService } from '../../../services/modal.service';
 
 @Component({
   selector: 'app-mechanic-getall',
@@ -60,7 +61,8 @@ export class MechanicGetallComponent implements OnInit {
     private mechanicService: MechanicService,
     private router: Router,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private modalService: ModalService
   ) {}
 
   ngOnInit() {
@@ -133,35 +135,37 @@ export class MechanicGetallComponent implements OnInit {
     const mechanic = this.mechanics.find(m => m.id === id);
     const mechanicName = mechanic ? `${mechanic.firstName} ${mechanic.lastName}` : 'este mecánico';
     
-    this.confirmationService.confirm({
-      message: `¿Estás seguro de que quieres eliminar ${mechanicName}?`,
-      header: 'Confirmar Eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      acceptButtonStyleClass: 'p-button-danger',
-      rejectButtonStyleClass: 'p-button-text',
-      acceptLabel: 'Sí, eliminar',
-      rejectLabel: 'Cancelar',
-      accept: () => {
-        this.mechanicService.deleteMechanic(id).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Éxito',
-              detail: 'Mecánico eliminado correctamente'
-            });
-            this.loadMechanics();
-          },
-          error: (error) => {
-            console.error('Error eliminando mecánico:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Error al eliminar el mecánico'
-            });
-          }
-        });
+    this.modalService.openDeleteModal(
+      {
+        title: '¿Eliminar Mecánico?',
+        message: 'Esta acción no se puede deshacer. El mecánico será eliminado permanentemente.',
+        itemName: mechanicName,
+        itemLabel: 'Mecánico a eliminar:',
+        showWarning: true,
+        warningMessage: '⚠️ Se eliminarán también todas las citas y órdenes de trabajo asignadas a este mecánico.'
+      },
+      async () => {
+        try {
+          await this.mechanicService.deleteMechanic(id).toPromise();
+          this.messageService.add({
+            severity: 'success',
+            summary: '¡Éxito!',
+            detail: 'Mecánico eliminado correctamente',
+            life: 3000
+          });
+          this.loadMechanics();
+        } catch (error) {
+          console.error('Error eliminando mecánico:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al eliminar el mecánico',
+            life: 3000
+          });
+          throw error; // Re-throw para que el modal maneje el error
+        }
       }
-    });
+    );
   }
 
   createMechanic() {

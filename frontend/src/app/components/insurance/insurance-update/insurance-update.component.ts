@@ -6,7 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
-import { DatePicker } from 'primeng/datepicker';
+import { DatePickerModule } from 'primeng/datepicker';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { InsuranceService } from '../../../services/insurance.service';
@@ -22,7 +22,7 @@ import { Insurance } from '../../../models/insurance.model';
     InputTextModule,
     InputNumberModule,
     SelectModule,
-    DatePicker,
+    DatePickerModule,
     ToastModule
   ],
   providers: [MessageService],

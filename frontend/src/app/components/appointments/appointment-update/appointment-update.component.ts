@@ -2,13 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 import { AppointmentService } from '../../../services/appointment.service';
 import { Appointment } from '../../../models/appointment.model';
 
 @Component({
   selector: 'app-appointment-update',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ToastModule],
+  providers: [MessageService],
   templateUrl: './appointment-update.component.html',
 })
 export class AppointmentUpdateComponent implements OnInit {
@@ -32,7 +35,8 @@ export class AppointmentUpdateComponent implements OnInit {
   constructor(
     private appointmentService: AppointmentService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService
   ) {}
 
   ngOnInit() {
@@ -58,6 +62,11 @@ export class AppointmentUpdateComponent implements OnInit {
       error: (error: any) => {
         this.error = 'Error al cargar la cita';
         this.loading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al cargar la cita'
+        });
         console.error('Error:', error);
       }
     });
@@ -70,11 +79,21 @@ export class AppointmentUpdateComponent implements OnInit {
     this.appointmentService.updateAppointment(this.appointmentId, this.appointment).subscribe({
       next: (response) => {
         console.log('Cita actualizada exitosamente:', response);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Cita actualizada correctamente'
+        });
         this.router.navigate(['/appointments']);
       },
       error: (error: any) => {
         this.error = 'Error al actualizar la cita';
         this.loading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Error al actualizar la cita'
+        });
         console.error('Error:', error);
       }
     });

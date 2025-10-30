@@ -13,6 +13,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { InsuranceService } from '../../../services/insurance.service';
 import { Insurance } from '../../../models/insurance.model';
 import { TagSeverity } from '../../../models/ui.model';
+import { ModalService } from '../../../services/modal.service';
 
 @Component({
   selector: 'app-insurance-getall',
@@ -58,7 +59,8 @@ export class InsuranceGetallComponent implements OnInit {
     private insuranceService: InsuranceService,
     private router: Router,
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private modalService: ModalService
   ) {}
 
   ngOnInit() {
@@ -130,35 +132,37 @@ export class InsuranceGetallComponent implements OnInit {
     const insurance = this.insurances.find(i => i.id === id);
     const insuranceName = insurance ? insurance.companyName : 'este seguro';
     
-    this.confirmationService.confirm({
-      message: `¿Estás seguro de que quieres eliminar ${insuranceName}?`,
-      header: 'Confirmar Eliminación',
-      icon: 'pi pi-exclamation-triangle',
-      acceptButtonStyleClass: 'p-button-danger',
-      rejectButtonStyleClass: 'p-button-text',
-      acceptLabel: 'Sí, eliminar',
-      rejectLabel: 'Cancelar',
-      accept: () => {
-        this.insuranceService.deleteInsurance(id).subscribe({
-          next: () => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Éxito',
-              detail: 'Seguro eliminado correctamente'
-            });
-            this.loadInsurances();
-          },
-          error: (error) => {
-            console.error('Error eliminando seguro:', error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Error al eliminar el seguro'
-            });
-          }
-        });
+    this.modalService.openDeleteModal(
+      {
+        title: '¿Eliminar Seguro?',
+        message: 'Esta acción no se puede deshacer. El seguro será eliminado permanentemente.',
+        itemName: insuranceName,
+        itemLabel: 'Seguro a eliminar:',
+        showWarning: true,
+        warningMessage: '⚠️ Se eliminarán también todas las reclamaciones y registros asociados a este seguro.'
+      },
+      async () => {
+        try {
+          await this.insuranceService.deleteInsurance(id).toPromise();
+          this.messageService.add({
+            severity: 'success',
+            summary: '¡Éxito!',
+            detail: 'Seguro eliminado correctamente',
+            life: 3000
+          });
+          this.loadInsurances();
+        } catch (error) {
+          console.error('Error eliminando seguro:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Error al eliminar el seguro',
+            life: 3000
+          });
+          throw error; // Re-throw para que el modal maneje el error
+        }
       }
-    });
+    );
   }
 
   createInsurance() {
