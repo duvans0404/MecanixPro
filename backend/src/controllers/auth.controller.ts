@@ -48,11 +48,24 @@ export const register = async (req: Request, res: Response): Promise<void> => {
     // Assign role relation as well (default CLIENT if none provided)
     try {
       const roleName = (role || UserRole.CLIENT) as string;
-      const roleRecord = await Role.findOne({ where: { name: roleName } });
+      console.log(`🔍 [Register] Asignando rol "${roleName}" al usuario ${user.username}`);
+      
+      // Asegurar que el rol existe en la base de datos
+      let roleRecord = await Role.findOne({ where: { name: roleName } });
+      if (!roleRecord) {
+        console.log(`⚠️ [Register] Rol "${roleName}" no encontrado, creándolo...`);
+        roleRecord = await Role.create({ name: roleName });
+      }
+      
       if (roleRecord && typeof (user as any).addRole === 'function') {
         await (user as any).addRole(roleRecord);
+        console.log(`✅ [Register] Rol "${roleName}" asignado correctamente al usuario ${user.username}`);
+      } else {
+        console.warn(`⚠️ [Register] No se pudo asignar el rol. roleRecord:`, roleRecord, 'addRole function:', typeof (user as any).addRole);
       }
-    } catch {}
+    } catch (error) {
+      console.error('❌ [Register] Error al asignar rol:', error);
+    }
 
     // Generate tokens
   const accessToken = await AuthService.generateAccessToken(user);
@@ -240,10 +253,16 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
     const userData = user.toJSON();
     const rolesArray = ((userData as any).roles || []).map((r: any) => r.name || r);
     
+    // Usar el campo role del usuario como fuente de verdad principal
+    // El campo role es el rol que viene directamente con el usuario desde la BD
+    const finalRoles = userData.role ? [userData.role] : (rolesArray.length > 0 ? rolesArray : []);
+    
+    console.log(`👤 [GetProfile] Usuario: ${userData.username}, role (campo principal): ${userData.role}, Roles desde relación:`, rolesArray, 'Roles finales:', finalRoles);
+    
     // Asegurarse de que los roles vengan como array de strings, no objetos
     const serializedUser = {
       ...userData,
-      roles: rolesArray.length > 0 ? rolesArray : (userData.role ? [userData.role] : [])
+      roles: finalRoles
     };
 
     res.status(200).json({ user: serializedUser });
@@ -428,6 +447,118 @@ export const resetPassword = async (req: Request, res: Response): Promise<void> 
     res.status(200).json({ message: 'Password has been reset successfully' });
   } catch (error) {
     console.error('Reset password error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+/**
+ * Get all users (ADMIN only)
+ */
+export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: 'User not authenticated' });
+      return;
+    }
+
+    // Verificar que el usuario es ADMIN
+    const currentUser = await User.findByPk(req.user.id);
+    if (!currentUser || currentUser.role !== UserRole.ADMIN) {
+      res.status(403).json({ message: 'Access denied. Admin only.' });
+      return;
+    }
+
+    const users = await User.findAll({
+      attributes: { exclude: ['password'] },
+      include: [{ model: Role, as: 'roles', attributes: ['id', 'name'], through: { attributes: [] } }],
+      order: [['createdAt', 'DESC']]
+    });
+
+    // Serializar usuarios con roles como array de strings
+    const serializedUsers = users.map(user => {
+      const userData = user.toJSON();
+      const rolesArray = ((userData as any).roles || []).map((r: any) => r.name || r);
+      return {
+        ...userData,
+        roles: rolesArray.length > 0 ? rolesArray : (userData.role ? [userData.role] : [])
+      };
+    });
+
+    res.status(200).json({ users: serializedUsers });
+  } catch (error) {
+    console.error('Get all users error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+/**
+ * Update user role (ADMIN only)
+ */
+export const updateUserRole = async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: 'User not authenticated' });
+      return;
+    }
+
+    // Verificar que el usuario es ADMIN
+    const currentUser = await User.findByPk(req.user.id);
+    if (!currentUser || currentUser.role !== UserRole.ADMIN) {
+      res.status(403).json({ message: 'Access denied. Admin only.' });
+      return;
+    }
+
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    if (!role || !Object.values(UserRole).includes(role as UserRole)) {
+      res.status(400).json({ message: 'Invalid role provided' });
+      return;
+    }
+
+    const user = await User.findByPk(userId, {
+      include: [{ model: Role, as: 'roles', attributes: ['id', 'name'], through: { attributes: [] } }]
+    });
+
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    // Actualizar el campo role
+    user.role = role as UserRole;
+    await user.save();
+
+    // Actualizar la relación many-to-many
+    // Eliminar todos los roles actuales
+    await (user as any).setRoles([]);
+    
+    // Agregar el nuevo rol
+    const roleRecord = await Role.findOne({ where: { name: role } });
+    if (roleRecord) {
+      await (user as any).addRole(roleRecord);
+      console.log(`✅ [UpdateUserRole] Rol "${role}" asignado al usuario ${user.username}`);
+    }
+
+    // Obtener el usuario actualizado
+    const updatedUser = await User.findByPk(userId, {
+      attributes: { exclude: ['password'] },
+      include: [{ model: Role, as: 'roles', attributes: ['id', 'name'], through: { attributes: [] } }]
+    });
+
+    const userData = updatedUser?.toJSON();
+    const rolesArray = ((userData as any)?.roles || []).map((r: any) => r.name || r);
+    const serializedUser = {
+      ...userData,
+      roles: rolesArray.length > 0 ? rolesArray : [role]
+    };
+
+    res.status(200).json({
+      message: 'User role updated successfully',
+      user: serializedUser
+    });
+  } catch (error) {
+    console.error('Update user role error:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };

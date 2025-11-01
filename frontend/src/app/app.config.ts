@@ -1,12 +1,12 @@
-import { ApplicationConfig } from '@angular/core';
+import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
+import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { routes } from './app.routes';
-import { authInterceptor } from './interceptors/auth.interceptor';
-import { timeoutInterceptor } from './interceptors/timeout.interceptor';
-import { loggingInterceptor } from './interceptors/logging.interceptor';
-import { loadingInterceptor } from './interceptors/loading.interceptor';
+import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { timeoutInterceptor } from './core/interceptors/timeout.interceptor';
+import { loggingInterceptor } from './core/interceptors/logging.interceptor';
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {

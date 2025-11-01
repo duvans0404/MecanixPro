@@ -3,19 +3,19 @@ import { trigger, transition, style, animate, query, group } from '@angular/anim
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DOCUMENT } from '@angular/common';
-import { DataService } from './services/data.service';
-import { ThemeService } from './services/theme.service';
-import { LoadingService } from './services/loading.service';
-import { SidebarComponent } from './components/navigation/sidebar.component';
-import { AuthService } from './services/auth.service';
+import { DataService } from './core/services/data.service';
+import { ThemeService } from './core/services/theme.service';
+import { LoadingService } from './core/services/loading.service';
+import { SidebarComponent } from './components/navigation/base/sidebar.component';
+import { AuthService } from './core/services/auth.service';
 import { Router, NavigationStart, NavigationEnd, NavigationCancel, NavigationError } from '@angular/router';
-import { SidebarAdminComponent } from './components/navigation/sidebar-admin.component';
-import { SidebarManagerComponent } from './components/navigation/sidebar-manager.component';
-import { SidebarMechanicComponent } from './components/navigation/sidebar-mechanic.component';
-import { SidebarReceptionistComponent } from './components/navigation/sidebar-receptionist.component';
+import { SidebarAdminComponent } from './components/navigation/admin/sidebar-admin.component';
+import { SidebarManagerComponent } from './components/navigation/manager/sidebar-manager.component';
+import { SidebarMechanicComponent } from './components/navigation/mechanic/sidebar-mechanic.component';
+import { SidebarReceptionistComponent } from './components/navigation/receptionist/sidebar-receptionist.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { SidebarClientComponent } from './components/navigation/sidebar-client.component';
-import { GlobalModalsComponent } from './components/shared/global-modals.component';
+import { SidebarClientComponent } from './components/navigation/client/sidebar-client.component';
+import { GlobalModalsComponent } from './shared/components/global-modals.component';
 
 @Component({
   selector: 'app-root',
@@ -57,6 +57,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
   private navStartAt = 0;
   private navStopTimer: any = null;
   loadingMessage = 'Cargando…';
+  private profileLoaded = false; // Bandera para saber si el perfil ya se cargó
   private readonly segmentTitleMap: Record<string, string> = {
     'dashboard': 'Dashboard',
     'clients': 'Clientes',
@@ -171,17 +172,34 @@ export class AppComponent implements OnInit, AfterViewChecked {
     // Suscribirse a cambios en el usuario actual
     this.auth.currentUser$.subscribe(user => {
       this.currentUser = user;
+      // Si el perfil ya se cargó, marcar como cargado
+      if (user && !this.profileLoaded) {
+        this.profileLoaded = true;
+      }
     });
     
     if (this.auth.isAuthenticated()) {
+      this.profileLoaded = false; // Resetear la bandera antes de cargar
       this.auth.getProfile().subscribe({
         next: ({ user }) => {
+          console.log('👤 [AppComponent] Perfil de usuario recibido:', user);
+          console.log('👤 [AppComponent] Roles del usuario:', (user as any).roles || (user as any).role);
           this.currentUser = user;
+          this.profileLoaded = true; // Marcar que el perfil se cargó
           // Forzar detección de cambios después de actualizar el usuario
           this.cdr.detectChanges();
+          // Log después de la detección de cambios
+          setTimeout(() => {
+            console.log('✅ [AppComponent] Usuario actualizado. displayRole:', this.displayRole);
+          }, 0);
         },
         error: (error) => {
           console.error('❌ [AppComponent] Error loading user profile:', error);
+          // Si falla, permitir usar el token como fallback después de un delay
+          setTimeout(() => {
+            this.profileLoaded = true;
+            this.cdr.detectChanges();
+          }, 1000);
         }
       });
     }
@@ -344,18 +362,15 @@ export class AppComponent implements OnInit, AfterViewChecked {
 
   /**
    * Obtiene los roles directamente del backend (perfil o token), sin prioridad
-   * Usa los roles tal como vienen de la base de datos
+   * Usa los roles tal como vienen del backend en el orden que vienen
    */
   get roles(): string[] {
     const u = this.currentUser as any;
     
-    // Preferir roles del perfil (servidor) que vienen directamente de la BD
-    // El backend ahora devuelve roles como array de strings directamente
-    if (u && (u.roles || u.role)) {
-      const raw = (u.roles as any[] | undefined) || (u.role ? [u.role] : []);
-      
-      // Los roles pueden venir como strings (nuevo formato del backend) o como objetos {id, name}
-      const names = raw
+    // Sin prioridad: usar los roles tal como vienen del backend
+    // Primero intentar desde el array roles (relación many-to-many)
+    if (u && u.roles && Array.isArray(u.roles) && u.roles.length > 0) {
+      const names = u.roles
         .map((r: any) => {
           if (typeof r === 'string') {
             return r;
@@ -370,12 +385,31 @@ export class AppComponent implements OnInit, AfterViewChecked {
         .map((v: string) => String(v).toUpperCase());
       
       if (names.length) {
+        console.log('🔍 [AppComponent] Roles desde perfil (relación):', names);
         return names;
       }
     }
     
-    // Respaldo: roles desde el token JWT (que también vienen del backend)
-    return (this.auth.roles || []).map(r => String(r).toUpperCase());
+    // Si no hay roles en la relación, usar el campo role como fallback
+    if (u && u.role) {
+      const roleStr = String(u.role).toUpperCase().trim();
+      if (roleStr && roleStr !== 'UNDEFINED' && roleStr !== 'NULL') {
+        console.log('🔍 [AppComponent] Rol desde campo role (fallback):', roleStr);
+        return [roleStr];
+      }
+    }
+    
+    // Respaldo: roles desde el token JWT SOLO si el perfil ya se cargó o si no hay currentUser
+    // Esto evita usar roles del token mientras el perfil se está cargando
+    if (this.profileLoaded || !this.currentUser) {
+      const tokenRoles = (this.auth.roles || []).map(r => String(r).toUpperCase());
+      console.log('🔍 [AppComponent] Roles desde token (fallback):', tokenRoles);
+      return tokenRoles;
+    }
+    
+    // Si el perfil aún no se ha cargado, devolver array vacío para evitar mostrar rol incorrecto
+    console.log('⏳ [AppComponent] Esperando carga del perfil...');
+    return [];
   }
 
   /**
@@ -385,10 +419,13 @@ export class AppComponent implements OnInit, AfterViewChecked {
   get displayRole(): string | undefined {
     const roles = this.roles;
     if (!roles || roles.length === 0) {
+      console.warn('⚠️ [AppComponent] No se encontraron roles para el usuario');
       return undefined;
     }
     // Usar el primer rol que viene del backend, sin ordenar por prioridad
-    return roles[0];
+    const role = roles[0];
+    console.log('🎯 [AppComponent] displayRole seleccionado:', role, 'de roles:', roles);
+    return role;
   }
 
   get sortedRoles(): string[] {

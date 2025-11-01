@@ -18,4 +18,8 @@ router.put('/profile', authenticate, authController.updateProfile);
 router.post('/change-password', authenticate, authController.changePassword);
 router.post('/logout-all', authenticate, authController.logoutAll);
 
+// Admin-only routes
+router.get('/users', authenticate, authController.getAllUsers);
+router.put('/users/:userId/role', authenticate, authController.updateUserRole);
+
 export default router;

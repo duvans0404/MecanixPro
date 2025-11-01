@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { timeout, catchError, throwError } from 'rxjs';
 
 @Component({
@@ -52,7 +52,7 @@ export class RegisterComponent {
         this.loading = false;
         this.router.navigateByUrl('/dashboard');
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Register error:', err);
         this.error = err?.error?.message || 'Error en el registro';
         this.loading = false;

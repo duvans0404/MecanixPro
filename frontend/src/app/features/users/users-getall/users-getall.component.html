@@ -1,0 +1,209 @@
+<div class="page-container">
+  <div class="page-wrapper">
+    <!-- Header -->
+    <div class="page-header">
+      <div style="position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between;">
+        <div>
+          <h1 class="page-title">
+            <i class="pi pi-user-edit" style="margin-right: 0.75rem; color: #3b82f6;"></i>
+            Gestión de Usuarios
+          </h1>
+          <p class="page-subtitle">Administra los usuarios y sus roles del sistema</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros y búsqueda -->
+    <div class="page-card">
+      <div>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin: 0; display: flex; align-items: center;">
+            <i class="pi pi-filter" style="margin-right: 0.75rem; color: #3b82f6;"></i>
+            Filtros y Búsqueda
+          </h3>
+          <button 
+            type="button" 
+            class="p-button p-button-text"
+            (click)="clearFilters()">
+            <i class="pi pi-refresh"></i>
+            Limpiar filtros
+          </button>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Buscar</label>
+            <div style="position: relative;">
+              <i class="pi pi-search" style="position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #6b7280; z-index: 10;"></i>
+              <input 
+                type="text" 
+                pInputText 
+                class="form-control"
+                style="padding-left: 2.5rem !important;"
+                [(ngModel)]="searchTerm" 
+                name="searchTerm"
+                (input)="onSearch()"
+                placeholder="Buscar por nombre, email o usuario...">
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Rol</label>
+            <p-select 
+              [(ngModel)]="roleFilter" 
+              name="roleFilter"
+              [options]="roleOptions" 
+              (onChange)="onRoleFilterChange()"
+              placeholder="Filtrar por rol"
+              style="width: 100%;">
+            </p-select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de usuarios -->
+    <div class="page-card">
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+        <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin: 0; display: flex; align-items: center;">
+          <i class="pi pi-list" style="margin-right: 0.75rem; color: #3b82f6;"></i>
+          Lista de Usuarios
+        </h3>
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 0.875rem; color: #6b7280;">{{ filteredUsers.length }} usuarios</span>
+          <div style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></div>
+        </div>
+      </div>
+      <p-table 
+        [value]="filteredUsers" 
+        [loading]="loading"
+        [paginator]="true" 
+        [rows]="10"
+        [showCurrentPageReport]="true"
+        currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuarios"
+        [rowsPerPageOptions]="[5,10,25,50]"
+        styleClass="modern-datatable">
+        
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="text-left">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-user" style="color: #3b82f6;"></i>
+                <span>Usuario</span>
+              </div>
+            </th>
+            <th class="text-left">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-envelope" style="color: #6b7280;"></i>
+                <span>Email</span>
+              </div>
+            </th>
+            <th class="text-center">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="pi pi-key" style="color: #6b7280;"></i>
+                <span>Rol Actual</span>
+              </div>
+            </th>
+            <th class="text-center">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="pi pi-refresh" style="color: #6b7280;"></i>
+                <span>Cambiar Rol</span>
+              </div>
+            </th>
+            <th class="text-center">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="pi pi-circle-fill" style="color: #6b7280;"></i>
+                <span>Estado</span>
+              </div>
+            </th>
+            <th class="text-center">
+              <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
+                <i class="pi pi-calendar" style="color: #6b7280;"></i>
+                <span>Último Acceso</span>
+              </div>
+            </th>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="body" let-user>
+          <tr style="transition: background-color 0.2s ease;">
+            <td style="padding: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.75rem;">
+                <div style="width: 2.5rem; height: 2.5rem; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                  <i class="pi pi-user" style="color: white; font-size: 1rem;"></i>
+                </div>
+                <div>
+                  <div style="font-weight: 600; color: #1f2937;">{{ getDisplayName(user) }}</div>
+                  <div style="font-size: 0.875rem; color: #6b7280;">@{{ user.username }}</div>
+                  <div style="font-size: 0.75rem; color: #9ca3af;">ID: {{ user.id }}</div>
+                </div>
+              </div>
+            </td>
+            <td style="padding: 1rem;">
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <i class="pi pi-envelope" style="color: #6b7280; font-size: 0.875rem;"></i>
+                <span style="color: #374151;">{{ user.email }}</span>
+              </div>
+            </td>
+            <td style="padding: 1rem; text-align: center;">
+              <p-tag 
+                [value]="getRoleLabel(getCurrentRole(user))" 
+                [severity]="getRoleSeverity(getCurrentRole(user))"
+                style="font-weight: 600;">
+              </p-tag>
+            </td>
+            <td style="padding: 1rem; text-align: center; position: relative;">
+              <div style="display: inline-flex; width: 100%; max-width: 220px; position: relative; z-index: 1;">
+                <p-select 
+                  [options]="availableRoles" 
+                  [ngModel]="getCurrentRole(user)"
+                  (onChange)="onChangeRole(user, $event.value)"
+                  placeholder="Cambiar rol"
+                  style="width: 100%;"
+                  [disabled]="loading"
+                  appendTo="body"
+                  [style]="{'minWidth': '200px'}">
+                </p-select>
+              </div>
+            </td>
+            <td style="padding: 1rem; text-align: center;">
+              <p-tag 
+                [value]="getStatusLabel(user.isActive)" 
+                [severity]="getStatusSeverity(user.isActive)"
+                style="font-weight: 600;">
+              </p-tag>
+            </td>
+            <td style="padding: 1rem; text-align: center;">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <i class="pi pi-calendar-check" style="color: #10b981; font-size: 0.75rem;"></i>
+                  <span style="font-size: 0.75rem; color: #6b7280;">
+                    {{ user.lastLogin ? (user.lastLogin | date:'dd/MM/yy HH:mm') : 'Nunca' }}
+                  </span>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 4rem;">
+              <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                <div style="width: 5rem; height: 5rem; background: #f3f4f6; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                  <i class="pi pi-users" style="font-size: 2.5rem; color: #9ca3af;"></i>
+                </div>
+                <div>
+                  <h3 style="font-size: 1.125rem; font-weight: 600; color: #374151; margin-bottom: 0.5rem;">No se encontraron usuarios</h3>
+                  <p style="color: #6b7280;">Intenta ajustar los filtros de búsqueda</p>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>
+
+<!-- Global p-confirmDialog is provided in app.html -->
+<p-toast></p-toast>
+

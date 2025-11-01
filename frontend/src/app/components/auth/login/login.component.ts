@@ -2,7 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
 import { catchError, throwError } from 'rxjs';
 
 @Component({
@@ -53,7 +53,7 @@ export class LoginComponent {
         const returnUrl = new URLSearchParams(window.location.search).get('returnUrl') || '/dashboard';
         this.router.navigateByUrl(returnUrl);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Login error:', err);
         this.error = err?.error?.message || 'Error de autenticación';
         this.loading = false;

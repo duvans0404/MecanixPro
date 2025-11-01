@@ -2,7 +2,7 @@ import { Component, inject, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../services/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-forgot-password',
@@ -29,7 +29,7 @@ export class ForgotPasswordComponent {
     this.loading = true;
     const { email } = this.form.value;
     this.auth.requestPasswordReset(email!).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.sent = true;
         this.loading = false;
         // En desarrollo, podríamos mostrar el res.resetUrl en consola
