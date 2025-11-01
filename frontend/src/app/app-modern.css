@@ -4,7 +4,22 @@
   grid-template-columns: 280px 1fr;
   height: 100vh;
   background: linear-gradient(135deg, var(--surface-0) 0%, var(--surface-50) 100%);
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modern-app-layout.sidebar-collapsed {
+  grid-template-columns: 80px 1fr;
+}
+
+/* Expandir el grid cuando el sidebar colapsado está en hover */
+.modern-app-layout.sidebar-collapsed:has(.modern-sidebar.collapsed:hover),
+.modern-app-layout.sidebar-collapsed:has(.sidebar-client.collapsed:hover),
+.modern-app-layout.sidebar-collapsed:has(.sidebar-admin.collapsed:hover),
+.modern-app-layout.sidebar-collapsed:has(.sidebar-manager.collapsed:hover),
+.modern-app-layout.sidebar-collapsed:has(.sidebar-mechanic.collapsed:hover),
+.modern-app-layout.sidebar-collapsed:has(.sidebar-receptionist.collapsed:hover) {
+  grid-template-columns: 280px 1fr;
+  transition: grid-template-columns 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modern-app-layout[data-theme="dark"] {
@@ -51,7 +66,18 @@
 .brand-section {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.75rem;
+}
+
+.sidebar-toggle-btn {
+  background: var(--surface-100);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.sidebar-toggle-btn:hover {
+  background: var(--surface-200);
+  transform: scale(1.05);
 }
 
 .brand-logo {
@@ -317,8 +343,12 @@
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-  .modern-app-layout {
-    grid-template-columns: 60px 1fr;
+  .modern-app-layout:not(.sidebar-collapsed) {
+    grid-template-columns: 280px 1fr;
+  }
+  
+  .modern-app-layout.sidebar-collapsed {
+    grid-template-columns: 80px 1fr;
   }
   
   .search-section {

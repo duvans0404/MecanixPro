@@ -2,19 +2,49 @@
   width: 280px;
   height: 100vh;
   background: #1f2937;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-  transition: all 0.3s ease;
+  position: relative;
+  z-index: 10;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: visible;
   border-right: 1px solid #374151;
 }
 
-.sidebar.collapsed {
+.sidebar.collapsed,
+.sidebar.modern-sidebar.collapsed {
   width: 80px;
+  overflow-x: visible;
+}
+
+/* Expandir al hacer hover cuando está colapsado */
+.sidebar.collapsed:hover,
+.sidebar.modern-sidebar.collapsed:hover {
+  width: 280px;
+  position: relative;
+  z-index: 100;
+  box-shadow: 8px 0 30px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+}
+
+.sidebar.collapsed:hover .nav-text,
+.sidebar.modern-sidebar.collapsed:hover .nav-text {
+  display: inline;
+}
+
+.sidebar.collapsed:hover .nav-link,
+.sidebar.modern-sidebar.collapsed:hover .nav-link {
+  justify-content: flex-start;
+}
+
+.sidebar.collapsed:hover .logo-text,
+.sidebar.modern-sidebar.collapsed:hover .logo-text {
+  display: block;
+}
+
+.sidebar.collapsed:hover .sidebar-footer,
+.sidebar.modern-sidebar.collapsed:hover .sidebar-footer {
+  display: flex;
 }
 
 .sidebar-header {

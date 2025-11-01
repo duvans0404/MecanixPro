@@ -1,30 +1,122 @@
 .sidebar-manager {
-  width: 220px;
+  width: 280px;
   background: #23272f;
   color: #fff;
   height: 100vh;
+  position: relative;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: visible;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+.sidebar-manager.collapsed,
+.sidebar-manager.modern-sidebar.collapsed {
+  width: 80px;
+  overflow: visible;
+}
+
+/* Expandir al hacer hover cuando está colapsado */
+.sidebar-manager.collapsed:hover,
+.sidebar-manager.modern-sidebar.collapsed:hover {
+  width: 280px;
+  position: relative;
+  z-index: 100;
+  box-shadow: 8px 0 30px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
+  overflow-x: visible;
+}
+
+.sidebar-manager.collapsed:hover .sidebar-menu a .menu-text,
+.sidebar-manager.modern-sidebar.collapsed:hover .sidebar-menu a .menu-text {
+  display: inline;
+  opacity: 1;
+  width: auto;
+  overflow: visible;
+  transition: opacity 0.2s ease;
+}
+
+.sidebar-manager.collapsed:hover .sidebar-menu a,
+.sidebar-manager.modern-sidebar.collapsed:hover .sidebar-menu a {
+  justify-content: flex-start;
+  padding: 0.75rem 1.25rem;
+}
+
 .sidebar-menu {
   list-style: none;
-  padding: 0;
+  padding: 1rem 0;
   margin: 0;
 }
+
 .sidebar-menu li {
   margin: 0;
 }
+
 .sidebar-menu a {
   display: flex;
   align-items: center;
-  padding: 12px 20px;
+  padding: 0.75rem 1.25rem;
   color: #fff;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  margin: 0.25rem 0.5rem;
+  position: relative;
+  gap: 0.75rem;
 }
+
 .sidebar-menu a:hover {
   background: #2c313a;
+  transform: translateX(2px);
 }
+
+.sidebar-menu a.active {
+  background: #3b82f6;
+  color: white;
+  font-weight: 600;
+}
+
+.sidebar-menu a.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #1d4ed8;
+  border-radius: 0 2px 2px 0;
+}
+
 .sidebar-menu i {
-  margin-right: 12px;
+  font-size: 1.125rem;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.menu-text {
+  display: inline;
+  white-space: nowrap;
+  transition: opacity 0.2s ease, width 0.2s ease;
+}
+
+.sidebar-manager.collapsed .sidebar-menu a,
+.sidebar-manager.modern-sidebar.collapsed .sidebar-menu a {
+  justify-content: center;
+  padding: 0.75rem;
+  margin: 0.25rem 0.5rem;
+}
+
+.sidebar-manager.collapsed .sidebar-menu a .menu-text,
+.sidebar-manager.modern-sidebar.collapsed .sidebar-menu a .menu-text {
+  display: none;
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
 }
 
 /* ========== DARK MODE MANAGER SIDEBAR ========== */

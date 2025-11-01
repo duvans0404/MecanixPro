@@ -1,5 +1,5 @@
 <ng-container *ngIf="!isAuthRoute; else authOnly">
-<div class="modern-app-layout" [attr.data-theme]="isDarkMode ? 'dark' : 'light'">
+<div class="modern-app-layout" [class.sidebar-collapsed]="sidebarCollapsed" [attr.data-theme]="isDarkMode ? 'dark' : 'light'">
   <!-- Barra de progreso global de navegación -->
   <div class="top-progress" [class.is-active]="isNavigating || (loadingService.isLoading$ | async)"></div>
   <div class="loading-overlay" [class.is-active]="isNavigating || (loadingService.isLoading$ | async)" aria-busy="true" aria-live="polite">
@@ -11,21 +11,28 @@
 
   <!-- Modern Sidebar -->
   <ng-container [ngSwitch]="displayRole">
-    <sidebar-admin *ngSwitchCase="'ADMIN'" [isCollapsed]="sidebarCollapsed"></sidebar-admin>
-    <sidebar-manager *ngSwitchCase="'MANAGER'" [isCollapsed]="sidebarCollapsed"></sidebar-manager>
-    <sidebar-mechanic *ngSwitchCase="'MECHANIC'" [isCollapsed]="sidebarCollapsed"></sidebar-mechanic>
-    <sidebar-receptionist *ngSwitchCase="'RECEPTIONIST'" [isCollapsed]="sidebarCollapsed"></sidebar-receptionist>
-    <sidebar-client *ngSwitchCase="'CLIENT'" [isCollapsed]="sidebarCollapsed"></sidebar-client>
-    <app-sidebar *ngSwitchDefault class="modern-sidebar"></app-sidebar>
+    <sidebar-admin *ngSwitchCase="'ADMIN'" [isCollapsed]="sidebarCollapsed" class="modern-sidebar"></sidebar-admin>
+    <sidebar-manager *ngSwitchCase="'MANAGER'" [isCollapsed]="sidebarCollapsed" class="modern-sidebar"></sidebar-manager>
+    <sidebar-mechanic *ngSwitchCase="'MECHANIC'" [isCollapsed]="sidebarCollapsed" class="modern-sidebar"></sidebar-mechanic>
+    <sidebar-receptionist *ngSwitchCase="'RECEPTIONIST'" [isCollapsed]="sidebarCollapsed" class="modern-sidebar"></sidebar-receptionist>
+    <sidebar-client *ngSwitchCase="'CLIENT'" [isCollapsed]="sidebarCollapsed" class="modern-sidebar"></sidebar-client>
+    <app-sidebar *ngSwitchDefault [isCollapsed]="sidebarCollapsed" class="modern-sidebar"></app-sidebar>
   </ng-container>
 
   <!-- Main Content Area -->
-  <div class="modern-main-content">
+  <div class="modern-main-content" [class.sidebar-collapsed]="sidebarCollapsed">
     <!-- Modern Header with Glass Effect -->
     <header class="modern-header glass-effect anim-slide-down">
       <div class="header-wrapper">
         <!-- Brand Section -->
         <div class="brand-section">
+          <button 
+            type="button"
+            (click)="toggleSidebar()"
+            class="sidebar-toggle-btn action-btn"
+            [title]="sidebarCollapsed ? 'Expandir menú' : 'Contraer menú'">
+            <i class="pi" [class.pi-angle-right]="sidebarCollapsed" [class.pi-angle-left]="!sidebarCollapsed"></i>
+          </button>
           <div class="brand-logo hover-raise">
             <div class="logo-gradient anim-pop">
               <i class="pi pi-cog"></i>

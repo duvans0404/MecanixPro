@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
@@ -15,7 +15,7 @@ import { PermissionsService } from '../../services/permissions.service';
   styleUrls: ['./sidebar.component.css']
 })
 export class SidebarComponent implements OnInit {
-  isCollapsed = false;
+  @Input() isCollapsed = false;
   activeRoute = '';
 
   private menuItems = [

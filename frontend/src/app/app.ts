@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
   stats: any = {};
   mobileMenuOpen = false;
   isDarkMode = false;
-  sidebarCollapsed = false;
+  sidebarCollapsed = true; // Colapsado por defecto, se expande con hover
   currentUser: { username?: string; firstName?: string; lastName?: string } | null = null;
   isNavigating = false;
   private navStartAt = 0;

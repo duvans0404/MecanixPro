@@ -1,9 +1,9 @@
-<aside class="sidebar-admin">
+<aside class="sidebar-admin modern-sidebar" [class.collapsed]="isCollapsed">
   <ul class="sidebar-menu">
     <li *ngFor="let item of visibleMenu">
-      <a [routerLink]="item.route">
+      <a [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}">
         <i [class]="item.icon"></i>
-        <span *ngIf="!isCollapsed">{{ item.title }}</span>
+        <span class="menu-text">{{ item.title }}</span>
       </a>
     </li>
   </ul>
