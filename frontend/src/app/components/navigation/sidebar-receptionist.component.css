@@ -119,6 +119,49 @@
   overflow: hidden;
 }
 
+/* ========== MOBILE RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .sidebar-receptionist {
+    width: 280px;
+    position: fixed;
+    left: -280px;
+    top: 0;
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .sidebar-receptionist.open,
+  .sidebar-receptionist.modern-sidebar.open {
+    left: 0;
+  }
+  
+  .sidebar-receptionist.open .sidebar-menu a .menu-text,
+  .sidebar-receptionist.modern-sidebar.open .sidebar-menu a .menu-text {
+    display: inline;
+    opacity: 1;
+    width: auto;
+  }
+  
+  .sidebar-receptionist.open .sidebar-menu a,
+  .sidebar-receptionist.modern-sidebar.open .sidebar-menu a {
+    justify-content: flex-start;
+    padding: 0.75rem 1.25rem;
+  }
+  
+  .sidebar-receptionist.collapsed:hover,
+  .sidebar-receptionist.modern-sidebar.collapsed:hover {
+    width: 80px;
+    left: -280px;
+  }
+  
+  .sidebar-receptionist.collapsed,
+  .sidebar-receptionist.modern-sidebar.collapsed {
+    width: 280px;
+  }
+}
+
 /* ========== DARK MODE RECEPTIONIST SIDEBAR ========== */
 [data-theme="dark"] .sidebar-receptionist {
   background: var(--surface-900);

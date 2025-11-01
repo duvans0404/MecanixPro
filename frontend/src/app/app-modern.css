@@ -366,17 +366,55 @@
     grid-template-columns: 1fr;
   }
   
+  /* Sidebar como overlay en móvil */
   .modern-sidebar {
     position: fixed;
     left: -280px;
     top: 0;
     height: 100vh;
-    z-index: 100;
-    transition: left 0.3s ease;
+    z-index: 1000;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
   }
   
-  .modern-sidebar.open {
+  .modern-sidebar.open,
+  .modern-app-layout:has(.modern-sidebar.open) .modern-sidebar {
     left: 0;
+  }
+  
+  /* Overlay/backdrop cuando el sidebar está abierto - solo móvil */
+  .sidebar-overlay {
+    display: none;
+  }
+  
+  .sidebar-overlay.visible {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: all;
+    cursor: pointer;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  
+  /* Prevenir scroll del body cuando sidebar está abierto en móvil */
+  .modern-app-layout.sidebar-open {
+    overflow: hidden;
+  }
+  
+  .modern-main-content {
+    transition: transform 0.3s ease;
+  }
+  
+  /* Deshabilitar hover en móvil */
+  .modern-sidebar.collapsed:hover {
+    width: 80px;
   }
   
   .search-section {
@@ -389,6 +427,29 @@
   
   .user-details {
     display: none;
+  }
+  
+  /* Header más compacto en móvil */
+  .modern-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  .header-wrapper {
+    padding: 0;
+  }
+  
+  .brand-logo {
+    gap: 0.5rem;
+  }
+  
+  .logo-gradient {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .action-btn {
+    width: 36px;
+    height: 36px;
   }
 }
 

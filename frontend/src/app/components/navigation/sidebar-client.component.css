@@ -118,6 +118,52 @@
   overflow: hidden;
 }
 
+/* ========== MOBILE RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .sidebar-client {
+    width: 280px;
+    position: fixed;
+    left: -280px;
+    top: 0;
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .sidebar-client.open,
+  .sidebar-client.modern-sidebar.open {
+    left: 0;
+  }
+  
+  /* En móvil siempre mostrar textos cuando está abierto */
+  .sidebar-client.open .sidebar-menu a .menu-text,
+  .sidebar-client.modern-sidebar.open .sidebar-menu a .menu-text {
+    display: inline;
+    opacity: 1;
+    width: auto;
+  }
+  
+  .sidebar-client.open .sidebar-menu a,
+  .sidebar-client.modern-sidebar.open .sidebar-menu a {
+    justify-content: flex-start;
+    padding: 0.75rem 1.25rem;
+  }
+  
+  /* Deshabilitar hover en móvil */
+  .sidebar-client.collapsed:hover,
+  .sidebar-client.modern-sidebar.collapsed:hover {
+    width: 80px;
+    left: -280px;
+  }
+  
+  /* No aplicar estado colapsado en móvil */
+  .sidebar-client.collapsed,
+  .sidebar-client.modern-sidebar.collapsed {
+    width: 280px;
+  }
+}
+
 /* ========== DARK MODE CLIENT SIDEBAR ========== */
 [data-theme="dark"] .sidebar-client {
   background: var(--surface-900);

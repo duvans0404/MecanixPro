@@ -119,6 +119,49 @@
   overflow: hidden;
 }
 
+/* ========== MOBILE RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .sidebar-manager {
+    width: 280px;
+    position: fixed;
+    left: -280px;
+    top: 0;
+    height: 100vh;
+    z-index: 1000;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .sidebar-manager.open,
+  .sidebar-manager.modern-sidebar.open {
+    left: 0;
+  }
+  
+  .sidebar-manager.open .sidebar-menu a .menu-text,
+  .sidebar-manager.modern-sidebar.open .sidebar-menu a .menu-text {
+    display: inline;
+    opacity: 1;
+    width: auto;
+  }
+  
+  .sidebar-manager.open .sidebar-menu a,
+  .sidebar-manager.modern-sidebar.open .sidebar-menu a {
+    justify-content: flex-start;
+    padding: 0.75rem 1.25rem;
+  }
+  
+  .sidebar-manager.collapsed:hover,
+  .sidebar-manager.modern-sidebar.collapsed:hover {
+    width: 80px;
+    left: -280px;
+  }
+  
+  .sidebar-manager.collapsed,
+  .sidebar-manager.modern-sidebar.collapsed {
+    width: 280px;
+  }
+}
+
 /* ========== DARK MODE MANAGER SIDEBAR ========== */
 [data-theme="dark"] .sidebar-manager {
   background: var(--surface-900);

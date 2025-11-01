@@ -236,7 +236,17 @@ export const getProfile = async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
-    res.status(200).json({ user });
+    // Serializar el usuario con roles como array de strings (nombres)
+    const userData = user.toJSON();
+    const rolesArray = ((userData as any).roles || []).map((r: any) => r.name || r);
+    
+    // Asegurarse de que los roles vengan como array de strings, no objetos
+    const serializedUser = {
+      ...userData,
+      roles: rolesArray.length > 0 ? rolesArray : (userData.role ? [userData.role] : [])
+    };
+
+    res.status(200).json({ user: serializedUser });
   } catch (error) {
     console.error('Get profile error:', error);
     res.status(500).json({ message: 'Internal server error' });

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation, Renderer2, Inject } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation, Renderer2, Inject, ChangeDetectorRef, AfterViewChecked } from '@angular/core';
 import { trigger, transition, style, animate, query, group } from '@angular/animations';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -45,12 +45,13 @@ import { GlobalModalsComponent } from './components/shared/global-modals.compone
     ])
   ]
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, AfterViewChecked {
   title = 'MecanixPro';
   stats: any = {};
   mobileMenuOpen = false;
   isDarkMode = false;
   sidebarCollapsed = true; // Colapsado por defecto, se expande con hover
+  isMobile = false;
   currentUser: { username?: string; firstName?: string; lastName?: string } | null = null;
   isNavigating = false;
   private navStartAt = 0;
@@ -71,6 +72,8 @@ export class AppComponent implements OnInit {
     'register': 'Registro'
   };
 
+  routeAnimationState: string | null = null;
+
   constructor(
     private dataService: DataService,
     private renderer: Renderer2,
@@ -78,48 +81,9 @@ export class AppComponent implements OnInit {
     private auth: AuthService,
     private router: Router,
     private themeService: ThemeService,
-    public loadingService: LoadingService
+    public loadingService: LoadingService,
+    private cdr: ChangeDetectorRef
   ) {}
-
-  ngOnInit() {
-    this.loadStats();
-    // El tema se inicializa automáticamente en el servicio
-    this.themeService.isDarkMode$.subscribe(isDark => {
-      this.isDarkMode = isDark;
-    });
-    this.initializeKeyboardShortcuts();
-    
-    // Suscribirse a cambios en el usuario actual
-    this.auth.currentUser$.subscribe(user => {
-      this.currentUser = user;
-    });
-    
-    if (this.auth.isAuthenticated()) {
-      this.auth.getProfile().subscribe({
-        next: ({ user }) => {
-          this.currentUser = user;
-        },
-        error: (error) => {
-          console.error('Error loading user profile:', error);
-        }
-      });
-    }
-
-    // Barra de progreso durante navegación de rutas
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationStart) {
-        this.loadingMessage = `Cargando… ${this.formatUrlTitle(event.url)}`;
-        this.document.title = `MecanixPro — ${this.loadingMessage}`;
-        this.setNavigating(true);
-      }
-      if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
-        const url = event instanceof NavigationEnd ? event.urlAfterRedirects : this.router.url;
-        const title = this.formatUrlTitle(url);
-        this.document.title = `MecanixPro — ${title}`;
-        this.setNavigating(false);
-      }
-    });
-  }
 
   // Métodos de tema ahora usan el servicio
   get isDarkModeFromService(): boolean {
@@ -165,8 +129,101 @@ export class AppComponent implements OnInit {
     });
   }
 
+  checkMobile() {
+    this.isMobile = window.innerWidth <= 768;
+  }
+
   toggleSidebar() {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
+    // En móvil, toggle abre/cierra el sidebar
+    if (this.isMobile) {
+      this.sidebarCollapsed = !this.sidebarCollapsed;
+      // Agregar/quitar clase para el overlay
+      const layout = document.querySelector('.modern-app-layout');
+      if (layout) {
+        if (!this.sidebarCollapsed) {
+          layout.classList.add('sidebar-open');
+        } else {
+          layout.classList.remove('sidebar-open');
+        }
+      }
+    } else {
+      // En desktop, toggle colapsa/expande
+      this.sidebarCollapsed = !this.sidebarCollapsed;
+    }
+  }
+
+  ngOnInit() {
+    this.checkMobile();
+    // Actualizar isMobile en resize
+    window.addEventListener('resize', () => this.checkMobile());
+    
+    // Inicializar el estado de animación de ruta con la ruta actual
+    const currentPath = this.router.url.split('?')[0].replace(/^\//, '') || null;
+    this.routeAnimationState = currentPath;
+    
+    this.loadStats();
+    // El tema se inicializa automáticamente en el servicio
+    this.themeService.isDarkMode$.subscribe(isDark => {
+      this.isDarkMode = isDark;
+    });
+    this.initializeKeyboardShortcuts();
+    
+    // Suscribirse a cambios en el usuario actual
+    this.auth.currentUser$.subscribe(user => {
+      this.currentUser = user;
+    });
+    
+    if (this.auth.isAuthenticated()) {
+      this.auth.getProfile().subscribe({
+        next: ({ user }) => {
+          this.currentUser = user;
+          // Forzar detección de cambios después de actualizar el usuario
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('❌ [AppComponent] Error loading user profile:', error);
+        }
+      });
+    }
+
+    // Barra de progreso durante navegación de rutas
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationStart) {
+        this.loadingMessage = `Cargando… ${this.formatUrlTitle(event.url)}`;
+        this.document.title = `MecanixPro — ${this.loadingMessage}`;
+        this.setNavigating(true);
+        // Cerrar sidebar en móvil al navegar
+        if (this.isMobile && !this.sidebarCollapsed) {
+          this.sidebarCollapsed = true;
+          const layout = this.document.querySelector('.modern-app-layout');
+          if (layout) {
+            layout.classList.remove('sidebar-open');
+          }
+        }
+      }
+      if (event instanceof NavigationEnd || event instanceof NavigationCancel || event instanceof NavigationError) {
+        const url = event instanceof NavigationEnd ? event.urlAfterRedirects : this.router.url;
+        const title = this.formatUrlTitle(url);
+        this.document.title = `MecanixPro — ${title}`;
+        this.setNavigating(false);
+        // Actualizar animación de ruta de forma asíncrona para evitar ExpressionChangedAfterItHasBeenCheckedError
+        setTimeout(() => {
+          this.updateRouteAnimation();
+          this.cdr.detectChanges();
+        }, 0);
+      }
+    });
+    
+    // Cerrar sidebar con Escape key (solo en móvil)
+    this.document.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && this.isMobile && !this.sidebarCollapsed) {
+        this.sidebarCollapsed = true;
+        const layout = this.document.querySelector('.modern-app-layout');
+        if (layout) {
+          layout.classList.remove('sidebar-open');
+        }
+      }
+    });
   }
 
   openQuickCreate() {
@@ -189,13 +246,35 @@ export class AppComponent implements OnInit {
   }
 
   prepareRoute(outlet: RouterOutlet): string | null {
+    // Usar el valor almacenado si está disponible para evitar cambios durante la verificación
+    if (this.routeAnimationState !== null) {
+      return this.routeAnimationState;
+    }
+    
     if (!outlet || !outlet.isActivated || !outlet.activatedRoute) {
       return null;
     }
+    
     const data = outlet.activatedRouteData?.['animation'] as string | undefined;
-    if (data) return data;
+    if (data) {
+      this.routeAnimationState = data;
+      return data;
+    }
+    
     const url = outlet.activatedRoute.snapshot?.url?.map(s => s.path).join('/') ?? null;
+    this.routeAnimationState = url;
     return url;
+  }
+
+  private updateRouteAnimation() {
+    // Actualizar el estado de animación cuando cambia la ruta
+    const outlet = this.router.url.split('?')[0].replace(/^\//, '') || 'dashboard';
+    this.routeAnimationState = outlet;
+  }
+
+  ngAfterViewChecked() {
+    // Evitar ExpressionChangedAfterItHasBeenCheckedError
+    // No hacer cambios aquí, solo detectar si es necesario
   }
 
   private setNavigating(active: boolean) {
@@ -263,45 +342,58 @@ export class AppComponent implements OnInit {
     return u.username;
   }
 
-  get displayRole(): string | undefined {
-    const roles = this.getEffectiveRoles();
-    return roles && roles.length ? roles[0] : undefined;
-  }
-
+  /**
+   * Obtiene los roles directamente del backend (perfil o token), sin prioridad
+   * Usa los roles tal como vienen de la base de datos
+   */
   get roles(): string[] {
-    return this.getEffectiveRoles();
-  }
-
-  private rolePriority(role: string): number {
-    const order = ['ADMIN', 'MANAGER', 'MECHANIC', 'RECEPTIONIST', 'CLIENT'];
-    const idx = order.indexOf(String(role).toUpperCase());
-    return idx === -1 ? 999 : idx;
-  }
-
-  // Return unique, sorted roles by priority
-  get sortedRoles(): string[] {
-    const roles = this.getEffectiveRoles().map(r => String(r).toUpperCase());
-    const unique = Array.from(new Set(roles));
-    return unique.sort((a, b) => this.rolePriority(a) - this.rolePriority(b));
+    const u = this.currentUser as any;
+    
+    // Preferir roles del perfil (servidor) que vienen directamente de la BD
+    // El backend ahora devuelve roles como array de strings directamente
+    if (u && (u.roles || u.role)) {
+      const raw = (u.roles as any[] | undefined) || (u.role ? [u.role] : []);
+      
+      // Los roles pueden venir como strings (nuevo formato del backend) o como objetos {id, name}
+      const names = raw
+        .map((r: any) => {
+          if (typeof r === 'string') {
+            return r;
+          }
+          // Soporte para formato legacy (objetos)
+          if (r && typeof r === 'object' && r.name) {
+            return r.name;
+          }
+          return String(r);
+        })
+        .filter((v: any) => !!v && v !== 'undefined' && v !== 'null')
+        .map((v: string) => String(v).toUpperCase());
+      
+      if (names.length) {
+        return names;
+      }
+    }
+    
+    // Respaldo: roles desde el token JWT (que también vienen del backend)
+    return (this.auth.roles || []).map(r => String(r).toUpperCase());
   }
 
   /**
-   * Preferir roles del perfil (servidor) para reflejar cambios en BD sin relogin.
-   * Si no hay perfil aún, usar roles del token como respaldo.
+   * Obtiene el rol principal directamente del backend sin aplicar prioridad
+   * Usa el primer rol que viene del perfil o token, en el orden que viene del backend
    */
-  private getEffectiveRoles(): string[] {
-    const u = this.currentUser as any;
-    // Intentar desde perfil: puede venir como strings o como objetos {id, name}
-    if (u && (u.roles || u.role)) {
-      const raw = (u.roles as any[] | undefined) || (u.role ? [u.role] : []);
-      const names = raw
-        .map((r: any) => typeof r === 'string' ? r : r?.name)
-        .filter((v: any) => !!v)
-        .map((v: string) => v.toUpperCase());
-      if (names.length) return names;
+  get displayRole(): string | undefined {
+    const roles = this.roles;
+    if (!roles || roles.length === 0) {
+      return undefined;
     }
-    // Respaldo: roles desde el token JWT
-    return (this.auth.roles || []).map(r => String(r).toUpperCase());
+    // Usar el primer rol que viene del backend, sin ordenar por prioridad
+    return roles[0];
+  }
+
+  get sortedRoles(): string[] {
+    // Devolver roles tal como vienen del backend, sin ordenar por prioridad
+    return this.roles;
   }
 
   roleTitle(role: string): string {

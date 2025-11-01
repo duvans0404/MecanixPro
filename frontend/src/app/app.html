@@ -1,5 +1,7 @@
 <ng-container *ngIf="!isAuthRoute; else authOnly">
-<div class="modern-app-layout" [class.sidebar-collapsed]="sidebarCollapsed" [attr.data-theme]="isDarkMode ? 'dark' : 'light'">
+<div class="modern-app-layout" [class.sidebar-collapsed]="sidebarCollapsed" [class.sidebar-open]="!sidebarCollapsed" [attr.data-theme]="isDarkMode ? 'dark' : 'light'">
+  <!-- Overlay para móvil -->
+  <div class="sidebar-overlay" *ngIf="isMobile && !sidebarCollapsed" (click)="toggleSidebar()" [class.visible]="!sidebarCollapsed"></div>
   <!-- Barra de progreso global de navegación -->
   <div class="top-progress" [class.is-active]="isNavigating || (loadingService.isLoading$ | async)"></div>
   <div class="loading-overlay" [class.is-active]="isNavigating || (loadingService.isLoading$ | async)" aria-busy="true" aria-live="polite">
@@ -11,12 +13,12 @@
 
   <!-- Modern Sidebar -->
   <ng-container [ngSwitch]="displayRole">
-    <sidebar-admin *ngSwitchCase="'ADMIN'" [isCollapsed]="sidebarCollapsed" class="modern-sidebar"></sidebar-admin>
-    <sidebar-manager *ngSwitchCase="'MANAGER'" [isCollapsed]="sidebarCollapsed" class="modern-sidebar"></sidebar-manager>
-    <sidebar-mechanic *ngSwitchCase="'MECHANIC'" [isCollapsed]="sidebarCollapsed" class="modern-sidebar"></sidebar-mechanic>
-    <sidebar-receptionist *ngSwitchCase="'RECEPTIONIST'" [isCollapsed]="sidebarCollapsed" class="modern-sidebar"></sidebar-receptionist>
-    <sidebar-client *ngSwitchCase="'CLIENT'" [isCollapsed]="sidebarCollapsed" class="modern-sidebar"></sidebar-client>
-    <app-sidebar *ngSwitchDefault [isCollapsed]="sidebarCollapsed" class="modern-sidebar"></app-sidebar>
+    <sidebar-admin *ngSwitchCase="'ADMIN'" [isCollapsed]="sidebarCollapsed" [class.open]="!sidebarCollapsed" class="modern-sidebar" (click)="$event.stopPropagation()"></sidebar-admin>
+    <sidebar-manager *ngSwitchCase="'MANAGER'" [isCollapsed]="sidebarCollapsed" [class.open]="!sidebarCollapsed" class="modern-sidebar" (click)="$event.stopPropagation()"></sidebar-manager>
+    <sidebar-mechanic *ngSwitchCase="'MECHANIC'" [isCollapsed]="sidebarCollapsed" [class.open]="!sidebarCollapsed" class="modern-sidebar" (click)="$event.stopPropagation()"></sidebar-mechanic>
+    <sidebar-receptionist *ngSwitchCase="'RECEPTIONIST'" [isCollapsed]="sidebarCollapsed" [class.open]="!sidebarCollapsed" class="modern-sidebar" (click)="$event.stopPropagation()"></sidebar-receptionist>
+    <sidebar-client *ngSwitchCase="'CLIENT'" [isCollapsed]="sidebarCollapsed" [class.open]="!sidebarCollapsed" class="modern-sidebar" (click)="$event.stopPropagation()"></sidebar-client>
+    <app-sidebar *ngSwitchDefault [isCollapsed]="sidebarCollapsed" [class.open]="!sidebarCollapsed" class="modern-sidebar" (click)="$event.stopPropagation()"></app-sidebar>
   </ng-container>
 
   <!-- Main Content Area -->
@@ -109,7 +111,7 @@
     <main class="flex-1 relative overflow-y-auto focus:outline-none anim-fade-in">
       <div class="py-6">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <router-outlet #outlet="outlet" [@routeAnimations]="prepareRoute(outlet)"></router-outlet>
+          <router-outlet #outlet="outlet" [@routeAnimations]="routeAnimationState || prepareRoute(outlet)"></router-outlet>
         </div>
       </div>
     </main>
